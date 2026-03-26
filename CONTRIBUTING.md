@@ -96,18 +96,31 @@ PRs implementing substantial changes without prior RFC discussion may be closed 
 - Explain why the change is needed, not only what changed.
 - Link related issue(s) in the PR.
 
-## Versioning and Compatibility
+### Versioning and Compatibility
 
 - Breaking protocol changes must be explicit and versioned.
 - When behavior changes, update `protocol-spec` and `conformance-tests` together.
 - Include migration notes for maintainers of third-party clients when applicable.
+
+### CI/CD and Supply Chain Integrity
+
+When contributing workflow changes or release-related code, you **must** follow the supply chain integrity requirements documented in [`SECURITY.md`](SECURITY.md#supply-chain-integrity).
+
+Key requirements include:
+
+- **SHA-pinned actions**: All `uses:` references in GitHub Actions workflows must be pinned to the full 40-character commit SHA (add `# vX.Y.Z` comment for readability).
+- **Harden-runner**: Every job must start with `step-security/harden-runner` in audit mode.
+- **GPG-signed commits**: All commits must be GPG-signed.
+- **Job-level permissions**: Prefer job-level `permissions` over top-level `permissions`.
+
+Dependabot automatically updates SHA-pinned action references via weekly PRs.
 
 ## Security Reporting
 
 > [!IMPORTANT]
 > Do not report vulnerabilities in public issues or PRs.
 
-Follow `SECURITY.md` for private disclosure.
+Follow [`SECURITY.md`](SECURITY.md) for private disclosure and vulnerability reporting procedures.
 Public vulnerability details may be removed until coordinated remediation is complete.
 
 ## Legal: License and DCO/CLA
