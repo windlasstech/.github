@@ -57,11 +57,12 @@ If your change depends on non-public backend behavior, open an issue first so ma
    - `feature/<short-description>`
    - `fix/<short-description>`
    - `docs/<short-description>`
-   > [!NOTE]
-   > Please keep changes small and focused.
 5. Implement changes with tests/docs updates as needed.
 6. Ensure CI is green.
 7. Open a PR using the PR template.
+
+> [!NOTE]
+> Please keep changes in each PR small and focused.
 
 ## RFC Path (Required for Substantial Changes)
 
