@@ -2,7 +2,7 @@
 
 # 기여자 서약 3.0 행동 강령
 
-[English](CODE_OF_CONDUCT.md) | 한국어 | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | [Deutsch](CODE_OF_CONDUCT.de.md)
+[English](../CODE_OF_CONDUCT.md) | 한국어 | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | [Deutsch](CODE_OF_CONDUCT.de.md)
 
 </div>
 

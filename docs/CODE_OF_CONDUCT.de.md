@@ -2,7 +2,7 @@
 
 # Contributor Covenant 3.0 (deutsche Übersetzung)
 
-[English](CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | Deutsch
+[English](../CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | Deutsch
 
 </div>
 
