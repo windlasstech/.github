@@ -34,7 +34,6 @@ Please report vulnerabilities privately:
 3. Reproduction steps or proof of concept
 4. Suggested mitigation (if available)
 
-
 ### Response Timeline
 
 | Step                              | Timeline                                      |
@@ -77,30 +76,34 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
 
 #### Current SLSA Level Status
 
-| Level | Status | Description |
-|-------|--------|-------------|
+| Level             | Status      | Description                                           |
+| ----------------- | ----------- | ----------------------------------------------------- |
 | **SLSA Build L1** | ✅ Required | Provenance exists documenting how artifacts are built |
-| **SLSA Build L2** | ✅ Required | Hosted build platform with signed provenance |
-| **SLSA Build L3** | 🎯 Target | Hardened builds with isolated, ephemeral environments |
-| **SLSA Build L4** | 📋 Planned | Hermetic and reproducible builds (future goal) |
+| **SLSA Build L2** | ✅ Required | Hosted build platform with signed provenance          |
+| **SLSA Build L3** | 🎯 Target   | Hardened builds with isolated, ephemeral environments |
+| **SLSA Build L4** | 📋 Planned  | Hermetic and reproducible builds (future goal)        |
 
-> **Note**: SLSA v1.2 defines Build Track levels 0-3. Level 4 and additional tracks (Source, Common) are planned for future specification versions.
+> [!NOTE]
+> SLSA v1.2 defines Build Track levels 0-3. Level 4 and additional tracks (Source, Common) are planned for future specification versions.
 
 #### SLSA Build Level Requirements
 
-**Build L1 — Provenance Exists**
+##### Build L1 — Provenance Exists
+
 - All builds must generate provenance describing:
   - Entity that performed the build
   - Build process and steps used
   - Top-level inputs (source repository, commit SHA, dependencies)
 - Provenance must be in SLSA format or equivalent
 
-**Build L2 — Hosted Build Platform**
+##### Build L2 — Hosted Build Platform
+
 - All production builds must run on hosted CI/CD platforms (GitHub Actions)
 - Provenance must be cryptographically signed by the build platform
 - No local/developer workstation builds for releases
 
-**Build L3 — Hardened Builds**
+##### Build L3 — Hardened Builds
+
 - Builds must run in isolated, ephemeral environments
 - Build steps cannot access platform signing keys
 - Concurrent builds cannot influence each other
@@ -116,10 +119,11 @@ All GitHub Actions workflows enforce supply-chain protections:
 - **SHA-pinned actions** — Every `uses:` reference is pinned to the full 40-character commit SHA (not a mutable tag like `@v4`). This prevents supply-chain attacks where a tag is silently repointed to a compromised commit. Dependabot keeps SHAs up to date automatically via weekly PRs.
 
   Example:
+
   ```yaml
   # Correct - SHA pinned with version comment
   - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-  
+
   # Incorrect - mutable tag
   - uses: actions/checkout@v6
   ```
@@ -142,44 +146,45 @@ When adding or modifying workflows, contributors must:
    - `packages: write` — Required for container registry pushes
    - `pull-requests: write` — Required for PR comments
 
-    Example:
-    ```yaml
-    name: CI
+   Example:
 
-    # Minimal permissions at top level
-    permissions:
-      contents: read
+   ```yaml
+   name: CI
 
-    jobs:
-      build:
-        runs-on: ubuntu-latest
-        # Inherits top-level permissions (read-only)
-        steps:
-          - name: Harden the runner (Audit all outbound calls)
-            uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
-            with:
-              egress-policy: audit
-    
-          - name: Checkout
-            uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+   # Minimal permissions at top level
+   permissions:
+     contents: read
 
-      release:
-        runs-on: ubuntu-latest
-        # Elevated permissions only for this job
-        permissions:
-          contents: read
-          id-token: write        # Required for OIDC
-          attestations: write    # Required for attestations
-          packages: write        # Required for GHCR
-        steps:
-          - name: Harden the runner (Audit all outbound calls)
-            uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
-            with:
-              egress-policy: audit
-    
-          - name: Checkout
-            uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-    ```
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       # Inherits top-level permissions (read-only)
+       steps:
+         - name: Harden the runner (Audit all outbound calls)
+           uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+           with:
+             egress-policy: audit
+
+         - name: Checkout
+           uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+     release:
+       runs-on: ubuntu-latest
+       # Elevated permissions only for this job
+       permissions:
+         contents: read
+         id-token: write # Required for OIDC
+         attestations: write # Required for attestations
+         packages: write # Required for GHCR
+       steps:
+         - name: Harden the runner (Audit all outbound calls)
+           uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+           with:
+             egress-policy: audit
+
+         - name: Checkout
+           uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+   ```
 
 3. **Environment protection** — Production deployments must use protected environments with:
    - Required reviewers for approval
@@ -196,9 +201,9 @@ Workflows generating attestations require these permissions:
 
 ```yaml
 permissions:
-  id-token: write      # Required for OIDC token to request signing certificate
-  attestations: write  # Required to persist the attestation
-  contents: read       # Required to read source code
+  id-token: write # Required for OIDC token to request signing certificate
+  attestations: write # Required to persist the attestation
+  contents: read # Required to read source code
 ```
 
 #### Generating Attestations
@@ -207,7 +212,7 @@ Use the `actions/attest` action to generate SLSA-compliant provenance:
 
 ```yaml
 - name: Generate artifact attestation
-  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381  # v4.1.0
+  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381 # v4.1.0
   with:
     subject-path: '${{ github.workspace }}/my-artifact'
 ```
@@ -216,7 +221,7 @@ For container images:
 
 ```yaml
 - name: Generate container attestation
-  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381  # v4.1.0
+  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381 # v4.1.0
   with:
     subject-name: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}'
     subject-digest: '${{ steps.build.outputs.digest }}'
@@ -225,11 +230,11 @@ For container images:
 
 #### Attestation Modes
 
-| Mode | Input | Description |
-|------|-------|-------------|
-| **Provenance** (default) | `subject-path` only | Auto-generates SLSA build provenance |
-| **SBOM** | `sbom-path` provided | Creates attestation from SPDX/CycloneDX SBOM |
-| **Custom** | `predicate-type` + `predicate` | User-defined predicate |
+| Mode                     | Input                          | Description                                  |
+| ------------------------ | ------------------------------ | -------------------------------------------- |
+| **Provenance** (default) | `subject-path` only            | Auto-generates SLSA build provenance         |
+| **SBOM**                 | `sbom-path` provided           | Creates attestation from SPDX/CycloneDX SBOM |
+| **Custom**               | `predicate-type` + `predicate` | User-defined predicate                       |
 
 ### SLSA GitHub Generator
 
@@ -237,13 +242,13 @@ For language-specific builds, use the [slsa-framework/slsa-github-generator](htt
 
 #### Available Builders
 
-| Ecosystem | Builder | Status |
-|-----------|---------|--------|
-| Go | `slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml` | Stable |
-| Node.js/npm | `slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml` | Beta |
-| Maven | `slsa-framework/slsa-github-generator/.github/workflows/builder_maven_slsa3.yml` | Beta |
-| Gradle | `slsa-framework/slsa-github-generator/.github/workflows/builder_gradle_slsa3.yml` | Beta |
-| Generic | `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml` | Stable |
+| Ecosystem   | Builder                                                                              | Status |
+| ----------- | ------------------------------------------------------------------------------------ | ------ |
+| Go          | `slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml`        | Stable |
+| Node.js/npm | `slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml`    | Beta   |
+| Maven       | `slsa-framework/slsa-github-generator/.github/workflows/builder_maven_slsa3.yml`     | Beta   |
+| Gradle      | `slsa-framework/slsa-github-generator/.github/workflows/builder_gradle_slsa3.yml`    | Beta   |
+| Generic     | `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml` | Stable |
 
 #### Reference Requirements
 
@@ -265,17 +270,17 @@ All projects must commit dependency lockfiles to version control to ensure repro
 
 #### Lockfile Requirements
 
-| Ecosystem | Lockfile | Commit Required |
-|-----------|----------|-----------------|
-| Rust/Cargo | `Cargo.lock` | ✅ Yes |
-| Node.js/npm | `package-lock.json` | ✅ Yes |
-| Node.js/Yarn | `yarn.lock` | ✅ Yes |
-| Node.js/pnpm | `pnpm-lock.yaml` | ✅ Yes |
-| Python/pip | `requirements.txt` (pinned) or `poetry.lock` | ✅ Yes |
-| Go | `go.sum` | ✅ Yes |
-| Java/Maven | `pom.xml` (with versions) | ✅ Yes |
-| Java/Gradle | `gradle.lockfile` | ✅ Yes |
-| Ruby | `Gemfile.lock` | ✅ Yes |
+| Ecosystem    | Lockfile                                     | Commit Required |
+| ------------ | -------------------------------------------- | --------------- |
+| Rust/Cargo   | `Cargo.lock`                                 | ✅ Yes          |
+| Node.js/npm  | `package-lock.json`                          | ✅ Yes          |
+| Node.js/Yarn | `yarn.lock`                                  | ✅ Yes          |
+| Node.js/pnpm | `pnpm-lock.yaml`                             | ✅ Yes          |
+| Python/pip   | `requirements.txt` (pinned) or `poetry.lock` | ✅ Yes          |
+| Go           | `go.sum`                                     | ✅ Yes          |
+| Java/Maven   | `pom.xml` (with versions)                    | ✅ Yes          |
+| Java/Gradle  | `gradle.lockfile`                            | ✅ Yes          |
+| Ruby         | `Gemfile.lock`                               | ✅ Yes          |
 
 #### Dependency Update Automation
 
@@ -290,7 +295,7 @@ All projects must commit dependency lockfiles to version control to ensure repro
 All commits to protected branches must be cryptographically signed:
 
 - **GPG signing** — Traditional approach using GPG keys
-- **SSH signing** — Alternative to GPG using SSH keys  
+- **SSH signing** — Alternative to GPG using SSH keys
 - **Sigstore gitsign** — Keyless signing linking to OIDC identity (recommended)
 
 #### Branch Protection
@@ -325,14 +330,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429c905ace6919b0a7664b96b2b5dc3c81  # v4.0.2
+        uses: aws-actions/configure-aws-credentials@e3dd6a429c905ace6919b0a7664b96b2b5dc3c81 # v4.0.2
         with:
           role-to-assume: arn:aws:iam::123456789012:role/github-deploy-role
           aws-region: us-east-1
-      
+
       - name: Deploy
         run: aws s3 sync ./dist s3://my-bucket/
 ```

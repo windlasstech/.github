@@ -3,6 +3,7 @@
 Thank you for your interest in contributing.
 
 This project follows a controlled-open contribution model:
+
 - Public contribution is encouraged for clients, protocol specs, conformance tests, and documentation.
 - Backend implementation and internal operations remain private.
 
@@ -13,6 +14,7 @@ All of your interactions in the project are subject to our [Code of Conduct](COD
 ## Scope and Contribution Boundaries
 
 This repository accepts contributions for:
+
 - Client libraries and official client behavior
 - Protocol/spec clarifications
 - Conformance tests and fixtures
@@ -20,6 +22,7 @@ This repository accepts contributions for:
 - Developer tooling for interoperability
 
 This repository does not accept direct contributions for:
+
 - Private backend service internals
 - Internal infrastructure design and operational runbooks
 
@@ -134,6 +137,7 @@ If this repository requires a CLA, complete CLA requirements before merge.
 ## Maintainer Review and Discretion
 
 Maintainers may request changes, defer, or close PRs that are:
+
 - Out of scope
 - In conflict with project direction
 - Inactive for an extended period
