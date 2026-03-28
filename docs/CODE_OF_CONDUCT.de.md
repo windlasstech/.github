@@ -2,7 +2,7 @@
 
 # Contributor Covenant 3.0 (deutsche Übersetzung)
 
-[English](../CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | Deutsch
+[English](../CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | Deutsch | [Français](CODE_OF_CONDUCT.fr.md)
 
 </div>
 
@@ -49,7 +49,7 @@ Wir verpflichten uns, die folgenden Verhaltensweisen in unserer Gemeinschaft zu 
 
 Spannungen können auch bei bestem Bemühen um Zusammenarbeit entstehen. Nicht jeder Konflikt stellt einen Verstoß gegen den Verhaltenskodex dar; dieser Verhaltenskodex fördert erwünschte Verhaltensweisen und Normen, die helfen, Konflikte zu vermeiden und Schäden zu minimieren.
 
-Wenn ein Vorfall eintritt, ist es wichtig, ihn umgehend zu melden. Um einen möglichen Verstoß zu melden, **senden Sie bitte eine E-Mail an [oss-conduct@windlasstech.com](mailto:oss-conduct@windlasstech.com)**
+Wenn ein Vorfall eintritt, ist es wichtig, ihn umgehend zu melden. Um einen möglichen Verstoß zu melden, **senden Sie bitte eine E-Mail an [oss-conduct@windlasstech.com](mailto:oss-conduct@windlasstech.com)**.
 
 Moderator:innen nehmen Meldungen von Verstößen ernst und bemühen sich um eine zeitnahe Reaktion. Sie untersuchen alle Meldungen, prüfen Nachrichten, Protokolle und Aufzeichnungen oder befragen Zeugen und andere Beteiligte. Moderator:innen halten Untersuchungen zu und Maßnahmen bei Verstößen so transparent wie möglich, wobei Sicherheit und Vertraulichkeit Vorrang haben. Maßnahmen zur Durchsetzung des Verhaltenskodex erfolgen privat mit den beteiligten Parteien, aber eine Kommunikation an die gesamte Gemeinschaft kann Teil einer einvernehmlich verabredeten Lösung sein.
 
