@@ -60,7 +60,33 @@ When adding or modifying workflows, contributors must:
 
 1. Pin all new action references to commit SHAs (add a `# vX.Y.Z` comment for readability).
 2. Include the harden-runner step as the first step in every job.
-3. Prefer job-level `permissions` over top-level `permissions` to enforce least privilege.
+3. **Explicit top-level permissions** — Set `permissions: {}` or minimal read-only permissions (`contents: read`) at the workflow level. This establishes a secure default that prevents accidental privilege escalation.
+4. **Job-level elevation** — Grant additional permissions at the job level only when required (e.g., `id-token: write` for OIDC, `pull-requests: write` for commenting). Never grant more permissions than the job actually needs.
+
+    Example:
+    ```yaml
+    name: CI
+
+    # Minimal permissions at top level
+    permissions:
+      contents: read
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        # Inherits top-level permissions (read-only)
+        steps:
+          - uses: actions/checkout@sha256:abc...
+
+      deploy:
+        runs-on: ubuntu-latest
+        # Elevated permissions only for this job
+        permissions:
+          contents: read
+          id-token: write  # Required for OIDC to cloud provider
+        steps:
+          - uses: actions/checkout@sha256:abc...
+    ```
 
 ### Release Integrity
 
