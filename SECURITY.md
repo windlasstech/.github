@@ -47,28 +47,6 @@ Please report vulnerabilities privately:
 
 These timelines are best-effort commitments and are not guaranteed SLAs. Complex issues may take longer, but we will keep you informed of progress — at least every 7 business days until closure.
 
-## Supply Chain Integrity
-
-### Workflow Hardening
-
-All GitHub Actions workflows enforce two supply-chain protections:
-
-- **SHA-pinned actions** — Every `uses:` reference is pinned to the full 40-character commit SHA (not a mutable tag like `@v4`). This prevents supply-chain attacks where a tag is silently repointed to a compromised commit. Dependabot keeps SHAs up to date automatically via weekly PRs.
-- **Harden-runner** — Every job starts with [`step-security/harden-runner`](https://github.com/step-security/harden-runner) in audit mode (`egress-policy: audit`), logging all outbound network calls. This provides visibility into unexpected egress from CI runners.
-
-When adding or modifying workflows, contributors must:
-
-1. Pin all new action references to commit SHAs (add a `# vX.Y.Z` comment for readability).
-2. Include the harden-runner step as the first step in every job.
-3. Prefer job-level `permissions` over top-level `permissions` to enforce least privilege.
-
-### Release Integrity
-
-- **GPG-signed tags** — All release tags are GPG-signed annotated tags.
-- **GPG-signed commits** — All commits on `main` must be GPG-signed (enforced by repository rulesets).
-- **Linear history** — Squash-merge-only policy prevents history rewriting; force-push to `main` is blocked.
-- **CI gate** — All required status checks must pass before any merge to `main`.
-
 ## Disclosure Policy
 
 We follow coordinated disclosure:
@@ -90,3 +68,408 @@ Please do not:
 - Access non-public data beyond what is required to prove impact
 - Degrade service availability
 - Social engineer, spam, or perform destructive testing
+
+## Supply Chain Integrity
+
+### SLSA Compliance Framework
+
+This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)](https://slsa.dev/) framework to ensure software supply chain security. SLSA provides a checklist of standards and controls to prevent tampering, improve integrity, and secure software packages.
+
+#### Current SLSA Level Status
+
+| Level | Status | Description |
+|-------|--------|-------------|
+| **SLSA Build L1** | ✅ Required | Provenance exists documenting how artifacts are built |
+| **SLSA Build L2** | ✅ Required | Hosted build platform with signed provenance |
+| **SLSA Build L3** | 🎯 Target | Hardened builds with isolated, ephemeral environments |
+| **SLSA Build L4** | 📋 Planned | Hermetic and reproducible builds (future goal) |
+
+> **Note**: SLSA v1.2 defines Build Track levels 0-3. Level 4 and additional tracks (Source, Common) are planned for future specification versions.
+
+#### SLSA Build Level Requirements
+
+**Build L1 — Provenance Exists**
+- All builds must generate provenance describing:
+  - Entity that performed the build
+  - Build process and steps used
+  - Top-level inputs (source repository, commit SHA, dependencies)
+- Provenance must be in SLSA format or equivalent
+
+**Build L2 — Hosted Build Platform**
+- All production builds must run on hosted CI/CD platforms (GitHub Actions)
+- Provenance must be cryptographically signed by the build platform
+- No local/developer workstation builds for releases
+
+**Build L3 — Hardened Builds**
+- Builds must run in isolated, ephemeral environments
+- Build steps cannot access platform signing keys
+- Concurrent builds cannot influence each other
+- Cache poisoning must be prevented between builds
+- All external interactions must be captured in provenance
+
+### Workflow Hardening
+
+All GitHub Actions workflows enforce supply-chain protections:
+
+#### Action References
+
+- **SHA-pinned actions** — Every `uses:` reference is pinned to the full 40-character commit SHA (not a mutable tag like `@v4`). This prevents supply-chain attacks where a tag is silently repointed to a compromised commit. Dependabot keeps SHAs up to date automatically via weekly PRs.
+
+  Example:
+  ```yaml
+  # Correct - SHA pinned with version comment
+  - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+  
+  # Incorrect - mutable tag
+  - uses: actions/checkout@v6
+  ```
+
+#### Runner Security
+
+- **Harden-runner** — Every job starts with [`step-security/harden-runner`](https://github.com/step-security/harden-runner) in audit mode (`egress-policy: audit`), logging all outbound network calls. This provides visibility into unexpected egress from CI runners.
+
+- **Ephemeral environments** — All builds use fresh, isolated runners with no persistence between builds
+
+#### Permission Management
+
+When adding or modifying workflows, contributors must:
+
+1. **Explicit top-level permissions** — Set `permissions: {}` or minimal read-only permissions at the workflow level. This establishes a secure default that prevents accidental privilege escalation.
+
+2. **Job-level elevation** — Grant additional permissions at the job level only when required:
+   - `id-token: write` — Required for OIDC token generation
+   - `attestations: write` — Required for artifact attestations
+   - `packages: write` — Required for container registry pushes
+   - `pull-requests: write` — Required for PR comments
+
+    Example:
+    ```yaml
+    name: CI
+
+    # Minimal permissions at top level
+    permissions:
+      contents: read
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        # Inherits top-level permissions (read-only)
+        steps:
+          - name: Harden the runner (Audit all outbound calls)
+            uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+            with:
+              egress-policy: audit
+    
+          - name: Checkout
+            uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      release:
+        runs-on: ubuntu-latest
+        # Elevated permissions only for this job
+        permissions:
+          contents: read
+          id-token: write        # Required for OIDC
+          attestations: write    # Required for attestations
+          packages: write        # Required for GHCR
+        steps:
+          - name: Harden the runner (Audit all outbound calls)
+            uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+            with:
+              egress-policy: audit
+    
+          - name: Checkout
+            uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    ```
+
+3. **Environment protection** — Production deployments must use protected environments with:
+   - Required reviewers for approval
+   - Deployment branch policies
+   - Wait timers where appropriate
+
+### Artifact Attestations
+
+All released artifacts must include cryptographically signed attestations establishing build provenance.
+
+#### Required Permissions
+
+Workflows generating attestations require these permissions:
+
+```yaml
+permissions:
+  id-token: write      # Required for OIDC token to request signing certificate
+  attestations: write  # Required to persist the attestation
+  contents: read       # Required to read source code
+```
+
+#### Generating Attestations
+
+Use the `actions/attest` action to generate SLSA-compliant provenance:
+
+```yaml
+- name: Generate artifact attestation
+  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381  # v4.1.0
+  with:
+    subject-path: '${{ github.workspace }}/my-artifact'
+```
+
+For container images:
+
+```yaml
+- name: Generate container attestation
+  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381  # v4.1.0
+  with:
+    subject-name: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}'
+    subject-digest: '${{ steps.build.outputs.digest }}'
+    push-to-registry: true
+```
+
+#### Attestation Modes
+
+| Mode | Input | Description |
+|------|-------|-------------|
+| **Provenance** (default) | `subject-path` only | Auto-generates SLSA build provenance |
+| **SBOM** | `sbom-path` provided | Creates attestation from SPDX/CycloneDX SBOM |
+| **Custom** | `predicate-type` + `predicate` | User-defined predicate |
+
+### SLSA GitHub Generator
+
+For language-specific builds, use the [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) to generate SLSA Build Level 3 provenance:
+
+#### Available Builders
+
+| Ecosystem | Builder | Status |
+|-----------|---------|--------|
+| Go | `slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml` | Stable |
+| Node.js/npm | `slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml` | Beta |
+| Maven | `slsa-framework/slsa-github-generator/.github/workflows/builder_maven_slsa3.yml` | Beta |
+| Gradle | `slsa-framework/slsa-github-generator/.github/workflows/builder_gradle_slsa3.yml` | Beta |
+| Generic | `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml` | Stable |
+
+#### Reference Requirements
+
+> [!IMPORTANT]
+> SLSA generators must be referenced by tag (e.g., `@v2.1.0`) for `slsa-verifier` to validate the trusted builder. This is an intentional exception to the SHA-pinning requirement.
+
+```yaml
+jobs:
+  build:
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.1.0
+    with:
+      go-version: '1.26'
+      # ... other inputs
+```
+
+### Dependency Locking
+
+All projects must commit dependency lockfiles to version control to ensure reproducible builds and enable security auditing.
+
+#### Lockfile Requirements
+
+| Ecosystem | Lockfile | Commit Required |
+|-----------|----------|-----------------|
+| Rust/Cargo | `Cargo.lock` | ✅ Yes |
+| Node.js/npm | `package-lock.json` | ✅ Yes |
+| Node.js/Yarn | `yarn.lock` | ✅ Yes |
+| Node.js/pnpm | `pnpm-lock.yaml` | ✅ Yes |
+| Python/pip | `requirements.txt` (pinned) or `poetry.lock` | ✅ Yes |
+| Go | `go.sum` | ✅ Yes |
+| Java/Maven | `pom.xml` (with versions) | ✅ Yes |
+| Java/Gradle | `gradle.lockfile` | ✅ Yes |
+| Ruby | `Gemfile.lock` | ✅ Yes |
+
+#### Dependency Update Automation
+
+- Use Dependabot or Renovate to automatically update dependencies
+- Security updates should be applied immediately
+- Major version updates require review and testing
+
+### Source Integrity
+
+#### Commit Signing
+
+All commits to protected branches must be cryptographically signed:
+
+- **GPG signing** — Traditional approach using GPG keys
+- **SSH signing** — Alternative to GPG using SSH keys  
+- **Sigstore gitsign** — Keyless signing linking to OIDC identity (recommended)
+
+#### Branch Protection
+
+All repositories must enforce:
+
+- Require signed commits
+- Require pull request reviews (minimum 1 reviewer)
+- Require status checks to pass before merging
+- Require linear history (no merge commits)
+- Include administrators in restrictions
+- Restrict force pushes
+
+### OIDC and Cloud Authentication
+
+Use OpenID Connect (OIDC) for authentication to cloud providers instead of long-lived credentials stored as secrets.
+
+#### Supported Providers
+
+- AWS — `aws-actions/configure-aws-credentials`
+- Azure — `azure/login`
+- Google Cloud — `google-github-actions/auth`
+
+#### AWS OIDC Example
+
+```yaml
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429c905ace6919b0a7664b96b2b5dc3c81  # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-deploy-role
+          aws-region: us-east-1
+      
+      - name: Deploy
+        run: aws s3 sync ./dist s3://my-bucket/
+```
+
+### Release Integrity
+
+- **GPG-signed tags** — All release tags are GPG-signed annotated tags
+- **GPG-signed commits** — All commits on `main` must be GPG-signed (enforced by repository rulesets)
+- **Linear history** — Squash-merge-only policy prevents history rewriting; force-push to `main` is blocked
+- **CI gate** — All required status checks must pass before any merge to `main`
+- **Artifact attestations** — All released artifacts must include signed attestations
+
+## Verifying Artifacts
+
+Consumers can verify the authenticity and provenance of artifacts from this organization using the GitHub CLI:
+
+### Install GitHub CLI
+
+```bash
+# macOS
+brew install gh
+
+# Ubuntu/Debian
+sudo apt install gh
+
+# Or download from https://cli.github.com/
+```
+
+### Verify Binary Attestations
+
+```bash
+# Verify a downloaded binary
+gh attestation verify ./my-artifact -R windlass-tech/my-repo
+
+# Verify with specific workflow
+gh attestation verify ./my-artifact \
+  -R windlass-tech/my-repo \
+  --signer-workflow windlass-tech/my-repo/.github/workflows/release.yml
+```
+
+### Verify Container Image Attestations
+
+```bash
+# Verify a container image
+gh attestation verify oci://ghcr.io/windlass-tech/my-image:latest \
+  -R windlass-tech/my-repo
+
+# Verify by digest (recommended)
+gh attestation verify oci://ghcr.io/windlass-tech/my-image@sha256:abc123... \
+  -R windlass-tech/my-repo
+```
+
+### Verify SLSA Provenance
+
+For artifacts with SLSA provenance generated by slsa-github-generator:
+
+```bash
+# Install slsa-verifier
+go install github.com/slsa-framework/slsa-verifier/cli/slsa-verifier@v2.0.0
+
+# Verify provenance
+slsa-verifier verify-artifact my-artifact \
+  --provenance-path my-artifact.intoto.jsonl \
+  --source-uri github.com/windlass-tech/my-repo \
+  --source-tag v1.0.0
+```
+
+### What Verification Checks
+
+Verification confirms:
+
+1. **Authenticity** — The artifact was built by the claimed repository
+2. **Integrity** — The artifact has not been tampered with since build
+3. **Provenance** — The artifact's build process is documented
+4. **Source** — The exact source code (commit SHA) used to build
+5. **Build environment** — The workflow that produced the artifact
+
+## Security Monitoring
+
+### Audit Logging
+
+- All workflow runs are logged via GitHub's audit log
+- Access to secrets is logged
+- Deployment activity is tracked
+
+### Vulnerability Scanning
+
+- Dependabot alerts are enabled on all repositories
+- Code scanning with CodeQL runs on all PRs
+- Secret scanning prevents credential leakage
+
+### Security Scorecard
+
+This organization uses [OpenSSF Scorecard](https://securityscorecards.dev/) to continuously monitor security posture:
+
+- Binary artifacts
+- Branch protection
+- Code review
+- Dependency update tool
+- Fuzzing
+- License
+- Maintained
+- Pinned dependencies
+- SAST
+- Security policy
+- Signed releases
+- Token permissions
+- Vulnerabilities
+
+## References
+
+### SLSA Framework
+
+- [SLSA Specification v1.2](https://slsa.dev/spec/v1.2/)
+- [SLSA Get Started Guide](https://slsa.dev/how-to/get-started)
+- [SLSA for Organizations](https://slsa.dev/how-to/how-to-orgs)
+- [SLSA for Infrastructure Providers](https://slsa.dev/how-to/how-to-infra)
+- [SLSA GitHub Generator](https://github.com/slsa-framework/slsa-github-generator)
+
+### GitHub Security
+
+- [GitHub Artifact Attestations](https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds)
+- [GitHub Artifact Attestations - Increase Security](https://docs.github.com/en/actions/security-guides/using-artifact-attestations/increase-security-for-your-builds)
+- [GitHub Reusable Workflows](https://docs.github.com/en/actions/sharing-automations/reusing-workflows)
+- [actions/attest](https://github.com/actions/attest)
+- [GitHub Actions Security Hardening](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions)
+- [OIDC in GitHub Actions](https://docs.github.com/en/actions/security-guides/security-hardening-your-deployments/configuring-openid-connect-in-cloud-providers)
+
+### Step Security
+
+- [Step Security - Admin Experience](https://docs.stepsecurity.io/admin-experience)
+- [Step Security - Security Engineer Experience](https://docs.stepsecurity.io/security-engineer-experience)
+- [Step Security - Harden-Runner](https://docs.stepsecurity.io/harden-runner)
+- [Step Security - Secure Workflow](https://app.stepsecurity.io/secureworkflow)
+
+### Additional Resources
+
+- [Sigstore](https://www.sigstore.dev/)
+- [in-toto attestation format](https://github.com/in-toto/attestation)
+- [Rust Lockfile Guidelines](https://blog.rust-lang.org/2023/08/29/committing-lockfiles/)
