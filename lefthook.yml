@@ -1,0 +1,17 @@
+# Lefthook pre-commit configuration
+# Documentation: https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: Lint and format Markdown
+      glob: "*.{md,mdx}"
+      run: |
+        set -e
+        echo "🔍 Running markdownlint-cli2 --fix on staged files..."
+        bunx markdownlint-cli2 --fix {staged_files}
+        echo "✨ Running prettier --write on staged files..."
+        bunx prettier --write {staged_files}
+        echo "📦 Re-staging fixed files..."
+        git add {staged_files}
+        echo "✅ Pre-commit checks completed!"
