@@ -1,6 +1,50 @@
 # .github
 
-Centralized documents and information for the Windlass
+Centralized documents and information for the Windlass.
+
+This is the organization's special `.github` repository — a [GitHub convention](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file) that automatically applies its files across all repositories in the Windlass organization that don't have their own versions.
+
+## Repository Contents
+
+### Community Health Files
+
+| File                                         | Purpose                                                                                | Scope             |
+| :------------------------------------------- | :------------------------------------------------------------------------------------- | :---------------- |
+| [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) | Contributor Covenant 3.0 — behavioral expectations for community participation         | Organization-wide |
+| [`CONTRIBUTING.md`](./CONTRIBUTING.md)       | Contribution guidelines: scope boundaries, process, RFC path, development expectations | Organization-wide |
+| [`SECURITY.md`](./SECURITY.md)               | Security policy: vulnerability reporting, SLSA compliance, supply chain integrity      | Organization-wide |
+
+### Translations
+
+The Code of Conduct is available in multiple languages:
+
+| Language                      | File                                                               |
+| :---------------------------- | :----------------------------------------------------------------- |
+| English (default)             | [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)                       |
+| 한국어 (Korean)               | [`docs/CODE_OF_CONDUCT.ko.md`](./docs/CODE_OF_CONDUCT.ko.md)       |
+| 简体中文 (Chinese Simplified) | [`docs/CODE_OF_CONDUCT.zh-cn.md`](./docs/CODE_OF_CONDUCT.zh-cn.md) |
+| Deutsch (German)              | [`docs/CODE_OF_CONDUCT.de.md`](./docs/CODE_OF_CONDUCT.de.md)       |
+| Français (French)             | [`docs/CODE_OF_CONDUCT.fr.md`](./docs/CODE_OF_CONDUCT.fr.md)       |
+
+### Issue and PR Templates
+
+| Template              | Location                                                                 | Purpose                                                                                    |
+| --------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Pull Request Template | [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) | Standardized PR format with summary, change type, checklists for CI, testing, and security |
+
+### CI/CD Workflows
+
+| Workflow                 | File                                                                           | Purpose                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| Markdown Lint and Format | [`.github/workflows/markdown-lint.yml`](./.github/workflows/markdown-lint.yml) | Automated linting and formatting checks for Markdown files on PRs and pushes to `main` |
+
+## How Organization-Wide Files Work
+
+GitHub automatically applies files from this repository to all other repositories in the Windlass organization:
+
+- **Default behavior**: If a repository doesn't have its own `CODE_OF_CONDUCT.md`, it will inherit the one from this repository.
+- **Override**: Individual repositories can override by adding their own version of any file.
+- **Visibility**: Files in this repository are visible across the organization via GitHub's UI (e.g., when creating issues or PRs).
 
 ## Development
 
