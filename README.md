@@ -1,5 +1,8 @@
 # .github
 
+[![Markdown Lint and Format](https://github.com/windlasstech/.github/actions/workflows/markdown-lint.yml/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/markdown-lint.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/windlasstech/.github/badge)](https://scorecard.dev/viewer/?uri=github.com/windlasstech/.github)
+
 Centralized documents and information for the Windlass.
 
 This is the organization's special `.github` repository — a [GitHub convention](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file) that automatically applies its files across all repositories in the Windlass organization that don't have their own versions.
