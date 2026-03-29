@@ -51,9 +51,6 @@ updates:
       semver-major-days: 14
       semver-minor-days: 3
       semver-patch-days: 1
-    # Ignore specific patterns if needed (currently none)
-    ignore: []
-
   # GitHub Actions - critical for SLSA compliance and SHA-pinning
   # All workflows use SHA-pinned actions per SECURITY.md requirements
   - package-ecosystem: 'github-actions'
