@@ -15,19 +15,23 @@ Special `.github` repository per [GitHub convention](https://docs.github.com/en/
 
 ```text
 .
-├── CODE_OF_CONDUCT.md           # Contributor Covenant 3.0 (en)
-├── CONTRIBUTING.md              # Contribution guidelines
-├── SECURITY.md                  # Security policy + SLSA compliance
-├── README.md                    # This repo's documentation
-├── docs/                        # Translations
-│   ├── CODE_OF_CONDUCT.ko.md   # Korean
-│   ├── CODE_OFDUCT.zh-cn.md    # Chinese Simplified
-│   ├── CODE_OF_CONDUCT.de.md   # German
-│   └── CODE_OF_CONDUCT.fr.md   # French
+├── CODE_OF_CONDUCT.md              # Contributor Covenant 3.0 (en)
+├── CONTRIBUTING.md                 # Contribution guidelines
+├── SECURITY.md                     # Security policy + SLSA compliance
+├── README.md                       # This repo's documentation
+├── docs/                           # Translations
+│   ├── CODE_OF_CONDUCT.ko.md      # Korean
+│   ├── CODE_OF_CONDUCT.zh-cn.md   # Chinese Simplified
+│   ├── CODE_OF_CONDUCT.de.md      # German
+│   └── CODE_OF_CONDUCT.fr.md      # French
 ├── .github/
-│   ├── PULL_REQUEST_TEMPLATE.md # PR template
-│   └── workflows/               # CI workflows
-│       └── markdown-lint.yml   # Markdown linting CI
+│   ├── PULL_REQUEST_TEMPLATE.md    # PR template
+│   ├── dependabot.yml              # Dependency update automation
+│   ├── dependency-review-config.yml # Dependency review policy
+│   └── workflows/                  # CI workflows
+│       ├── markdown-lint.yml       # Markdown linting CI
+│       ├── dependency-review.yml   # Supply chain security
+│       └── scorecard.yml           # OpenSSF Scorecard
 └── [config files]
 ```
 
@@ -35,15 +39,18 @@ Special `.github` repository per [GitHub convention](https://docs.github.com/en/
 
 ## WHERE TO LOOK
 
-| Need                          | Look Here                             |
-| :---------------------------- | :------------------------------------ |
-| Edit org-wide Code of Conduct | `CODE_OF_CONDUCT.md`                  |
-| Add translation               | `docs/CODE_OF_CONDUCT.{lang}.md`      |
-| Edit PR template              | `.github/PULL_REQUEST_TEMPLATE.md`    |
-| Modify CI checks              | `.github/workflows/markdown-lint.yml` |
-| Change lint rules             | `.markdownlint-cli2.jsonc`            |
-| Change format rules           | `.prettierrc`                         |
-| Modify pre-commit hooks       | `lefthook.yml`                        |
+| Need                          | Look Here                                 |
+| :---------------------------- | :---------------------------------------- |
+| Edit org-wide Code of Conduct | `CODE_OF_CONDUCT.md`                      |
+| Add translation               | `docs/CODE_OF_CONDUCT.{lang}.md`          |
+| Edit PR template              | `.github/PULL_REQUEST_TEMPLATE.md`        |
+| Modify CI checks              | `.github/workflows/markdown-lint.yml`     |
+| Change lint rules             | `.markdownlint-cli2.jsonc`                |
+| Change format rules           | `.prettierrc`                             |
+| Modify pre-commit hooks       | `lefthook.yml`                            |
+| Modify dependency automation  | `.github/dependabot.yml`                  |
+| Change dependency review      | `.github/workflows/dependency-review.yml` |
+| Change security scorecard     | `.github/workflows/scorecard.yml`         |
 
 ---
 
@@ -118,4 +125,8 @@ bunx lefthook run pre-commit
 - Runs on: PRs + pushes to `main` that touch `**/*.md`
 - Uses: GitHub Actions with hard-runner audit mode
 - Must: SHA-pin all actions (supply chain requirement)
+- Workflows:
+  - `markdown-lint.yml` — Lint/format checks on Markdown changes
+  - `dependency-review.yml` — Supply chain security review
+  - `scorecard.yml` — OpenSSF Scorecard analysis
 - See: `SECURITY.md` for full supply chain integrity requirements

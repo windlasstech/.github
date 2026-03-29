@@ -1,6 +1,8 @@
 # .github
 
 [![Markdown Lint and Format](https://github.com/windlasstech/.github/actions/workflows/markdown-lint.yml/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/markdown-lint.yml)
+[![CodeQL](https://github.com/windlasstech/.github/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/github-code-scanning/codeql)
+[![Dependency Review](https://github.com/windlasstech/.github/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/dependency-review.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/windlasstech/.github/badge)](https://scorecard.dev/viewer/?uri=github.com/windlasstech/.github)
 
 Centralized documents and information for the Windlass.

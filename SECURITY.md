@@ -299,12 +299,22 @@ Cooldown periods delay version update PRs to allow community vetting of new rele
 
 | Ecosystem                 | Patch     | Minor      | Major      | Rationale                                                                             |
 | :------------------------ | :-------- | :--------- | :--------- | :------------------------------------------------------------------------------------ |
-| **GitHub Actions**        | 0-3 days  | 1-3 days   | 7 days     | Supply chain risk > regression risk; Actions are SHA-pinned and stable                |
+| **GitHub Actions**        | N/A       | N/A        | N/A        | Use `default-days` only; SemVer cooldown not supported. SHA-pinning mitigates risk.   |
 | **NPM/Bun (Production)**  | 3-7 days  | 7-14 days  | 21-30 days | Balance security with npm `min-release-age`; align cooldown with install restrictions |
 | **NPM/Bun (Development)** | 1-3 days  | 3-7 days   | 14-21 days | Lower risk tolerance for dev dependencies                                             |
 | **Rust/Cargo**            | 3-7 days  | 14-21 days | 30-60 days | Stricter SemVer compliance allows longer vetting; Cargo.lock provides safety net      |
 | **Python/pip**            | 7-14 days | 14-21 days | 21-30 days | PyPI has slower yank response; conservative approach recommended                      |
 | **Go**                    | 3-7 days  | 7-14 days  | 14-21 days | Go modules are immutable; supply chain attacks less common but possible               |
+
+> [!IMPORTANT]
+> SemVer-based cooldown (`semver-major-days`, `semver-minor-days`, `semver-patch-days`) is only supported by package ecosystems that use Semantic Versioning. Ecosystems like **GitHub Actions**, **Docker**, **Terraform**, and **Bazel** only support `default-days`.
+
+##### SemVer Cooldown Support by Ecosystem
+
+| Support                   | Ecosystems                                                                                                                                                      |
+| :------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SemVer + default-days** | `bundler`, `bun`, `cargo`, `composer`, `dotnet_sdk`, `elm`, `gomod`, `gradle`, `hex`, `julia`, `maven`, `npm`, `nuget`, `opentofu`, `pip`, `pub`, `swift`, `uv` |
+| **default-days only**     | `bazel`, `devcontainers`, `docker`, `docker_compose`, `github-actions`, `gitsubmodule`, `helm`, `terraform`                                                     |
 
 ##### Cooldown Rationale
 
