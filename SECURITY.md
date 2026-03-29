@@ -288,6 +288,83 @@ All projects must commit dependency lockfiles to version control to ensure repro
 - Security updates should be applied immediately
 - Major version updates require review and testing
 
+#### Dependabot Cooldown Configuration
+
+Cooldown periods delay version update PRs to allow community vetting of new releases. This mitigates supply chain attacks by providing time for malicious packages to be detected and yanked before adoption.
+
+> [!NOTE]
+> Security updates bypass cooldowns and are created immediately. Cooldowns apply only to version updates.
+
+##### Ecosystem-Specific Recommendations
+
+| Ecosystem                 | Patch     | Minor      | Major      | Rationale                                                                             |
+| :------------------------ | :-------- | :--------- | :--------- | :------------------------------------------------------------------------------------ |
+| **GitHub Actions**        | 0-3 days  | 1-3 days   | 7 days     | Supply chain risk > regression risk; Actions are SHA-pinned and stable                |
+| **NPM/Bun (Production)**  | 3-7 days  | 7-14 days  | 21-30 days | Balance security with npm `min-release-age`; align cooldown with install restrictions |
+| **NPM/Bun (Development)** | 1-3 days  | 3-7 days   | 14-21 days | Lower risk tolerance for dev dependencies                                             |
+| **Rust/Cargo**            | 3-7 days  | 14-21 days | 30-60 days | Stricter SemVer compliance allows longer vetting; Cargo.lock provides safety net      |
+| **Python/pip**            | 7-14 days | 14-21 days | 21-30 days | PyPI has slower yank response; conservative approach recommended                      |
+| **Go**                    | 3-7 days  | 7-14 days  | 14-21 days | Go modules are immutable; supply chain attacks less common but possible               |
+
+##### Cooldown Rationale
+
+**Why cooldowns matter:**
+
+- Most malicious packages are detected within 24-72 hours of publication
+- 7-day cooldown provides comfortable safety margin for community detection
+- Organizations with cooldowns were not exposed during major incidents (e.g., Nx, xz utils backdoor)
+
+**SemVer-specific delays:**
+
+- **Patch (z in x.y.z)**: Bug fixes only; shortest cooldown acceptable
+- **Minor (y in x.y.z)**: New features; moderate cooldown for API stability verification
+- **Major (x in x.y.z)**: Breaking changes; longest cooldown for migration planning and community feedback
+
+##### Rust-Specific Considerations
+
+The Rust ecosystem has unique characteristics affecting cooldown strategy:
+
+1. **Strict SemVer Compliance**: Cargo enforces SemVer strictly. Minor updates are generally safer than in npm, but the community tends toward conservatism.
+
+2. **Cargo Yank Mechanism**: Yanked crates remain available for existing `Cargo.lock` but prevent new adoption. Cooldowns work synergistically—malicious versions can be yanked before PRs are created.
+
+3. **Recent Attack Patterns** (March 2026): Five malicious crates (`chrono_anchor`, `dnp3times`, etc.) targeted CI/CD environments to exfiltrate `.env` files. Cooldowns provide critical detection window.
+
+4. **Cargo.lock Pinning**: Unlike npm, Cargo.lock should always be committed. This creates natural review gates that complement cooldowns.
+
+##### Example Configuration
+
+```yaml
+# dependabot.yml - Production-grade Rust project
+version: 2
+updates:
+  - package-ecosystem: 'cargo'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'tuesday'
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 14
+      semver-patch-days: 5
+    groups:
+      patch-updates:
+        patterns: ['*']
+        update-types: ['patch']
+    reviewers:
+      - 'windlass-tech/security-team'
+```
+
+##### Additional Supply Chain Defenses
+
+Combine cooldowns with:
+
+- **`cargo-audit`**: Scan for known vulnerabilities in `Cargo.lock`
+- **`cargo-vet`**: Establish trust relationships for dependencies
+- **Dependency review workflows**: Require human review for new dependencies
+- **Lockfile verification**: Always review `Cargo.lock`/`package-lock.json` diffs in PRs
+
 ### Source Integrity
 
 #### Commit Signing
