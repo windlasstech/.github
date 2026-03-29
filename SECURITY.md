@@ -365,6 +365,154 @@ Combine cooldowns with:
 - **Dependency review workflows**: Require human review for new dependencies
 - **Lockfile verification**: Always review `Cargo.lock`/`package-lock.json` diffs in PRs
 
+### Dependency Review
+
+The [Dependency Review Action](https://github.com/actions/dependency-review-action) scans pull requests for vulnerable or non-compliant dependencies before they enter the codebase. It performs diff-based analysis comparing dependencies in the PR head against the base, identifying changes that introduce known vulnerabilities or license violations.
+
+> [!NOTE]
+> Dependency Review is available for all public repositories. For private repositories, GitHub Advanced Security is required.
+
+#### Key Differences from Dependabot
+
+| Feature         | Dependabot                         | Dependency Review                     |
+| :-------------- | :--------------------------------- | :------------------------------------ |
+| **Timing**      | Alerts on existing vulnerabilities | Blocks new vulnerabilities at PR time |
+| **Scope**       | Scans entire dependency tree       | Scans only changed dependencies       |
+| **Action**      | Creates update PRs                 | Fails PR checks to prevent merge      |
+| **Integration** | Standalone alerts                  | GitHub Actions workflow               |
+
+#### Required Workflow Template
+
+All repositories must implement Dependency Review with this hardened configuration:
+
+```yaml
+name: 'Dependency Review'
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  merge_group:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - name: 'Checkout Repository'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+        with:
+          fail-on-severity: critical
+          fail-on-scopes: development, runtime
+          comment-summary-in-pr: on-failure
+```
+
+#### Configuration Options
+
+| Option                  | Type    | Description                                                         | Recommended                              |
+| :---------------------- | :------ | :------------------------------------------------------------------ | :--------------------------------------- |
+| `fail-on-severity`      | string  | Minimum severity to block PR: `low`, `moderate`, `high`, `critical` | `critical`                               |
+| `fail-on-scopes`        | string  | Scopes to check: `runtime`, `development`, `unknown`                | `development, runtime`                   |
+| `allow-licenses`        | string  | Comma-separated allowed SPDX license IDs                            | See license policy below                 |
+| `deny-licenses`         | string  | Comma-separated forbidden SPDX license IDs                          | Mutually exclusive with `allow-licenses` |
+| `allow-ghsas`           | string  | GitHub Advisory IDs to temporarily allow                            | Document with justification              |
+| `comment-summary-in-pr` | string  | PR comment mode: `always`, `on-failure`, `never`                    | `on-failure`                             |
+| `warn-only`             | boolean | Log warnings without failing                                        | Use for phased rollout only              |
+
+#### Organization-Wide License Policy
+
+Use an allow-list approach for license compliance. Reference a centralized configuration file:
+
+```yaml
+# In repository workflow
+- name: 'Dependency Review'
+  uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+  with:
+    config-file: 'windlass/.github/dependency-review-config.yml@main'
+    external-repo-token: ${{ secrets.DEPENDENCY_REVIEW_TOKEN }}
+```
+
+**Standard allow-licenses list:**
+
+```yaml
+allow-licenses:
+  # Permissive licenses with attribution requirements
+  - MIT # MIT License - permissive, requires attribution
+  - Apache-2.0 # Apache License 2.0 - permissive, patent protection
+  - BSD-2-Clause # BSD 2-Clause "Simplified" - permissive
+  - BSD-3-Clause # BSD 3-Clause "New" - permissive, no endorsement clause
+  - ISC # ISC License - permissive, functionally equivalent to MIT
+  - 0BSD # Zero-Clause BSD - permissive, no attribution required
+  # Public domain dedications (no attribution required)
+  - CC0-1.0 # Creative Commons Zero - public domain dedication
+  - Unlicense # The Unlicense - public domain dedication (not "unlicensed")
+  # Language-specific permissive licenses
+  - Python-2.0 # Python Software Foundation License - permissive
+```
+
+> [!NOTE]
+> License identifiers must be SPDX-compliant. For licenses detected as `OTHER`, use `LicenseRef-clearlydefined-OTHER` in allow/deny lists.
+
+#### Permissions Requirements
+
+| Use Case                 | Required Permissions                     |
+| :----------------------- | :--------------------------------------- |
+| Basic vulnerability scan | `contents: read`                         |
+| PR comments enabled      | `contents: read`, `pull-requests: write` |
+| External config file     | `contents: read` + `external-repo-token` |
+
+#### Severity Levels
+
+| Level        | Description                          | Recommended Action |
+| :----------- | :----------------------------------- | :----------------- |
+| **Critical** | Active exploitation or severe impact | Always fail        |
+| **High**     | Significant security impact          | Fail in production |
+| **Moderate** | Limited impact                       | Consider failing   |
+| **Low**      | Minimal security risk                | Warn only          |
+
+#### Repository Ruleset Integration
+
+Enforce Dependency Review across the organization using repository rulesets:
+
+1. Navigate to **Organization Settings > Rules > Rulesets**
+2. Create ruleset targeting all repositories
+3. Add requirement: **Require status checks to pass**
+4. Search for and select the `dependency-review` workflow
+
+This ensures all PRs must pass dependency review before merging, regardless of individual repository configuration.
+
+#### Common Pitfalls
+
+| Pitfall                                                     | Solution                                              |
+| :---------------------------------------------------------- | :---------------------------------------------------- |
+| Missing `pull-requests: write` with `comment-summary-in-pr` | Add permission to workflow job                        |
+| Internal packages fail license check                        | Add to `allow-dependencies-licenses` with purl format |
+| Both `allow-licenses` and `deny-licenses` set               | Choose one approach; they are mutually exclusive      |
+| External config in private repo fails                       | Provide `external-repo-token` with read access        |
+| Action fails before dependency submission completes         | Use `retry-on-snapshot-warnings: true`                |
+
+#### References
+
+- [Dependency Review Action Repository](https://github.com/actions/dependency-review-action)
+- [GitHub Dependency Review Documentation](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review)
+- [SPDX License List](https://spdx.org/licenses/)
+- [GitHub Advisory Database](https://github.com/advisories)
+
 ### Source Integrity
 
 #### Commit Signing

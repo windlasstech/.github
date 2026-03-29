@@ -1,0 +1,187 @@
+# Windlass Organization Dependency Review Configuration
+# Centralized policy for dependency-review-action across all repositories
+#
+# Usage in repository workflows:
+#   - uses: actions/dependency-review-action@v4
+#     with:
+#       config-file: 'windlass/.github/dependency-review-config.yml@main'
+#       external-repo-token: ${{ secrets.DEPENDENCY_REVIEW_TOKEN }}
+#
+# References:
+# - https://github.com/actions/dependency-review-action
+# - SECURITY.md for organization-wide supply chain security policies
+
+# =============================================================================
+# VULNERABILITY POLICY
+# =============================================================================
+
+# Minimum severity to fail the check
+# Options: low, moderate, high, critical
+# Default: critical (override in individual repos for stricter enforcement)
+fail-on-severity: critical
+
+# Dependency scopes to check
+# Options: runtime, development, unknown
+# Check both runtime and development dependencies
+fail-on-scopes:
+  - development
+  - runtime
+
+# GitHub Security Advisory IDs to temporarily allow
+# Format: GHSA-xxxx-xxxx-xxxx
+# IMPORTANT: Each entry must include a comment with:
+#   - Reason for exemption
+#   - Expiration date (max 90 days)
+#   - Approver (security team member)
+allow-ghsas: []
+# Example:
+#   - GHSA-abcd-1234-5679  # Expires: 2024-06-01, Reason: Waiting for upstream patch, Approver: @security-lead
+
+# =============================================================================
+# LICENSE POLICY
+# =============================================================================
+
+# Allow-list approach: Only these licenses are permitted
+# All other licenses will fail the check
+allow-licenses:
+  # Permissive licenses with attribution requirements
+  - MIT # MIT License - permissive, requires attribution
+  - Apache-2.0 # Apache License 2.0 - permissive, patent protection
+  - BSD-2-Clause # BSD 2-Clause "Simplified" - permissive
+  - BSD-3-Clause # BSD 3-Clause "New" - permissive, no endorsement clause
+  - ISC # ISC License - permissive, functionally equivalent to MIT
+  - 0BSD # Zero-Clause BSD - permissive, no attribution required
+  # Public domain dedications (no attribution required)
+  - CC0-1.0 # Creative Commons Zero - public domain dedication
+  - Unlicense # The Unlicense - public domain dedication
+  # Language-specific permissive licenses
+  - Python-2.0 # Python Software Foundation License - permissive
+  - PHP-3.01 # PHP License v3.01 - permissive
+  - Ruby # Ruby License - permissive
+
+# Deny-list approach (alternative to allow-licenses)
+# Use ONLY ONE of: allow-licenses OR deny-licenses
+# Uncomment below to use deny-list instead:
+# deny-licenses:
+#   - GPL-2.0        # Copyleft - requires source disclosure
+#   - GPL-3.0        # Copyleft - requires source disclosure
+#   - AGPL-3.0       # Copyleft - network use is distribution
+#   - LGPL-2.1       # Weak copyleft - linking restrictions
+#   - LGPL-3.0       # Weak copyleft - linking restrictions
+#   - MPL-2.0        # Weak copyleft - file-level copyleft
+#   - BUSL-1.1       # Business Source License - non-compete clause
+
+# Packages exempt from license checking
+# Use purl format: pkg:ecosystem/namespace/name@version
+# Common use cases:
+#   - Internal packages without SPDX license
+#   - Packages with custom proprietary licenses
+allow-dependencies-licenses: []
+# Example:
+#   - pkg:npm/@windlass/internal-package
+#   - pkg:cargo/windlass-internal@1.0.0
+
+# =============================================================================
+# PACKAGE BLOCKING
+# =============================================================================
+
+# Specific packages to block (all versions or specific version)
+# Format: pkg:ecosystem/namespace/name@version (omit version to block all)
+deny-packages: []
+# Example:
+#   - pkg:npm/malicious-package@1.0.0
+#   - pkg:pip/compromised-lib
+
+# Package groups/namespaces to block
+# Format: pkg:ecosystem/namespace
+deny-groups: []
+# Example:
+#   - pkg:npm/@suspicious-namespace
+
+# =============================================================================
+# CHECK TOGGLES
+# =============================================================================
+
+# Enable vulnerability checking
+# Disable only if you only want license checking
+vulnerability-check: true
+
+# Enable license checking
+# Disable only if you only want vulnerability checking
+license-check: true
+
+# =============================================================================
+# REPORTING OPTIONS
+# =============================================================================
+
+# Post summary comment to PR
+# Options: always, on-failure, never
+# Requires: workflow permission 'pull-requests: write'
+comment-summary-in-pr: on-failure
+
+# Show first patched version in output
+# Helpful for quickly identifying upgrade path
+show-patched-versions: true
+
+# =============================================================================
+# OPENSSF SCORECARD INTEGRATION
+# =============================================================================
+
+# Display OpenSSF Scorecard information for dependencies
+show-openssf-scorecard: true
+
+# Warn when dependency scores fall below this level (0-10)
+warn-on-openssf-scorecard-level: 3
+
+# =============================================================================
+# RETRY BEHAVIOR (Advanced)
+# =============================================================================
+
+# Retry when waiting for dependency submission API
+# Enable if using dependency-submission action in same workflow
+retry-on-snapshot-warnings: false
+
+# Maximum seconds to retry waiting for dependency snapshot
+retry-on-snapshot-warnings-timeout: 120
+
+# =============================================================================
+# ROLLOUT MODES ( Uncomment as needed )
+# =============================================================================
+
+# Phase 1: Observation mode - report only, never fail
+# Use during initial adoption to understand impact
+# warn-only: true
+
+# Phase 2: Critical only - uncomment and remove warn-only
+# fail-on-severity: critical
+
+# Phase 3: Full enforcement (default in this config)
+# fail-on-severity: high
+
+# =============================================================================
+# REPOSITORY-SPECIFIC OVERRIDES
+# =============================================================================
+#
+# Repositories can override these settings in their local workflow:
+#
+# Example per-repo workflow override:
+#
+#   - name: Dependency Review
+#     uses: actions/dependency-review-action@v4
+#     with:
+#       config-file: 'windlass/.github/dependency-review-config.yml@main'
+#       external-repo-token: ${{ secrets.DEPENDENCY_REVIEW_TOKEN }}
+#       # Override severity for high-security repository
+#       fail-on-severity: moderate
+#       # Add repository-specific GHSA exemptions
+#       allow-ghsas: GHSA-xxxx-xxxx-xxxx
+
+# =============================================================================
+# CHANGE LOG
+# =============================================================================
+#
+# 2025-03-30: Initial configuration
+#   - Established allow-list license policy
+#   - Set default severity: critical
+#   - Enabled OpenSSF Scorecard integration
+#   - Added comprehensive documentation
