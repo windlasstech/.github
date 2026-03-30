@@ -397,6 +397,10 @@ All repositories must implement Dependency Review with this hardened configurati
 
 ```yaml
 name: 'Dependency Review'
+
+permissions:
+  contents: read
+
 on:
   pull_request:
     paths-ignore:
@@ -406,9 +410,6 @@ on:
     paths-ignore:
       - '**.md'
       - 'docs/**'
-
-permissions:
-  contents: read
 
 jobs:
   dependency-review:
@@ -427,9 +428,7 @@ jobs:
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
         with:
-          fail-on-severity: critical
-          fail-on-scopes: development, runtime
-          comment-summary-in-pr: on-failure
+          config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
 ```
 
 #### Configuration Options
@@ -453,8 +452,7 @@ Use an allow-list approach for license compliance. Reference a centralized confi
 - name: 'Dependency Review'
   uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
   with:
-    config-file: 'windlass/.github/dependency-review-config.yml@main'
-    external-repo-token: ${{ secrets.DEPENDENCY_REVIEW_TOKEN }}
+    config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
 ```
 
 **Standard allow-licenses list:**
