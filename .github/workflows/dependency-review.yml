@@ -30,6 +30,4 @@ jobs:
       - name: Dependency Review
         uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
         with:
-          fail-on-severity: critical
-          fail-on-scopes: development, runtime
-          comment-summary-in-pr: on-failure
+          config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
