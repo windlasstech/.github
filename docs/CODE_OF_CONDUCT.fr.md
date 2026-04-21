@@ -16,7 +16,7 @@ Nous sommes dédiés à encourager un environnement qui respecte et valorise la 
 
 Tout en reconnaissant les différences entre les normes sociales, nous nous efforçons chacun·e pour pousser les attentes de notre communauté vers des comportements positifs. Nous comprenons aussi que nos mots et actions peuvent être interprétés différemment de notre intention initiale, selon la culture, le vécu ou la langue natale.
 
-Avec ces considérations en tête, nous acceptons de nous comporter consciencieusement entre nous, et d'agir de manière à favoriser nos valeurs communes, incluant:
+Avec ces considérations en tête, nous acceptons de nous comporter consciencieusement entre nous, et d'agir de manière à favoriser nos valeurs communes, incluant :
 
 1. Respecter **la raison d'être de notre communauté**, nos activités, et nos manières de nous réunir.
 2. Dialoguer de manière **bienveillante et honnête** avec les autres.
@@ -51,28 +51,28 @@ Des tensions peuvent se produire entre les membres de la communauté même lorsq
 
 Lorsqu'un problème se produit, il est important de le notifier rapidement. Pour rapporter une possible infraction, **envoyez un e-mail à [oss-conduct@windlasstech.com](mailto:oss-conduct@windlasstech.com)**.
 
-La modération de la communauté recueille les infractions sérieusement et fait tout son possible pour répondre rapidement. Les modérateur.ices examinerons toutes plaintes d'infraction au code de conduite, vérifieront les messages, les évènements, les enregistrements, solliciteront des témoins ou autres participants. La modération de la communauté gardera l'investigation et la prise de mesures aussi transparente que possible, tout en priorisant la sécurité et la confidentialité. Dans le but d'honorer ces engagements, les mesures prises sont portées de manière privée aux parties concernées, mais communiquer au reste de la communauté peut faire partie de la résolution convenue conjointement.
+La modération de la communauté recueille les infractions sérieusement et fait tout son possible pour répondre rapidement. Les modérateur·ices examinerons toutes plaintes d'infraction au code de conduite, vérifieront les messages, les évènements, les enregistrements, solliciteront des témoins ou autres participants. La modération de la communauté gardera l'investigation et la prise de mesures aussi transparente que possible, tout en priorisant la sécurité et la confidentialité. Dans le but d'honorer ces engagements, les mesures prises sont portées de manière privée aux parties concernées, mais communiquer au reste de la communauté peut faire partie de la résolution convenue conjointement.
 
 ## Résolution et Réparation des Torts
 
 Si l'enquête par les modérateur·ices évalue que ce Code de Conduite a été enfreint, la grille de mesures suivante peut être utilisé pour déterminer comment réparer au mieux les torts, en se basant sur l'impact de l'incident sur les individus concernés et la communauté entière. En fonction de la sévérité de l'infraction, les premières étapes peuvent être sautées.
 
 1. Avertissement
-   1. Cas: Une infraction concernant un unique incident, ou des séries d'incidents isolés.
-   2. Conséquences: Un avertissement privé, écrit de la part des modérateur·ices.
-   3. Réparation: Une réparation comprend des excuses écrites privées, une reconnaissance de responsabilité, et la recherche d'éclaircissement sur les attendus.
+   1. Cas : Une infraction concernant un unique incident, ou des séries d'incidents isolés.
+   2. Conséquences : Un avertissement privé, écrit de la part des modérateur·ices.
+   3. Réparation : Une réparation comprend des excuses écrites privées, une reconnaissance de responsabilité, et la recherche d'éclaircissement sur les attendus.
 2. Limitation d'activité temporaire
-   1. Cas: La répétition d'infractions qui ont déjà donné lieu à des avertissements, ou le premier incident d'une infraction plus importante.
-   2. Conséquences: Un avertissement privé écrit accompagné d'une période de retour au calme pour mettre en évidence l'importance de la situation et donner à la communauté le temps d'intégrer ce qui s'est passé. Ce temps de réflexion peut être limité à certains canaux de communication ou aux interactions avec certains membres de la communauté.
-   3. Réparation: Une réparation peut inclure la formulation d'excuses, l'utilisation d'un temps de retour au calme pour réfléchir aux actions et conséquences, et être plus consciencieu·se après la fin de la période, au retour dans les espaces communautaires.
+   1. Cas : La répétition d'infractions qui ont déjà donné lieu à des avertissements, ou le premier incident d'une infraction plus importante.
+   2. Conséquences : Un avertissement privé écrit accompagné d'une période de retour au calme pour mettre en évidence l'importance de la situation et donner à la communauté le temps d'intégrer ce qui s'est passé. Ce temps de réflexion peut être limité à certains canaux de communication ou aux interactions avec certains membres de la communauté.
+   3. Réparation : Une réparation peut inclure la formulation d'excuses, l'utilisation d'un temps de retour au calme pour réfléchir aux actions et conséquences, et être plus consciencieu·se après la fin de la période, au retour dans les espaces communautaires.
 3. Suspension provisoire
-   1. Cas: Un schéma de répétition d'infraction auquel les modérateur·ices ont adressé des avertissements, ou une seule infraction d'importance.
-   2. Conséquences: Un avertissement privé écrit informant des conditions de retour de suspension. En général, une suspension provisoire donne à la personne suspendue le temps d'introspection sur son comportement et sur les corrections qu'elle doit entreprendre.
-   3. Réparation: Une réparation peut inclure la compréhension du motif de la suspension, le respect des conditions de retour, et réfléchir à comment réintégrer la communauté lorsque la suspension sera levé.
+   1. Cas : Un schéma de répétition d'infraction auquel les modérateur·ices ont adressé des avertissements, ou une seule infraction d'importance.
+   2. Conséquences : Un avertissement privé écrit informant des conditions de retour de suspension. En général, une suspension provisoire donne à la personne suspendue le temps d'introspection sur son comportement et sur les corrections qu'elle doit entreprendre.
+   3. Réparation : Une réparation peut inclure la compréhension du motif de la suspension, le respect des conditions de retour, et réfléchir à comment réintégrer la communauté lorsque la suspension sera levé.
 4. Bannissement permanent
-   1. Cas: Un schéma de répétition d'infractions du Code de Conduite où les premières étapes de résolution ont échoué, ou une infraction tellement importante que les modérateur·ices de la communauté déterminent qu'il n'y a aucun moyen de maintenir un espace communautaire sûr avec cette personne comme membre.
-   2. Conséquences: L'accès aux espaces communautaires, les outils, les canaux de communication sont révoqués. En général, les bannissements permanents devraient être rare, et doivent être appuyés de raisons fortes, et être le dernier recourt lorsque toutes les solutions ont échoué à corriger le comportement.
-   3. Réparation: Il n'y a aucune réparation possible pour des cas de cette sévérité.
+   1. Cas : Un schéma de répétition d'infractions du Code de Conduite où les premières étapes de résolution ont échoué, ou une infraction tellement importante que les modérateur·ices de la communauté déterminent qu'il n'y a aucun moyen de maintenir un espace communautaire sûr avec cette personne comme membre.
+   2. Conséquences : L'accès aux espaces communautaires, les outils, les canaux de communication sont révoqués. En général, les bannissements permanents devraient être rare, et doivent être appuyés de raisons fortes, et être le dernier recourt lorsque toutes les solutions ont échoué à corriger le comportement.
+   3. Réparation : Il n'y a aucune réparation possible pour des cas de cette sévérité.
 
 Cette échelle de mesure est une ligne directrice. Elle ne limite pas la capacité des modérateur·ices à utiliser leurs discrétions et leurs jugements, en adéquation avec l'intérêt de la communauté.
 
