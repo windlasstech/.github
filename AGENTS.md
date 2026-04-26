@@ -1,15 +1,14 @@
 # AGENTS.md — Windlass .github Repository
 
-**Type:** GitHub Organization Community Health Files Repository
-**Scope:** Organization-wide defaults (applied to all repos without their own versions)
+**Generated:** 2026-04-26
+**Commit:** b394f5f
+**Branch:** refactor/security-docs-split
 
 ---
 
-## WHAT THIS IS
+## OVERVIEW
 
-Special `.github` repository per [GitHub convention](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file). Files here auto-apply across all Windlass organization repositories.
-
----
+GitHub Organization Community Health Files repository. Files auto-apply across all Windlass org repos without their own versions.
 
 ## STRUCTURE
 
@@ -19,60 +18,63 @@ Special `.github` repository per [GitHub convention](https://docs.github.com/en/
 ├── CONTRIBUTING.md                 # Contribution guidelines
 ├── SECURITY.md                     # Security policy + SLSA compliance
 ├── README.md                       # This repo's documentation
-├── docs/                           # Translations
+├── docs/                           # Translations + security docs
 │   ├── CODE_OF_CONDUCT.ko.md      # Korean
 │   ├── CODE_OF_CONDUCT.zh-cn.md   # Chinese Simplified
 │   ├── CODE_OF_CONDUCT.de.md      # German
-│   └── CODE_OF_CONDUCT.fr.md      # French
+│   ├── CODE_OF_CONDUCT.fr.md      # French
+│   └── security/                   # Security companion docs
+│       ├── dependency-security.md       # Dependency security policy
+│       ├── slsa-compliance-framework.md # SLSA compliance details
+│       └── workflow-hardening.md        # CI hardening guidelines
 ├── .github/
 │   ├── PULL_REQUEST_TEMPLATE.md    # PR template
 │   ├── dependabot.yml              # Dependency update automation
 │   ├── dependency-review-config.yml # Dependency review policy
 │   └── workflows/                  # CI workflows
-│       ├── markdown-lint.yml       # Markdown linting CI
-│       ├── dependency-review.yml   # Supply chain security
-│       └── scorecard.yml           # OpenSSF Scorecard
+│       ├── markdown-lint.yml            # Markdown linting CI
+│       ├── dependency-review.yml        # Supply chain security
+│       ├── scorecard.yml                # OpenSSF Scorecard
+│       ├── osv-scanner-pr-reusable.yml  # Reusable OSV PR scan
+│       ├── osv-scanner-full-reusable.yml # Reusable OSV full scan
+│       └── osv-scanner-smoke.yml        # OSV integration smoke test
 └── [config files]
 ```
 
----
-
 ## WHERE TO LOOK
 
-| Need                          | Look Here                                 |
-| :---------------------------- | :---------------------------------------- |
-| Edit org-wide Code of Conduct | `CODE_OF_CONDUCT.md`                      |
-| Add translation               | `docs/CODE_OF_CONDUCT.{lang}.md`          |
-| Edit PR template              | `.github/PULL_REQUEST_TEMPLATE.md`        |
-| Modify CI checks              | `.github/workflows/markdown-lint.yml`     |
-| Change lint rules             | `.markdownlint-cli2.jsonc`                |
-| Change format rules           | `.prettierrc`                             |
-| Modify pre-commit hooks       | `lefthook.yml`                            |
-| Modify dependency automation  | `.github/dependabot.yml`                  |
-| Change dependency review      | `.github/workflows/dependency-review.yml` |
-| Change security scorecard     | `.github/workflows/scorecard.yml`         |
+| Need                          | Location                                          |
+| :---------------------------- | :------------------------------------------------ |
+| Edit org-wide Code of Conduct | `CODE_OF_CONDUCT.md`                              |
+| Add translation               | `docs/CODE_OF_CONDUCT.{lang}.md`                  |
+| Edit PR template              | `.github/PULL_REQUEST_TEMPLATE.md`                |
+| Modify CI checks              | `.github/workflows/markdown-lint.yml`             |
+| Change lint rules             | `.markdownlint-cli2.jsonc`                        |
+| Change format rules           | `.prettierrc`                                     |
+| Modify pre-commit hooks       | `lefthook.yml`                                    |
+| Modify dependency automation  | `.github/dependabot.yml`                          |
+| Change dependency review      | `.github/workflows/dependency-review.yml`         |
+| Change security scorecard     | `.github/workflows/scorecard.yml`                 |
+| Edit dependency security      | `docs/security/dependency-security.md`            |
+| Edit SLSA compliance          | `docs/security/slsa-compliance-framework.md`      |
+| Edit CI hardening             | `docs/security/workflow-hardening.md`             |
+| Modify OSV PR scan            | `.github/workflows/osv-scanner-pr-reusable.yml`   |
+| Modify OSV full scan          | `.github/workflows/osv-scanner-full-reusable.yml` |
+| Modify OSV smoke test         | `.github/workflows/osv-scanner-smoke.yml`         |
 
----
+## CONVENTIONS
 
-## CONVENTIONS (PROJECT-SPECIFIC)
-
-### Markdown Style
+### Markdown Style (Deviations from Standard)
 
 - **Tables:** Left-aligned headers with `:` prefix (`:---`)
-- **Lists:** Dashes only (`-`), not asterisks
-- **Headers:** ATX style (`#`), no setext
+- **Lists:** Dashes only (`-`), not asterisks (MD004)
 - **Line length:** No hard limit (MD013 disabled)
 - **Trailing spaces:** Allowed (MD009 disabled)
-
-### Linting Stack
-
-- **markdownlint-cli2** (v0.22.0) — rules in `.markdownlint-cli2.jsonc`
-- **Prettier** (v3.8.1) — config in `.prettierrc`
-- **Lefthook** — pre-commit automation
+- **No setext headers** — ATX style only (MD003 disabled)
 
 ### Table Style (CRITICAL)
 
-Compact tables use minimal spacing. Example:
+Compact tables with minimal spacing. Never align with excessive whitespace.
 
 ```markdown
 | Header | Header |
@@ -80,9 +82,25 @@ Compact tables use minimal spacing. Example:
 | cell   | cell   |
 ```
 
-NOT aligned tables with excessive whitespace.
+### Linting Stack
 
----
+- **markdownlint-cli2** (v0.22.0) — `.markdownlint-cli2.jsonc`
+- **Prettier** (v3.8.1) — `.prettierrc`
+- **Lefthook** — pre-commit automation
+
+## ANTI-PATTERNS
+
+- **Don't add `node_modules/` to git** — Already ignored
+- **Don't use `*` bullets** — Use `-` only (MD004: dash style enforced)
+- **Don't hard-wrap prose** — Prettier preserves wraps ("proseWrap": "preserve")
+- **Don't use setext headers** — ATX style required (MD003 disabled, MD018-020 disabled)
+- **Don't commit without signing** — Org requires GPG/SSH/Sigstore signed commits
+
+## UNIQUE STYLES
+
+- Org-wide file precedence: Repo file > `.github` repo default > missing
+- Reusable OSV Scanner workflows provided for consumer repos
+- SHA-pin required on all GitHub Actions (supply chain)
 
 ## COMMANDS
 
@@ -100,33 +118,9 @@ bun run format:check          # Check formatting
 bunx lefthook run pre-commit
 ```
 
----
+## NOTES
 
-## ANTI-PATTERNS (NEVER DO)
-
-- **Don't add `node_modules/` to git** — Already ignored
-- **Don't use `*` bullets** — Use `-` only (MD004: dash style enforced)
-- **Don't hard-wrap prose** — Prettier preserves wraps ("proseWrap": "preserve")
-- **Don't use setext headers** — ATX style required (MD003 disabled, MD018-020 disabled)
-- **Don't commit without signing** — Org requires GPG/SSH/Sigstore signed commits
-
----
-
-## ORG-WIDE FILE PRECEDENCE
-
-1. Repo has its own file → Uses that
-2. Repo has no file → Inherits from this `.github` repo
-3. Visibility: Files appear in GitHub UI across all org repos
-
----
-
-## CI/CD NOTES
-
-- Runs on: PRs + pushes to `main` that touch `**/*.md`
-- Uses: GitHub Actions with hard-runner audit mode
-- Must: SHA-pin all actions (supply chain requirement)
-- Workflows:
-  - `markdown-lint.yml` — Lint/format checks on Markdown changes
-  - `dependency-review.yml` — Supply chain security review
-  - `scorecard.yml` — OpenSSF Scorecard analysis
-- See: `SECURITY.md` for full supply chain integrity requirements
+- CI runs on PRs + pushes to `main` touching `**/*.md`
+- Uses hard-runner audit mode, SHA-pinned actions
+- `SECURITY.md` has full supply chain integrity requirements
+- OSV Scanner reusable workflows support all ecosystems JS/Python/Go/Rust/Java/.NET/PHP
