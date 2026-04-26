@@ -219,7 +219,7 @@ Implementation for this organization:
 - Repository rulesets protect `main` and release branches with required status checks
 - All PRs must pass CI checks (markdown lint, dependency review, scorecard) before merge
 - Required reviewers are enforced on all PRs to protected branches
-- Status checks include: OpenSSF Scorecard, Dependency Review, CodeQL
+- Status checks include: OpenSSF Scorecard, Dependency Review, CodeQL, OSV Scanner
 - Branch protection requires signed commits
 - The organization documents all technical controls in this `SECURITY.md` file
 
@@ -721,6 +721,49 @@ This ensures all PRs must pass dependency review before merging, regardless of i
 - [SPDX License List](https://spdx.org/licenses/)
 - [GitHub Advisory Database](https://github.com/advisories)
 
+### OSV Scanner
+
+The [OSV Scanner](https://google.github.io/osv-scanner/) workflow detects known vulnerabilities in project dependencies using the Open Source Vulnerabilities database. It complements Dependency Review by scanning the entire dependency tree, not just changed dependencies.
+
+#### Key Differences from Dependency Review
+
+| Feature      | Dependency Review           | OSV Scanner                               |
+| :----------- | :-------------------------- | :---------------------------------------- |
+| **Timing**   | Blocks new vulns at PR time | Scans all dependencies on PR and schedule |
+| **Scope**    | Only changed dependencies   | Full dependency tree                      |
+| **Database** | GitHub Advisory Database    | Open Source Vulnerabilities (OSV)         |
+| **Output**   | PR annotations and comments | SARIF for GitHub Security tab             |
+
+#### Recommended Defaults
+
+- `upload-sarif: true` — upload results to the repository's code scanning dashboard
+- `fail-on-vuln: true` — fail the workflow when vulnerabilities are found
+- `scan-args` defaulting to `--recursive ./` for automatic lockfile detection
+
+Repository-specific overrides are supported:
+
+- Set `upload-sarif: false` when SARIF upload should not be used for that repository
+- Override `scan-args` for explicit lockfiles, generated dependency artifacts, or excluded paths
+- Use `fail-on-vuln: false` only for short initial calibration, then restore the standard default of `true`
+
+#### Consumer Caller Example
+
+```yaml
+name: OSV Scanner PR
+on:
+  pull_request:
+  merge_group:
+permissions:
+  contents: read
+jobs:
+  osv:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: windlasstech/.github/.github/workflows/osv-scanner-pr-reusable.yml@<pin-sha>
+```
+
 ### Source Integrity
 
 #### Commit Signing
@@ -860,6 +903,7 @@ Verification confirms:
 
 - Dependabot alerts are enabled on all repositories
 - Code scanning with CodeQL runs on all PRs
+- OSV Scanner runs on PRs and scheduled full scans
 - Secret scanning prevents credential leakage
 
 ### Security Scorecard
