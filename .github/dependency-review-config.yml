@@ -17,8 +17,8 @@
 
 # Minimum severity to fail the check
 # Options: low, moderate, high, critical
-# Default: critical (override in individual repos for stricter enforcement)
-fail-on-severity: critical
+# Default: moderate (override in individual repos for stricter enforcement)
+fail-on-severity: moderate
 
 # Dependency scopes to check
 # Options: runtime, development, unknown
@@ -180,8 +180,12 @@ retry-on-snapshot-warnings-timeout: 120
 # CHANGE LOG
 # =============================================================================
 #
-# 2025-03-30: Initial configuration
+# 12026-03-30: Initial configuration
 #   - Established allow-list license policy
 #   - Set default severity: critical
 #   - Enabled OpenSSF Scorecard integration
 #   - Added comprehensive documentation
+#
+# 12026-04-27: Policy enforcement strengthened
+#   - Raised default fail-on-severity from critical to moderate
+#   - Organization-wide stricter supply chain security enforcement
