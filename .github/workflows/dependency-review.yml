@@ -11,6 +11,7 @@ jobs:
   dependency-review:
     permissions:
       contents: read
+      pull-requests: write
     uses: ./.github/workflows/dependency-review-reusable.yml
     with:
       config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
