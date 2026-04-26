@@ -39,9 +39,12 @@ The Code of Conduct is available in multiple languages:
 
 ### CI/CD Workflows
 
-| Workflow                 | File                                                                           | Purpose                                                                                |
-| ------------------------ | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| Markdown Lint and Format | [`.github/workflows/markdown-lint.yml`](./.github/workflows/markdown-lint.yml) | Automated linting and formatting checks for Markdown files on PRs and pushes to `main` |
+| Workflow                 | File                                                                                                   | Purpose                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| Markdown Lint and Format | [`.github/workflows/markdown-lint.yml`](./.github/workflows/markdown-lint.yml)                         | Automated linting and formatting checks for Markdown files on PRs and pushes to `main` |
+| OSV Scanner PR           | [`.github/workflows/osv-scanner-pr-reusable.yml`](./.github/workflows/osv-scanner-pr-reusable.yml)     | Reusable workflow for PR diff vulnerability scans                                      |
+| OSV Scanner Full         | [`.github/workflows/osv-scanner-full-reusable.yml`](./.github/workflows/osv-scanner-full-reusable.yml) | Reusable workflow for full repository vulnerability scans                              |
+| OSV Scanner Smoke        | [`.github/workflows/osv-scanner-smoke.yml`](./.github/workflows/osv-scanner-smoke.yml)                 | Validates OSV Scanner integration in this repository                                   |
 
 ## How Organization-Wide Files Work
 
@@ -50,6 +53,74 @@ GitHub automatically applies files from this repository to all other repositorie
 - **Default behavior**: If a repository doesn't have its own `CODE_OF_CONDUCT.md`, it will inherit the one from this repository.
 - **Override**: Individual repositories can override by adding their own version of any file.
 - **Visibility**: Files in this repository are visible across the organization via GitHub's UI (e.g., when creating issues or PRs).
+
+## OSV Scanner Reusable Workflows
+
+This repository provides Windlass-owned reusable workflows for [OSV Scanner](https://google.github.io/osv-scanner/) vulnerability detection. Consumer repositories can call these workflows with a single `uses:` line.
+
+### Available Workflows
+
+| Workflow     | File                            | Trigger                                 | Behavior                                                                    |
+| :----------- | :------------------------------ | :-------------------------------------- | :-------------------------------------------------------------------------- |
+| PR Diff Scan | `osv-scanner-pr-reusable.yml`   | `pull_request`, `merge_group`           | Compares base vs head branch, reports only newly introduced vulnerabilities |
+| Full Scan    | `osv-scanner-full-reusable.yml` | `push`, `schedule`, `workflow_dispatch` | Reports all known vulnerabilities in the repository                         |
+
+### Standard Defaults
+
+- `scan-args` defaults to `--recursive ./` — OSV Scanner auto-detects supported lockfiles across ecosystems
+- `upload-sarif` defaults to `true` — set to `false` for repositories where SARIF upload is not available
+- `fail-on-vuln` defaults to `true` — the workflow fails when vulnerabilities are found
+
+### Consumer Usage
+
+```yaml
+name: OSV Scanner PR
+on:
+  pull_request:
+  merge_group:
+permissions:
+  contents: read
+jobs:
+  osv:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: windlasstech/.github/.github/workflows/osv-scanner-pr-reusable.yml@<pin-sha>
+```
+
+```yaml
+name: OSV Scanner Full
+on:
+  schedule:
+    - cron: '30 12 * * 1'
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  osv:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: windlasstech/.github/.github/workflows/osv-scanner-full-reusable.yml@<pin-sha>
+```
+
+### Multi-Ecosystem Support
+
+These workflows support all ecosystems that OSV Scanner recognizes, including JavaScript, Python, Go, Rust, Java, .NET, PHP, and others. Standard lockfiles are auto-detected when scanning recursively from the repository root.
+
+Repositories with nonstandard layouts may override `scan-args`:
+
+- Explicit lockfile targeting: `--lockfile=./path/to/custom.lock`
+- Path exclusions: `--experimental-exclude=./vendor`
+
+### Rollout Notes
+
+- For initial calibration, a repository may temporarily set `fail-on-vuln: false` for the first 1-2 runs
+- After calibration, revert to the standard default of `true`
+- Always pin the workflow reference to a specific commit SHA
 
 ## Development
 
