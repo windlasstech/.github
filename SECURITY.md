@@ -943,6 +943,17 @@ This organization uses [OpenSSF Scorecard](https://securityscorecards.dev/) to c
 - [GitHub Actions Security Hardening](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions)
 - [OIDC in GitHub Actions](https://docs.github.com/en/actions/security-guides/security-hardening-your-deployments/configuring-openid-connect-in-cloud-providers)
 
+### OSV Scanner
+
+- [OSV Scanner Documentation](https://google.github.io/osv-scanner/)
+- [OSV Scanner Usage](https://google.github.io/osv-scanner/usage/)
+- [OSV Scanner Source Scanning](https://google.github.io/osv-scanner/usage/scan-source)
+- [OSV Scanner License Scanning](https://google.github.io/osv-scanner/usage/license-scanning/)
+- [OSV Scanner Configuration](https://google.github.io/osv-scanner/configuration/)
+- [OSV Scanner Output Formats](https://google.github.io/osv-scanner/output/)
+- [OSV Scanner GitHub Action](https://google.github.io/osv-scanner/github-action/)
+- [OSV Scanner Action Repository](https://github.com/google/osv-scanner-action)
+
 ### Step Security
 
 - [Step Security - Admin Experience](https://docs.stepsecurity.io/admin-experience)
