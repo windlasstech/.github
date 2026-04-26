@@ -9,19 +9,8 @@ on:
 
 jobs:
   dependency-review:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@6c3c2f2c1c457b00c10c4848d6f5491db3b629df # v2.18.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
-      - name: Dependency Review
-        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
-        with:
-          config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/dependency-review-reusable.yml
+    with:
+      config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
