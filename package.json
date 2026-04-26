@@ -13,5 +13,8 @@
     "lefthook": "^2.1.4",
     "markdownlint-cli2": "^0.22.0",
     "prettier": "^3.8.1"
+  },
+  "overrides": {
+    "smol-toml": "^1.6.1"
   }
 }
