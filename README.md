@@ -233,10 +233,15 @@ on:
     - cron: '20 7 * * 2'
   push:
     branches: [main]
-permissions: read-all
+permissions:
+  contents: read
 jobs:
   analysis:
     permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+      checks: read
       security-events: write
       id-token: write
     uses: windlasstech/.github/.github/workflows/scorecard-reusable.yml@<pin-sha>
@@ -251,10 +256,15 @@ on:
     - cron: '20 7 * * 2'
   push:
     branches: [main]
-permissions: read-all
+permissions:
+  contents: read
 jobs:
   analysis:
     permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+      checks: read
       security-events: write
       id-token: write
     uses: windlasstech/.github/.github/workflows/scorecard-reusable.yml@<pin-sha>
