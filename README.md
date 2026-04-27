@@ -57,24 +57,42 @@ GitHub automatically applies files from this repository to all other repositorie
 - **Override**: Individual repositories can override by adding their own version of any file.
 - **Visibility**: Files in this repository are visible across the organization via GitHub's UI (e.g., when creating issues or PRs).
 
-## OSV Scanner Reusable Workflows
+## Reusable Workflows
 
-This repository provides Windlass-owned reusable workflows for [OSV Scanner](https://google.github.io/osv-scanner/) vulnerability detection. Consumer repositories can call these workflows with a single `uses:` line.
+This repository provides reusable workflows for common security and compliance checks. Consumer repositories can call these workflows with a single `uses:` line.
 
-### Available Workflows
+> [!NOTE]
+> Reusable workflows from `windlasstech/.github` are an **exception** to [the SHA-pinning requirement](./docs/security/workflow-hardening.md#action-references). This repository does not publish semantic version tags, and Dependabot cannot propose updates for SHA-pinned internal reusable workflows. Adding tags or introducing an additional automation bot solely for this purpose would create more operational overhead than value. Consumer repositories may reference these workflows by branch name (e.g., `@main`).
+
+### Which Workflows Are Reusable
+
+| Workflow          | Reusable | Reason                                                         |
+| :---------------- | :------: | :------------------------------------------------------------- |
+| OSV Scanner PR    |   Yes    | Standard scan behavior across all repositories                 |
+| OSV Scanner Full  |   Yes    | Standard full repository scan behavior                         |
+| Dependency Review |   Yes    | Centralized policy with per-repo overrides                     |
+| Scorecard         |   Yes    | Standardized supply-chain security analysis                    |
+| Markdown Lint     |    No    | Tightly coupled to this repo's Bun/Prettier/markdownlint setup |
+| OSV Scanner Smoke |    No    | Repository-specific validation of the reusable OSV workflows   |
+
+### OSV Scanner Reusable Workflow
+
+Provides reusable workflows for [OSV Scanner](https://google.github.io/osv-scanner/) vulnerability detection.
+
+#### Available Workflows
 
 | Workflow     | File                            | Trigger                                 | Behavior                                                                    |
 | :----------- | :------------------------------ | :-------------------------------------- | :-------------------------------------------------------------------------- |
 | PR Diff Scan | `osv-scanner-pr-reusable.yml`   | `pull_request`, `merge_group`           | Compares base vs head branch, reports only newly introduced vulnerabilities |
 | Full Scan    | `osv-scanner-full-reusable.yml` | `push`, `schedule`, `workflow_dispatch` | Reports all known vulnerabilities in the repository                         |
 
-### Standard Defaults
+#### Standard Defaults
 
 - `scan-args` defaults to `--recursive ./` — OSV Scanner auto-detects supported lockfiles across ecosystems
 - `upload-sarif` defaults to `true` — set to `false` for repositories where SARIF upload is not available
 - `fail-on-vuln` defaults to `true` — the workflow fails when vulnerabilities are found
 
-### Consumer Usage
+#### Consumer Usage
 
 ```yaml
 name: OSV Scanner PR
@@ -110,7 +128,7 @@ jobs:
     uses: windlasstech/.github/.github/workflows/osv-scanner-full-reusable.yml@<pin-sha>
 ```
 
-### Multi-Ecosystem Support
+#### Multi-Ecosystem Support
 
 These workflows support all ecosystems that OSV Scanner recognizes, including JavaScript, Python, Go, Rust, Java, .NET, PHP, and others. Standard lockfiles are auto-detected when scanning recursively from the repository root.
 
@@ -119,26 +137,11 @@ Repositories with nonstandard layouts may override `scan-args`:
 - Explicit lockfile targeting: `--lockfile=./path/to/custom.lock`
 - Path exclusions: `--experimental-exclude=./vendor`
 
-### Rollout Notes
+#### Rollout Notes
 
 - For initial calibration, a repository may temporarily set `fail-on-vuln: false` for the first 1-2 runs
 - After calibration, revert to the standard default of `true`
 - Always pin the workflow reference to a specific commit SHA
-
-## Reusable Workflows
-
-This repository provides reusable workflows for common security and compliance checks. Consumer repositories can call these workflows with a single `uses:` line.
-
-### Which Workflows Are Reusable
-
-| Workflow          | Reusable | Reason                                                         |
-| :---------------- | :------: | :------------------------------------------------------------- |
-| OSV Scanner PR    |   Yes    | Standard scan behavior across all repositories                 |
-| OSV Scanner Full  |   Yes    | Standard full repository scan behavior                         |
-| Dependency Review |   Yes    | Centralized policy with per-repo overrides                     |
-| Scorecard         |   Yes    | Standardized supply-chain security analysis                    |
-| Markdown Lint     |    No    | Tightly coupled to this repo's Bun/Prettier/markdownlint setup |
-| OSV Scanner Smoke |    No    | Repository-specific validation of the reusable OSV workflows   |
 
 ### Dependency Review Reusable Workflow
 
