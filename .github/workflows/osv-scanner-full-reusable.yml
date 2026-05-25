@@ -72,7 +72,7 @@ jobs:
           path: ./
 
       - name: Run scanner
-        uses: google/osv-scanner-action/osv-scanner-action@43f380b8fc43a816831a9f5ee6fc91170809c7e9 # v2.3.5
+        uses: google/osv-scanner-action/osv-scanner-action@b8ac13f90f0ad78cebdcdbe5d39fcc8ff11301ba # v2.3.5
         continue-on-error: true
         with:
           scan-args: |-
@@ -81,7 +81,7 @@ jobs:
             ${{ inputs.scan-args }}
 
       - name: Build SARIF report
-        uses: google/osv-scanner-action/osv-reporter-action@43f380b8fc43a816831a9f5ee6fc91170809c7e9 # v2.3.5
+        uses: google/osv-scanner-action/osv-reporter-action@b8ac13f90f0ad78cebdcdbe5d39fcc8ff11301ba # v2.3.5
         with:
           scan-args: |-
             --output=${{ inputs.results-file-name }}
