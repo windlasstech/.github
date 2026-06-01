@@ -14,4 +14,4 @@ jobs:
       pull-requests: write
     uses: ./.github/workflows/dependency-review-reusable.yml
     with:
-      config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
+      config-file: "windlasstech/.github/.github/dependency-review-config.yml@main"

@@ -10,13 +10,13 @@ version: 2
 updates:
   # Bun/NPM ecosystem - development dependencies for linting/formatting
   # Uses bun.lock for deterministic dependency resolution
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-      timezone: 'Asia/Seoul'
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
     # Security updates are prioritized and created immediately
     open-pull-requests-limit: 10
     # Group related dependencies to reduce PR noise
@@ -24,26 +24,26 @@ updates:
       # Development tooling dependencies
       dev-dependencies:
         patterns:
-          - 'lefthook'
-          - 'markdownlint-cli2'
-          - 'prettier'
+          - "lefthook"
+          - "markdownlint-cli2"
+          - "prettier"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
     # Commit message conventions aligned with repository standards
     commit-message:
-      prefix: 'chore'
-      prefix-development: 'chore(dev)'
-      include: 'scope'
+      prefix: "chore"
+      prefix-development: "chore(dev)"
+      include: "scope"
     # Labels for easy identification and triage
     labels:
-      - 'dependencies'
-      - 'javascript'
+      - "dependencies"
+      - "javascript"
     # Semantic versioning strategy
-    versioning-strategy: 'auto'
+    versioning-strategy: "auto"
     # Allow all direct dependencies (production and development)
     allow:
-      - dependency-type: 'direct'
+      - dependency-type: "direct"
     # Cooldown: Development dependencies per SECURITY.md (NPM/Bun Development)
     # Patch: 1-3 days | Minor: 3-7 days | Major: 14-21 days
     cooldown:
@@ -53,43 +53,43 @@ updates:
       semver-patch-days: 1
   # GitHub Actions - critical for SLSA compliance and SHA-pinning
   # All workflows use SHA-pinned actions per SECURITY.md requirements
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-      timezone: 'Asia/Seoul'
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
     open-pull-requests-limit: 10
     groups:
       # Group GitHub official actions together
       github-actions:
         patterns:
-          - 'actions/*'
+          - "actions/*"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
       # Step-security actions (harden-runner)
       step-security-actions:
         patterns:
-          - 'step-security/*'
+          - "step-security/*"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
       # OpenSSF Scorecard action
       scorecard-actions:
         patterns:
-          - 'ossf/scorecard-action'
+          - "ossf/scorecard-action"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
     commit-message:
-      prefix: 'ci'
-      include: 'scope'
+      prefix: "ci"
+      include: "scope"
     labels:
-      - 'dependencies'
-      - 'github-actions'
-      - 'security'
+      - "dependencies"
+      - "github-actions"
+      - "security"
     # Cooldown: GitHub Actions per SECURITY.md
     # GitHub Actions only supports default-days (not SemVer-based cooldown)
     cooldown:

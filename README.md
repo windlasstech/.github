@@ -114,7 +114,7 @@ jobs:
 name: OSV Scanner Full
 on:
   schedule:
-    - cron: '30 12 * * 1'
+    - cron: "30 12 * * 1"
   push:
     branches: [main]
 permissions:
@@ -233,7 +233,7 @@ name: Scorecard supply-chain security
 on:
   branch_protection_rule:
   schedule:
-    - cron: '20 7 * * 2'
+    - cron: "20 7 * * 2"
   push:
     branches: [main]
 permissions:
@@ -256,7 +256,7 @@ jobs:
 name: Scorecard supply-chain security
 on:
   schedule:
-    - cron: '20 7 * * 2'
+    - cron: "20 7 * * 2"
   push:
     branches: [main]
 permissions:

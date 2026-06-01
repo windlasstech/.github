@@ -3,10 +3,10 @@ name: OSV Scanner Smoke
 on:
   pull_request:
     paths:
-      - '.github/workflows/osv-scanner-*.yml'
-      - 'README.md'
-      - 'SECURITY.md'
-      - 'bun.lock'
+      - ".github/workflows/osv-scanner-*.yml"
+      - "README.md"
+      - "SECURITY.md"
+      - "bun.lock"
   workflow_dispatch:
 
 permissions:

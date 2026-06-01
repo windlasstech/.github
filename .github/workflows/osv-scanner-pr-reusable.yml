@@ -4,29 +4,29 @@ on:
   workflow_call:
     inputs:
       scan-args:
-        description: 'Additional scan arguments, one per line. Do not set --format or --output.'
+        description: "Additional scan arguments, one per line. Do not set --format or --output."
         required: false
         type: string
         default: |-
           --recursive
           ./
       results-file-name:
-        description: 'SARIF results file name'
+        description: "SARIF results file name"
         required: false
         type: string
-        default: 'results.sarif'
+        default: "results.sarif"
       upload-sarif:
-        description: 'Upload SARIF to code scanning when available for this repository'
+        description: "Upload SARIF to code scanning when available for this repository"
         required: false
         type: boolean
         default: true
       fail-on-vuln:
-        description: 'Fail when the pull request introduces new vulnerabilities'
+        description: "Fail when the pull request introduces new vulnerabilities"
         required: false
         type: boolean
         default: true
       checkout-submodules:
-        description: 'Checkout git submodules'
+        description: "Checkout git submodules"
         required: false
         type: boolean
         default: false
