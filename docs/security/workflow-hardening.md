@@ -108,7 +108,7 @@ Use the `actions/attest` action to generate SLSA-compliant provenance:
 - name: Generate artifact attestation
   uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381 # v4.1.0
   with:
-    subject-path: '${{ github.workspace }}/my-artifact'
+    subject-path: "${{ github.workspace }}/my-artifact"
 ```
 
 For container images:
@@ -117,8 +117,8 @@ For container images:
 - name: Generate container attestation
   uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381 # v4.1.0
   with:
-    subject-name: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}'
-    subject-digest: '${{ steps.build.outputs.digest }}'
+    subject-name: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+    subject-digest: "${{ steps.build.outputs.digest }}"
     push-to-registry: true
 ```
 
@@ -154,7 +154,7 @@ jobs:
   build:
     uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.1.0
     with:
-      go-version: '1.26'
+      go-version: "1.26"
       # ... other inputs
 ```
 

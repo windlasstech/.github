@@ -7,30 +7,30 @@ on:
   workflow_call:
     inputs:
       config-file:
-        description: 'Path to the dependency review configuration file'
+        description: "Path to the dependency review configuration file"
         required: false
         type: string
-        default: 'windlasstech/.github/.github/dependency-review-config.yml@main'
+        default: "windlasstech/.github/.github/dependency-review-config.yml@main"
       fail-on-severity:
-        description: 'Minimum severity to fail the check (low, moderate, high, critical)'
+        description: "Minimum severity to fail the check (low, moderate, high, critical)"
         required: false
         type: string
-        default: ''
+        default: ""
       comment-summary-in-pr:
-        description: 'Post summary comment to PR (always, on-failure, never)'
+        description: "Post summary comment to PR (always, on-failure, never)"
         required: false
         type: string
-        default: 'on-failure'
+        default: "on-failure"
       warn-only:
-        description: 'Report only, never fail'
+        description: "Report only, never fail"
         required: false
         type: boolean
         default: false
       external-repo-token:
-        description: 'Token for accessing external repository config files'
+        description: "Token for accessing external repository config files"
         required: false
         type: string
-        default: ''
+        default: ""
 
 jobs:
   dependency-review:

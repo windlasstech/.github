@@ -86,11 +86,11 @@ The Rust ecosystem has unique characteristics affecting cooldown strategy:
 # dependabot.yml - Production-grade Rust project
 version: 2
 updates:
-  - package-ecosystem: 'cargo'
-    directory: '/'
+  - package-ecosystem: "cargo"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'tuesday'
+      interval: "weekly"
+      day: "tuesday"
     cooldown:
       default-days: 7
       semver-major-days: 30
@@ -98,10 +98,10 @@ updates:
       semver-patch-days: 5
     groups:
       patch-updates:
-        patterns: ['*']
-        update-types: ['patch']
+        patterns: ["*"]
+        update-types: ["patch"]
     reviewers:
-      - 'windlass-tech/security-team'
+      - "windlass-tech/security-team"
 ```
 
 ### Additional Supply Chain Defenses
@@ -134,7 +134,7 @@ The [Dependency Review Action](https://github.com/actions/dependency-review-acti
 All repositories must implement Dependency Review with this hardened configuration:
 
 ```yaml
-name: 'Dependency Review'
+name: "Dependency Review"
 
 permissions:
   contents: read
@@ -142,12 +142,12 @@ permissions:
 on:
   pull_request:
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
   merge_group:
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
 
 jobs:
   dependency-review:
@@ -158,15 +158,15 @@ jobs:
         with:
           egress-policy: audit
 
-      - name: 'Checkout Repository'
+      - name: "Checkout Repository"
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
-      - name: 'Dependency Review'
+      - name: "Dependency Review"
         uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
         with:
-          config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
+          config-file: "windlasstech/.github/.github/dependency-review-config.yml@main"
 ```
 
 ### Configuration Options
@@ -187,10 +187,10 @@ Use an allow-list approach for license compliance. Reference a centralized confi
 
 ```yaml
 # In repository workflow
-- name: 'Dependency Review'
+- name: "Dependency Review"
   uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
   with:
-    config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
+    config-file: "windlasstech/.github/.github/dependency-review-config.yml@main"
 ```
 
 **Standard allow-licenses list:**

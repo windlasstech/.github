@@ -8,42 +8,42 @@ on:
   workflow_call:
     inputs:
       results-file:
-        description: 'Path to the SARIF results file'
+        description: "Path to the SARIF results file"
         required: false
         type: string
-        default: 'results.sarif'
+        default: "results.sarif"
       results-format:
-        description: 'Results format (sarif, json, csv, etc.)'
+        description: "Results format (sarif, json, csv, etc.)"
         required: false
         type: string
-        default: 'sarif'
+        default: "sarif"
       publish-results:
-        description: 'Publish results to OpenSSF REST API for public repositories'
+        description: "Publish results to OpenSSF REST API for public repositories"
         required: false
         type: boolean
         default: true
       repo-token:
-        description: 'Fine-grained PAT token for Branch-Protection check on public repos or private repo installation'
+        description: "Fine-grained PAT token for Branch-Protection check on public repos or private repo installation"
         required: false
         type: string
-        default: ''
+        default: ""
       file-mode:
-        description: 'File mode for .gitattributes with export-ignore (e.g., git)'
+        description: "File mode for .gitattributes with export-ignore (e.g., git)"
         required: false
         type: string
-        default: ''
+        default: ""
       retention-days:
-        description: 'Artifact retention days'
+        description: "Artifact retention days"
         required: false
         type: number
         default: 5
       upload-artifact:
-        description: 'Upload results as artifact'
+        description: "Upload results as artifact"
         required: false
         type: boolean
         default: true
       upload-code-scanning:
-        description: 'Upload results to GitHub code scanning dashboard'
+        description: "Upload results to GitHub code scanning dashboard"
         required: false
         type: boolean
         default: true
