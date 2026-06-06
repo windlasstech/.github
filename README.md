@@ -29,8 +29,12 @@ The Code of Conduct is available in multiple languages:
 | English (default)             | [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)                       |
 | 한국어 (Korean)               | [`docs/CODE_OF_CONDUCT.ko.md`](./docs/CODE_OF_CONDUCT.ko.md)       |
 | 简体中文 (Chinese Simplified) | [`docs/CODE_OF_CONDUCT.zh-cn.md`](./docs/CODE_OF_CONDUCT.zh-cn.md) |
+| 日本語 (Japanese)             | [`docs/CODE_OF_CONDUCT.ja.md`](./docs/CODE_OF_CONDUCT.ja.md)       |
+| Español (Spanish)             | [`docs/CODE_OF_CONDUCT.es.md`](./docs/CODE_OF_CONDUCT.es.md)       |
 | Deutsch (German)              | [`docs/CODE_OF_CONDUCT.de.md`](./docs/CODE_OF_CONDUCT.de.md)       |
 | Français (French)             | [`docs/CODE_OF_CONDUCT.fr.md`](./docs/CODE_OF_CONDUCT.fr.md)       |
+| বাংলা (Bengali)               | [`docs/CODE_OF_CONDUCT.bn.md`](./docs/CODE_OF_CONDUCT.bn.md)       |
+| Magyar (Hungarian)            | [`docs/CODE_OF_CONDUCT.hu.md`](./docs/CODE_OF_CONDUCT.hu.md)       |
 
 ### Issue and PR Templates
 
