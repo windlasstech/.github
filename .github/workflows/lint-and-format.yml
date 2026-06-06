@@ -1,4 +1,4 @@
-name: Markdown Lint and Format
+name: Repository Lint and Format
 
 permissions:
   contents: read
@@ -7,14 +7,34 @@ on:
   pull_request:
     paths:
       - "**/*.md"
+      - "**/*.mdx"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.json"
+      - "**/*.jsonc"
+      - ".github/workflows/lint-and-format.yml"
       - ".markdownlint-cli2.jsonc"
+      - ".prettierignore"
       - ".prettierrc"
+      - "bun.lock"
+      - "lefthook.yml"
+      - "package.json"
   push:
     branches: [main]
     paths:
       - "**/*.md"
+      - "**/*.mdx"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.json"
+      - "**/*.jsonc"
+      - ".github/workflows/lint-and-format.yml"
       - ".markdownlint-cli2.jsonc"
+      - ".prettierignore"
       - ".prettierrc"
+      - "bun.lock"
+      - "lefthook.yml"
+      - "package.json"
 
 jobs:
   lint:
