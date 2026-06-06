@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
 
@@ -164,7 +164,7 @@ jobs:
           persist-credentials: false
 
       - name: "Dependency Review"
-        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
         with:
           config-file: "windlasstech/.github/.github/dependency-review-config.yml@main"
 ```
@@ -173,7 +173,7 @@ jobs:
 
 | Option                  | Type    | Description                                                         | Recommended                              |
 | :---------------------- | :------ | :------------------------------------------------------------------ | :--------------------------------------- |
-| `fail-on-severity`      | string  | Minimum severity to block PR: `low`, `moderate`, `high`, `critical` | `critical`                               |
+| `fail-on-severity`      | string  | Minimum severity to block PR: `low`, `moderate`, `high`, `critical` | `moderate`                               |
 | `fail-on-scopes`        | string  | Scopes to check: `runtime`, `development`, `unknown`                | `development, runtime`                   |
 | `allow-licenses`        | string  | Comma-separated allowed SPDX license IDs                            | See license policy below                 |
 | `deny-licenses`         | string  | Comma-separated forbidden SPDX license IDs                          | Mutually exclusive with `allow-licenses` |
@@ -188,7 +188,7 @@ Use an allow-list approach for license compliance. Reference a centralized confi
 ```yaml
 # In repository workflow
 - name: "Dependency Review"
-  uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+  uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
   with:
     config-file: "windlasstech/.github/.github/dependency-review-config.yml@main"
 ```

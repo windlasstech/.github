@@ -1,6 +1,6 @@
 # .github
 
-[![Markdown Lint and Format](https://github.com/windlasstech/.github/actions/workflows/markdown-lint.yml/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/markdown-lint.yml)
+[![Repository Lint and Format](https://github.com/windlasstech/.github/actions/workflows/lint-and-format.yml/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/lint-and-format.yml)
 [![CodeQL](https://github.com/windlasstech/.github/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/github-code-scanning/codeql)
 [![Dependency Review](https://github.com/windlasstech/.github/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/dependency-review.yml)
 [![OSV Scanner Smoke](https://github.com/windlasstech/.github/actions/workflows/osv-scanner-smoke.yml/badge.svg)](https://github.com/windlasstech/.github/actions/workflows/osv-scanner-smoke.yml)
@@ -40,14 +40,14 @@ The Code of Conduct is available in multiple languages:
 
 ### CI/CD Workflows
 
-| Workflow                 | File                                                                                                     | Purpose                                                                                | Reusable |
-| ------------------------ | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | :------: |
-| Markdown Lint and Format | [`.github/workflows/markdown-lint.yml`](./.github/workflows/markdown-lint.yml)                           | Automated linting and formatting checks for Markdown files on PRs and pushes to `main` |    No    |
-| Dependency Review        | [`.github/workflows/dependency-review-reusable.yml`](./.github/workflows/dependency-review-reusable.yml) | Reusable workflow for PR dependency vulnerability and license checks                   |   Yes    |
-| Scorecard                | [`.github/workflows/scorecard-reusable.yml`](./.github/workflows/scorecard-reusable.yml)                 | Reusable workflow for OpenSSF Scorecard supply-chain security analysis                 |   Yes    |
-| OSV Scanner PR           | [`.github/workflows/osv-scanner-pr-reusable.yml`](./.github/workflows/osv-scanner-pr-reusable.yml)       | Reusable workflow for PR diff vulnerability scans                                      |   Yes    |
-| OSV Scanner Full         | [`.github/workflows/osv-scanner-full-reusable.yml`](./.github/workflows/osv-scanner-full-reusable.yml)   | Reusable workflow for full repository vulnerability scans                              |   Yes    |
-| OSV Scanner Smoke        | [`.github/workflows/osv-scanner-smoke.yml`](./.github/workflows/osv-scanner-smoke.yml)                   | Validates OSV Scanner integration in this repository                                   |    No    |
+| Workflow                   | File                                                                                                     | Purpose                                                                              | Reusable |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | :------: |
+| Repository Lint and Format | [`.github/workflows/lint-and-format.yml`](./.github/workflows/lint-and-format.yml)                       | Automated linting and formatting checks for Markdown, workflow, YAML, and JSON files |    No    |
+| Dependency Review          | [`.github/workflows/dependency-review-reusable.yml`](./.github/workflows/dependency-review-reusable.yml) | Reusable workflow for PR dependency vulnerability and license checks                 |   Yes    |
+| Scorecard                  | [`.github/workflows/scorecard-reusable.yml`](./.github/workflows/scorecard-reusable.yml)                 | Reusable workflow for OpenSSF Scorecard supply-chain security analysis               |   Yes    |
+| OSV Scanner PR             | [`.github/workflows/osv-scanner-pr-reusable.yml`](./.github/workflows/osv-scanner-pr-reusable.yml)       | Reusable workflow for PR diff vulnerability scans                                    |   Yes    |
+| OSV Scanner Full           | [`.github/workflows/osv-scanner-full-reusable.yml`](./.github/workflows/osv-scanner-full-reusable.yml)   | Reusable workflow for full repository vulnerability scans                            |   Yes    |
+| OSV Scanner Smoke          | [`.github/workflows/osv-scanner-smoke.yml`](./.github/workflows/osv-scanner-smoke.yml)                   | Validates OSV Scanner integration in this repository                                 |    No    |
 
 ## How Organization-Wide Files Work
 
@@ -72,7 +72,7 @@ This repository provides reusable workflows for common security and compliance c
 | OSV Scanner Full  |   Yes    | Standard full repository scan behavior                         |
 | Dependency Review |   Yes    | Centralized policy with per-repo overrides                     |
 | Scorecard         |   Yes    | Standardized supply-chain security analysis                    |
-| Markdown Lint     |    No    | Tightly coupled to this repo's Bun/Prettier/markdownlint setup |
+| Lint and Format   |    No    | Tightly coupled to this repo's Bun/Prettier/markdownlint setup |
 | OSV Scanner Smoke |    No    | Repository-specific validation of the reusable OSV workflows   |
 
 ### OSV Scanner Reusable Workflow
@@ -277,22 +277,22 @@ jobs:
       repo-token: ${{ secrets.SCORECARD_TOKEN }}
 ```
 
-### Why Markdown Lint Is Not Reusable
+### Why Lint and Format Is Not Reusable
 
-The `markdown-lint.yml` workflow is intentionally not provided as a reusable workflow because it is tightly coupled to this repository's specific tooling stack:
+The `lint-and-format.yml` workflow is intentionally not provided as a reusable workflow because it is tightly coupled to this repository's specific tooling stack:
 
 - **Package manager**: Uses `bun` with `bun.lock`
 - **Linting tools**: Assumes `markdownlint-cli2` and `prettier` are installed via `package.json`
 - **Configuration files**: Expects `.markdownlint-cli2.jsonc` and `.prettierrc` to exist at repository root
 - **Scripts**: Calls `bun run format:check` and `bun run lint:md` which are defined in this repo's `package.json`
 
-Consumer repositories using different package managers (npm, yarn, pnpm) or different linting configurations should implement their own markdown linting workflow tailored to their stack.
+Consumer repositories using different package managers (npm, yarn, pnpm) or different linting configurations should implement their own repository linting workflow tailored to their stack.
 
 ## Development
 
-### Markdown Linting and Formatting
+### Linting and Formatting
 
-This repository uses [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [Prettier](https://prettier.io/) for consistent Markdown style.
+This repository uses [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [Prettier](https://prettier.io/) for consistent Markdown, YAML, and JSON/JSONC style.
 
 #### Setup
 
@@ -302,17 +302,17 @@ bun install
 
 #### Available Scripts
 
-| Script                 | Description                              |
-| ---------------------- | ---------------------------------------- |
-| `bun run lint:md`      | Lint all Markdown files                  |
-| `bun run lint:md:fix`  | Lint and auto-fix issues                 |
-| `bun run format`       | Format all Markdown files with Prettier  |
-| `bun run format:check` | Check formatting without modifying files |
+| Script                 | Description                                               |
+| ---------------------- | --------------------------------------------------------- |
+| `bun run lint:md`      | Lint all Markdown files                                   |
+| `bun run lint:md:fix`  | Lint and auto-fix issues                                  |
+| `bun run format`       | Format Markdown, YAML, and JSON/JSONC files with Prettier |
+| `bun run format:check` | Check formatting without modifying files                  |
 
 #### Configuration
 
 - **markdownlint**: `.markdownlint-cli2.jsonc` — Configured to avoid conflicts with Prettier
-- **Prettier**: `.prettierrc` — Uses default Prettier settings for Markdown
+- **Prettier**: `.prettierrc` — Uses default Prettier settings for Markdown, YAML, and JSON/JSONC
 
 #### Pre-commit Hooks
 
@@ -321,7 +321,7 @@ This repository uses [Lefthook](https://lefthook.dev/) to automatically lint and
 When you commit changes:
 
 1. Staged `.md` and `.mdx` files are automatically linted with `markdownlint-cli2 --fix`
-2. Files are formatted with `prettier --write`
+2. Staged Markdown, YAML, JSON, and JSONC files are formatted with `prettier --write`
 3. Fixed files are re-staged automatically
 4. If there are unfixable errors, the commit is blocked
 
@@ -335,4 +335,4 @@ bunx lefthook run pre-commit
 
 #### CI/CD
 
-Pull requests and pushes to `main` that modify Markdown files trigger automated linting and formatting checks via GitHub Actions.
+Pull requests and pushes to `main` that modify Markdown, YAML, JSON/JSONC, workflow, lockfile, or tooling configuration files trigger automated linting and formatting checks via GitHub Actions.
