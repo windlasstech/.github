@@ -2,7 +2,7 @@
 
 # Code de conduite 3.0 _Contributor Covenant_
 
-[English](../CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | [Deutsch](CODE_OF_CONDUCT.de.md) | Français
+[English](../CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | [简体中文](CODE_OF_CONDUCT.zh-cn.md) | [日本語](CODE_OF_CONDUCT.ja.md) | [Español](CODE_OF_CONDUCT.es.md) | [Deutsch](CODE_OF_CONDUCT.de.md) | Français | [বাংলা](CODE_OF_CONDUCT.bn.md) | [Magyar](CODE_OF_CONDUCT.hu.md)
 
 </div>
 
