@@ -2,7 +2,7 @@
 
 # Contributor Covenant 3.0 Code of Conduct
 
-English | [한국어](./docs/CODE_OF_CONDUCT.ko.md) | [简体中文](./docs/CODE_OF_CONDUCT.zh-cn.md) | [Deutsch](./docs/CODE_OF_CONDUCT.de.md) | [Français](./docs/CODE_OF_CONDUCT.fr.md)
+English | [한국어](./docs/CODE_OF_CONDUCT.ko.md) | [简体中文](./docs/CODE_OF_CONDUCT.zh-cn.md) | [日本語](./docs/CODE_OF_CONDUCT.ja.md) | [Español](./docs/CODE_OF_CONDUCT.es.md) | [Deutsch](./docs/CODE_OF_CONDUCT.de.md) | [Français](./docs/CODE_OF_CONDUCT.fr.md) | [বাংলা](./docs/CODE_OF_CONDUCT.bn.md) | [Magyar](./docs/CODE_OF_CONDUCT.hu.md)
 
 </div>
 
