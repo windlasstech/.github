@@ -32,7 +32,7 @@ GitHub Organization Community Health Files repository. Files auto-apply across a
 │   ├── dependabot.yml              # Dependency update automation
 │   ├── dependency-review-config.yml # Dependency review policy
 │   └── workflows/                  # CI workflows
-│       ├── markdown-lint.yml            # Markdown linting CI
+│       ├── lint-and-format.yml          # Repository linting and formatting CI
 │       ├── dependency-review.yml        # Supply chain security
 │       ├── scorecard.yml                # OpenSSF Scorecard
 │       ├── osv-scanner-pr-reusable.yml  # Reusable OSV PR scan
@@ -48,7 +48,7 @@ GitHub Organization Community Health Files repository. Files auto-apply across a
 | Edit org-wide Code of Conduct | `CODE_OF_CONDUCT.md`                              |
 | Add translation               | `docs/CODE_OF_CONDUCT.{lang}.md`                  |
 | Edit PR template              | `.github/PULL_REQUEST_TEMPLATE.md`                |
-| Modify CI checks              | `.github/workflows/markdown-lint.yml`             |
+| Modify CI checks              | `.github/workflows/lint-and-format.yml`           |
 | Change lint rules             | `.markdownlint-cli2.jsonc`                        |
 | Change format rules           | `.prettierrc`                                     |
 | Modify pre-commit hooks       | `lefthook.yml`                                    |

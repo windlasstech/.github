@@ -4,7 +4,7 @@
 # Usage in repository workflows:
 #   - uses: actions/dependency-review-action@v4
 #     with:
-#       config-file: 'windlass/.github/dependency-review-config.yml@main'
+#       config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
 #       external-repo-token: ${{ secrets.DEPENDENCY_REVIEW_TOKEN }}
 #
 # References:
@@ -169,7 +169,7 @@ retry-on-snapshot-warnings-timeout: 120
 #   - name: Dependency Review
 #     uses: actions/dependency-review-action@v4
 #     with:
-#       config-file: 'windlass/.github/dependency-review-config.yml@main'
+#       config-file: 'windlasstech/.github/.github/dependency-review-config.yml@main'
 #       external-repo-token: ${{ secrets.DEPENDENCY_REVIEW_TOKEN }}
 #       # Override severity for high-security repository
 #       fail-on-severity: moderate
