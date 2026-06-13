@@ -9,7 +9,7 @@ Do not attest every test-only build or individual source/documentation files. At
 
 ## Required Permissions
 
-Workflows generating attestations require these permissions:
+Workflows generating GitHub artifact attestations with `actions/attest` require these permissions:
 
 ```yaml
 permissions:
@@ -18,7 +18,7 @@ permissions:
   contents: read # Required to read source code
 ```
 
-Container image release jobs also require `packages: write` when pushing to GHCR or another registry. Jobs that should appear on the organization's linked artifacts page must also include `artifact-metadata: write`.
+SLSA GitHub Generator jobs use a reusable workflow instead of `actions/attest`. Generic generator jobs require `actions: read`, `id-token: write`, and `contents: write` when uploading provenance to a GitHub Release. Container image release jobs also require `packages: write` when pushing to GHCR or another registry. Jobs that should appear on the organization's linked artifacts page must also include `artifact-metadata: write`.
 
 Artifact attestations are available for public repositories on current GitHub plans. Private or internal repositories require GitHub Enterprise Cloud. GitHub Enterprise Server does not support artifact attestations.
 
@@ -27,13 +27,13 @@ Artifact attestations are available for public repositories on current GitHub pl
 The organization default is to produce SLSA Build L3+ provenance wherever feasible. Choose the provenance path in this order:
 
 1. **SLSA GitHub Generator builder** — Use when a hosted builder can both build the artifact and generate provenance for the project's ecosystem.
-2. **SLSA GitHub Generator generator** — Use when the release workflow already builds the artifact and only needs SLSA provenance generation for an existing file or container image.
+2. **SLSA GitHub Generator generator** — Use when the release workflow already builds the artifact and only needs SLSA provenance generation for an existing file or container image. For most custom release workflows, start with the [generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md).
 3. **Reusable workflow with `actions/attest`** — Use when a dedicated SLSA builder or generator is not a good fit, but the build can be moved into a trusted reusable workflow.
 4. **Direct `actions/attest` in the release workflow** — Use only as the baseline provenance path when Build L3+ is not yet feasible.
 
 ### SLSA GitHub Generator
 
-The [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) project provides both builders and generators. Builders perform the build and generate provenance together. Generators only generate provenance for artifacts that were already produced by the repository's release workflow. Prefer a builder when it fits the project ecosystem; use a generator when the build flow is too custom for a hosted builder or the artifact already exists.
+The [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) project provides both builders and generators. Builders perform the build and generate provenance together. Generators only generate provenance for artifacts that were already produced by the repository's release workflow. Prefer a builder when it fits the project ecosystem; use a generator when the build flow is too custom for a hosted builder or the artifact already exists. In practice, the [generic generator](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md) is the most likely fit for repositories that already have bespoke build and release jobs.
 
 Available builders and generators:
 
@@ -51,6 +51,8 @@ Available builders and generators:
 > [!IMPORTANT]
 > SLSA builders and generators must be referenced by tag (e.g., `@v2.1.0`) for `slsa-verifier` to validate the trusted reusable workflow. This is an intentional exception to the SHA-pinning requirement.
 
+Builder example:
+
 ```yaml
 jobs:
   build:
@@ -59,6 +61,48 @@ jobs:
       go-version: "1.26"
       # ... other inputs
 ```
+
+Generic generator example for existing file artifacts:
+
+Before adapting this pattern, read the [SLSA GitHub Generator generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md) for the latest supported triggers, inputs, outputs, private repository caveats, and `base64-subjects-as-file` guidance.
+
+```yaml
+jobs:
+  build:
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build artifacts
+        run: |
+          ./scripts/build-release.sh
+
+      - name: Generate hashes
+        id: hash
+        shell: bash
+        run: |
+          echo "hashes=$(sha256sum dist/my-artifact | base64 -w0)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: my-artifact
+          path: dist/my-artifact
+          if-no-files-found: error
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read # Required to detect the GitHub Actions environment
+      id-token: write # Required to sign provenance
+      contents: write # Required when upload-assets publishes provenance to a release
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.hashes }}"
+      upload-assets: true
+```
+
+The generic generator expects `base64-subjects` to decode to `sha256sum`-formatted lines, such as `SHA256 artifact-name`. For many artifacts or runner masking issues, follow the [generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md) and write the checksums to a file, then pass it with `base64-subjects-as-file` using the SLSA helper action.
 
 ### Reusable Workflow Attestation
 
@@ -263,11 +307,13 @@ steps:
 
 If an artifact is not attested, or if deployment/runtime records must be uploaded, use the artifact metadata REST API or an approved integration such as JFrog Artifactory, Dynatrace, or Microsoft Defender for Cloud. Linked artifacts records store metadata only; they do not store artifact files.
 
-## Attestation Modes
+## `actions/attest` Attestation Modes
+
+These modes apply only to `actions/attest` usage. SLSA GitHub Generator workflows use `base64-subjects` or `base64-subjects-as-file` instead.
 
 | Mode                     | Input                          | Description                                  |
 | :----------------------- | :----------------------------- | :------------------------------------------- |
-| **Provenance** (default) | `subject-path` only            | Auto-generates SLSA build provenance         |
+| **Provenance** (default) | `subject-path` only            | Auto-generates GitHub artifact provenance    |
 | **SBOM**                 | `sbom-path` provided           | Creates attestation from SPDX/CycloneDX SBOM |
 | **Custom**               | `predicate-type` + `predicate` | User-defined predicate                       |
 
@@ -363,4 +409,5 @@ slsa-verifier verify-artifact my-artifact \
 ### SLSA
 
 - [SLSA GitHub Generator](https://github.com/slsa-framework/slsa-github-generator)
+- [SLSA GitHub Generator generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md)
 - [SLSA verifier](https://github.com/slsa-framework/slsa-verifier)
