@@ -5,6 +5,18 @@
 
 All projects must commit dependency lockfiles to version control to ensure reproducible builds and enable security auditing.
 
+## Dependency Defense Overview
+
+Dependency security uses layered controls so each tool covers a different point in the lifecycle:
+
+| Control               | Timing                       | Scope                        | Primary outcome                              |
+| :-------------------- | :--------------------------- | :--------------------------- | :------------------------------------------- |
+| **Lockfiles**         | During development and build | Resolved dependency graph    | Reproducible builds and reviewable diffs     |
+| **Dependabot**        | Continuous and scheduled     | Existing dependency versions | Update PRs for vulnerable or stale packages  |
+| **Cooldowns**         | Before version update PRs    | Newly published versions     | Time for malicious releases to be detected   |
+| **Dependency Review** | Pull request                 | Newly changed dependencies   | Blocks vulnerable or non-compliant additions |
+| **OSV Scanner**       | Pull request and schedule    | Full dependency tree         | Finds known vulnerabilities across projects  |
+
 ## Lockfile Requirements
 
 | Ecosystem    | Lockfile                                     | Commit Required |
@@ -26,14 +38,14 @@ All projects must commit dependency lockfiles to version control to ensure repro
 - Security updates should be applied immediately
 - Major version updates require review and testing
 
-## Dependabot Cooldown Configuration
+### Dependabot Cooldown Configuration
 
 Cooldown periods delay version update PRs to allow community vetting of new releases. This mitigates supply chain attacks by providing time for malicious packages to be detected and yanked before adoption.
 
 > [!NOTE]
 > Security updates bypass cooldowns and are created immediately. Cooldowns apply only to version updates.
 
-### Ecosystem-Specific Recommendations
+#### Ecosystem-Specific Recommendations
 
 | Ecosystem                 | Patch     | Minor      | Major      | Rationale                                                                             |
 | :------------------------ | :-------- | :--------- | :--------- | :------------------------------------------------------------------------------------ |
@@ -47,14 +59,14 @@ Cooldown periods delay version update PRs to allow community vetting of new rele
 > [!IMPORTANT]
 > SemVer-based cooldown (`semver-major-days`, `semver-minor-days`, `semver-patch-days`) is only supported by package ecosystems that use Semantic Versioning. Ecosystems like **GitHub Actions**, **Docker**, **Terraform**, and **Bazel** only support `default-days`.
 
-### SemVer Cooldown Support by Ecosystem
+#### SemVer Cooldown Support by Ecosystem
 
 | Support                   | Ecosystems                                                                                                                                                      |
 | :------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **SemVer + default-days** | `bundler`, `bun`, `cargo`, `composer`, `dotnet_sdk`, `elm`, `gomod`, `gradle`, `hex`, `julia`, `maven`, `npm`, `nuget`, `opentofu`, `pip`, `pub`, `swift`, `uv` |
 | **default-days only**     | `bazel`, `devcontainers`, `docker`, `docker_compose`, `github-actions`, `gitsubmodule`, `helm`, `terraform`                                                     |
 
-### Cooldown Rationale
+#### Cooldown Rationale
 
 **Why cooldowns matter:**
 
@@ -68,7 +80,7 @@ Cooldown periods delay version update PRs to allow community vetting of new rele
 - **Minor (y in x.y.z)**: New features; moderate cooldown for API stability verification
 - **Major (x in x.y.z)**: Breaking changes; longest cooldown for migration planning and community feedback
 
-### Rust-Specific Considerations
+#### Rust-Specific Considerations
 
 The Rust ecosystem has unique characteristics affecting cooldown strategy:
 
@@ -80,7 +92,7 @@ The Rust ecosystem has unique characteristics affecting cooldown strategy:
 
 4. **Cargo.lock Pinning**: Unlike npm, Cargo.lock should always be committed. This creates natural review gates that complement cooldowns.
 
-### Example Configuration
+#### Example Configuration
 
 ```yaml
 # dependabot.yml - Production-grade Rust project
@@ -119,15 +131,6 @@ The [Dependency Review Action](https://github.com/actions/dependency-review-acti
 
 > [!NOTE]
 > Dependency Review is available for all public repositories. For private repositories, GitHub Advanced Security is required.
-
-### Key Differences from Dependabot
-
-| Feature         | Dependabot                         | Dependency Review                     |
-| :-------------- | :--------------------------------- | :------------------------------------ |
-| **Timing**      | Alerts on existing vulnerabilities | Blocks new vulnerabilities at PR time |
-| **Scope**       | Scans entire dependency tree       | Scans only changed dependencies       |
-| **Action**      | Creates update PRs                 | Fails PR checks to prevent merge      |
-| **Integration** | Standalone alerts                  | GitHub Actions workflow               |
 
 ### Required Workflow Template
 
@@ -255,15 +258,6 @@ This ensures all PRs must pass dependency review before merging, regardless of i
 ## OSV Scanner
 
 The [OSV Scanner](https://google.github.io/osv-scanner/) workflow detects known vulnerabilities in project dependencies using the Open Source Vulnerabilities database. It complements Dependency Review by scanning the entire dependency tree, not just changed dependencies.
-
-### Key Differences from Dependency Review
-
-| Feature      | Dependency Review           | OSV Scanner                               |
-| :----------- | :-------------------------- | :---------------------------------------- |
-| **Timing**   | Blocks new vulns at PR time | Scans all dependencies on PR and schedule |
-| **Scope**    | Only changed dependencies   | Full dependency tree                      |
-| **Database** | GitHub Advisory Database    | Open Source Vulnerabilities (OSV)         |
-| **Output**   | PR annotations and comments | SARIF for GitHub Security tab             |
 
 ### Recommended Defaults
 
