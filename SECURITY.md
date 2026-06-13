@@ -122,6 +122,7 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
 | :------------------------ | :----------------------------------------------------------------------------------------- |
 | SLSA compliance framework | [docs/security/slsa-compliance-framework.md](./docs/security/slsa-compliance-framework.md) |
 | Workflow hardening        | [docs/security/workflow-hardening.md](./docs/security/workflow-hardening.md)               |
+| Artifact attestations     | [docs/security/artifact-attestations.md](./docs/security/artifact-attestations.md)         |
 | Dependency security       | [docs/security/dependency-security.md](./docs/security/dependency-security.md)             |
 
 ### Source and Workflow Integrity
@@ -142,7 +143,7 @@ Source and workflow controls are implemented through signed commits, protected b
 - **SBOM attestations and release assets** — Released binaries and container images must include signed SPDX and CycloneDX SBOM attestations when the build can generate them, and public releases should publish the same SBOM files as release assets
 - **Linked artifacts metadata** — Registry-published release artifacts should upload storage metadata to GitHub's linked artifacts page through `actions/attest` or the artifact metadata API
 
-Workflow implementation requirements for provenance, SBOM attestations, and linked artifacts uploads are documented in [Workflow Hardening: Artifact Attestations](./docs/security/workflow-hardening.md#artifact-attestations).
+Implementation requirements for provenance, SBOM attestations, linked artifacts uploads, and release verification are documented in [Artifact Attestations](./docs/security/artifact-attestations.md).
 
 ## Verifying Artifacts
 
@@ -156,12 +157,13 @@ Verification confirms:
 4. **Source** — The exact source code revision used to build the artifact is known
 5. **Build environment** — The workflow that produced the artifact is identified
 
-Detailed verification commands for binaries, container images, SBOM attestations, and SLSA provenance are documented in [Workflow Hardening: Verification Expectations](./docs/security/workflow-hardening.md#verification-expectations).
+Detailed verification commands for binaries, container images, SBOM attestations, and SLSA provenance are documented in [Artifact Attestations: Verification Expectations](./docs/security/artifact-attestations.md#verification-expectations).
 
 ## References
 
 Detailed reference lists for each topic are available in the companion documents:
 
 - [SLSA Framework references](./docs/security/slsa-compliance-framework.md#references)
-- [GitHub Security and Step Security references](./docs/security/workflow-hardening.md#references)
+- [GitHub Actions and Step Security references](./docs/security/workflow-hardening.md#references)
+- [Artifact attestation references](./docs/security/artifact-attestations.md#references)
 - [OSV Scanner and Additional Resources](./docs/security/dependency-security.md#references)

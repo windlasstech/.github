@@ -94,6 +94,7 @@ Implementation for this organization:
 - Use reusable workflow based artifact attestations when a supported SLSA builder is not a good fit
 - Use direct `actions/attest` provenance only as the baseline path when Build L3+ isolation is not yet feasible
 - Document the verification command and expected signer workflow for each release-producing repository
+- Follow the implementation guide in [Artifact Attestations](./artifact-attestations.md)
 
 ## SLSA Source Track Requirements
 
@@ -220,7 +221,7 @@ While two-party review is not possible with one person, the following compensati
 | **Automated security scanning** | Detect malicious patterns      | CodeQL, Semgrep, or similar tools scanning for suspicious code                                                       |
 | **Immutable audit trail**       | Enable post-hoc investigation  | Signed commits + GitHub audit logs provide tamper-evident history                                                    |
 | **External monitoring**         | Detect unauthorized changes    | OpenSSF Scorecard monitors branch protection and signed commits                                                      |
-| **Artifact attestations**       | Verify build integrity         | All releases include signed SLSA Build provenance                                                                    |
+| **Artifact attestations**       | Verify build integrity         | All releases follow [artifact attestation requirements](./artifact-attestations.md)                                  |
 
 If the organization grows to multiple trusted contributors, the following steps enable Source L4:
 
