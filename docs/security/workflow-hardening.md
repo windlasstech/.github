@@ -87,6 +87,39 @@ When adding or modifying workflows, contributors must:
    - Deployment branch policies
    - Wait timers where appropriate
 
+## OIDC and Cloud Authentication
+
+Use OpenID Connect (OIDC) for authentication to cloud providers instead of long-lived credentials stored as GitHub secrets. OIDC credentials are short-lived, scoped to the workflow identity, and controlled by provider-side trust policies.
+
+Supported providers:
+
+- AWS — `aws-actions/configure-aws-credentials`
+- Azure — `azure/login`
+- Google Cloud — `google-github-actions/auth`
+
+### AWS OIDC Example
+
+```yaml
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429c905ace6919b0a7664b96b2b5dc3c81 # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-deploy-role
+          aws-region: us-east-1
+
+      - name: Deploy
+        run: aws s3 sync ./dist s3://my-bucket/
+```
+
 ## Artifact Attestations
 
 All released artifacts that consumers run, install, deploy, or download must include cryptographically signed artifact attestations. Attestations establish provenance and integrity by linking the artifact to the repository, workflow, commit SHA, triggering event, build environment, and OIDC identity that produced it.
@@ -112,11 +145,51 @@ Artifact attestations are available for public repositories on current GitHub pl
 
 The organization default is to produce SLSA Build L3+ provenance wherever feasible. Choose the provenance path in this order:
 
-1. **SLSA GitHub Generator builder** — Use when the project ecosystem and release flow match a supported builder. This is the preferred path for L3+ provenance because the builder is a trusted reusable workflow that builds the artifact and generates provenance with stronger isolation.
-2. **Reusable workflow with `actions/attest`** — Use when a dedicated SLSA builder is not a good fit, but the build can be moved into a trusted reusable workflow. This follows GitHub's artifact-attestation path for SLSA Build L3 by isolating the build instructions in a reusable workflow and verifying the expected signer workflow.
-3. **Direct `actions/attest` in the release workflow** — Use only as the baseline provenance path when Build L3+ is not yet feasible. It still creates signed GitHub artifact attestations and satisfies the release provenance requirement, but it should not be described as the repository's L3+ implementation by itself.
+1. **SLSA GitHub Generator builder** — Use when a hosted builder can both build the artifact and generate provenance for the project's ecosystem.
+2. **SLSA GitHub Generator generator** — Use when the release workflow already builds the artifact and only needs SLSA provenance generation for an existing file or container image.
+3. **Reusable workflow with `actions/attest`** — Use when a dedicated SLSA builder or generator is not a good fit, but the build can be moved into a trusted reusable workflow.
+4. **Direct `actions/attest` in the release workflow** — Use only as the baseline provenance path when Build L3+ is not yet feasible.
 
-Direct `actions/attest` baseline example:
+#### SLSA GitHub Generator
+
+The [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) project provides both builders and generators. Builders perform the build and generate provenance together. Generators only generate provenance for artifacts that were already produced by the repository's release workflow. Prefer a builder when it fits the project ecosystem; use a generator when the build flow is too custom for a hosted builder or the artifact already exists.
+
+Available builders and generators:
+
+| Kind          | Target                             | Workflow                                                                                   | What it does                                                                                        | Status |
+| :------------ | :--------------------------------- | :----------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- | :----- |
+| **Builder**   | Go projects                        | `slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml`              | Builds and generates provenance                                                                     | Stable |
+| **Builder**   | Node.js/npm packages               | `slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml`          | Builds and generates provenance                                                                     | Beta   |
+| **Builder**   | Maven packages                     | `slsa-framework/slsa-github-generator/.github/workflows/builder_maven_slsa3.yml`           | Builds and generates provenance                                                                     | Beta   |
+| **Builder**   | Gradle projects                    | `slsa-framework/slsa-github-generator/.github/workflows/builder_gradle_slsa3.yml`          | Builds and generates provenance                                                                     | Beta   |
+| **Builder**   | Bazel projects                     | `slsa-framework/slsa-github-generator/.github/workflows/builder_bazel_slsa3.yml`           | Builds and generates provenance                                                                     | WIP    |
+| **Builder**   | Artifacts built inside a container | `slsa-framework/slsa-github-generator/.github/workflows/builder_container-based_slsa3.yml` | Runs a configured container build and generates provenance                                          | Beta   |
+| **Generator** | Existing file artifacts            | `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml`       | Generates provenance for arbitrary file-based artifacts, for any ecosystem and programming language | Stable |
+| **Generator** | Existing container images          | `slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml`     | Generate provenance for container images                                                            | Stable |
+
+> [!IMPORTANT]
+> SLSA builders and generators must be referenced by tag (e.g., `@v2.1.0`) for `slsa-verifier` to validate the trusted reusable workflow. This is an intentional exception to the SHA-pinning requirement.
+
+```yaml
+jobs:
+  build:
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.1.0
+    with:
+      go-version: "1.26"
+      # ... other inputs
+```
+
+#### Reusable Workflow Attestation
+
+Use this path when a dedicated SLSA builder or generator is not a good fit, but the build can be moved into a trusted reusable workflow. This follows GitHub's artifact-attestation path for SLSA Build L3 by isolating the build instructions in a reusable workflow and verifying the expected signer workflow.
+
+Generate the artifact and the `actions/attest` provenance inside the reusable workflow. Both the caller and reusable workflow must grant `contents: read`, `id-token: write`, and `attestations: write`; container builds also need `packages: write`. Verification policy must use `--signer-workflow`, and `--signer-repo` when the reusable workflow lives in another repository.
+
+#### Direct `actions/attest` Baseline
+
+Use direct `actions/attest` only when Build L3+ is not yet feasible. It still creates signed GitHub artifact attestations and satisfies the release provenance requirement, but it should not be described as the repository's SLSA Build L3+ implementation by itself.
+
+Direct baseline example:
 
 ```yaml
 - name: Generate artifact attestation
@@ -137,8 +210,6 @@ For container images, attest the image by digest and push the attestation to the
 ```
 
 The `subject-name` must be the fully qualified image name without a tag, and `subject-digest` must be the immutable `sha256:...` digest from the image build/push step. `push-to-registry: true` is required when the attestation should upload registry storage metadata to the linked artifacts page, and `actions/attest` supports that option only with `subject-name` plus `subject-digest`.
-
-For reusable workflow based L3 provenance, generate the artifact and the `actions/attest` provenance inside the reusable workflow. Both the caller and reusable workflow must grant `contents: read`, `id-token: write`, and `attestations: write`; container builds also need `packages: write`. Verification policy must use `--signer-workflow`, and `--signer-repo` when the reusable workflow lives in another repository.
 
 ### SBOM Attestations
 
@@ -321,48 +392,78 @@ If an artifact is not attested, or if deployment/runtime records must be uploade
 
 ### Verification Expectations
 
-Consumers verify build provenance with `gh attestation verify`. SBOM attestations must be verified with the SBOM predicate type, such as `https://spdx.dev/Document/v2.3` for SPDX SBOMs.
+Consumers verify build provenance with `gh attestation verify`. For reusable workflow builders, verification policy should pin the expected signing workflow with `--signer-workflow`, and use `--signer-repo` when the reusable workflow lives in a separate repository.
+
+Verification confirms:
+
+1. **Authenticity** — The artifact was built by the claimed repository
+2. **Integrity** — The artifact has not been tampered with since build
+3. **Provenance** — The artifact's build process is documented
+4. **Source** — The exact source code revision used to build the artifact is known
+5. **Build environment** — The workflow that produced the artifact is identified
+
+#### Install Verification Tools
 
 ```bash
-# Verify SPDX SBOM attestation
+# macOS
+brew install gh
+
+# Ubuntu/Debian
+sudo apt install gh
+
+# SLSA verifier for slsa-github-generator provenance
+go install github.com/slsa-framework/slsa-verifier/cli/slsa-verifier@v2.0.0
+```
+
+#### Verify Binary Attestations
+
+```bash
+# Verify a downloaded binary
+gh attestation verify ./my-artifact -R windlasstech/my-repo
+
+# Verify with a specific workflow
+gh attestation verify ./my-artifact \
+  -R windlasstech/my-repo \
+  --signer-workflow windlasstech/my-repo/.github/workflows/release.yml
+```
+
+#### Verify Container Image Attestations
+
+```bash
+# Verify a container image
+gh attestation verify oci://ghcr.io/windlasstech/my-image:latest \
+  -R windlasstech/my-repo
+
+# Verify by digest (recommended)
+gh attestation verify oci://ghcr.io/windlasstech/my-image@sha256:abc123... \
+  -R windlasstech/my-repo
+```
+
+#### Verify SBOM Attestations
+
+SBOM attestations must be verified with the SBOM predicate type, such as `https://spdx.dev/Document/v2.3` for SPDX SBOMs. Verify each published SBOM format separately:
+
+```bash
+# SPDX
 gh attestation verify ./my-artifact \
   -R windlasstech/my-repo \
   --predicate-type https://spdx.dev/Document/v2.3
 
-# Verify CycloneDX SBOM attestation
+# CycloneDX
 gh attestation verify ./my-artifact \
   -R windlasstech/my-repo \
   --predicate-type https://cyclonedx.org/bom
 ```
 
-For reusable workflow builders, verification policy should pin the expected signing workflow with `--signer-workflow`, and use `--signer-repo` when the reusable workflow lives in a separate repository.
+#### Verify SLSA Provenance
 
-## SLSA GitHub Generator
+For artifacts with SLSA provenance generated by slsa-github-generator:
 
-For language-specific builds, prefer the [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) when a supported builder fits the project. These builders are the organization's default path for SLSA Build L3+ provenance because they build the artifact and generate provenance inside a trusted reusable workflow.
-
-### Available Builders
-
-| Ecosystem   | Builder                                                                              | Status |
-| :---------- | :----------------------------------------------------------------------------------- | :----- |
-| Go          | `slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml`        | Stable |
-| Node.js/npm | `slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml`    | Beta   |
-| Maven       | `slsa-framework/slsa-github-generator/.github/workflows/builder_maven_slsa3.yml`     | Beta   |
-| Gradle      | `slsa-framework/slsa-github-generator/.github/workflows/builder_gradle_slsa3.yml`    | Beta   |
-| Generic     | `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml` | Stable |
-
-### Reference Requirements
-
-> [!IMPORTANT]
-> SLSA generators must be referenced by tag (e.g., `@v2.1.0`) for `slsa-verifier` to validate the trusted builder. This is an intentional exception to the SHA-pinning requirement.
-
-```yaml
-jobs:
-  build:
-    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.1.0
-    with:
-      go-version: "1.26"
-      # ... other inputs
+```bash
+slsa-verifier verify-artifact my-artifact \
+  --provenance-path my-artifact.intoto.jsonl \
+  --source-uri github.com/windlasstech/my-repo \
+  --source-tag v1.0.0
 ```
 
 ## References
@@ -372,6 +473,7 @@ jobs:
 - [GitHub Artifact Attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
 - [Using artifact attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations)
 - [Using artifact attestations and reusable workflows to achieve SLSA v1 Build Level 3](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/increase-security-rating)
+- [Enhance build security and reach SLSA Level 3 with GitHub Artifact Attestations](https://github.blog/enterprise-software/devsecops/enhance-build-security-and-reach-slsa-level-3-with-github-artifact-attestations/)
 - [GitHub Linked Artifacts](https://docs.github.com/en/code-security/concepts/supply-chain-security/linked-artifacts)
 - [Uploading storage and deployment data to the linked artifacts page](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/establish-provenance-and-integrity/upload-linked-artifacts)
 - [GitHub Reusable Workflows](https://docs.github.com/en/actions/sharing-automations/reusing-workflows)
