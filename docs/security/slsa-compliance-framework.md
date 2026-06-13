@@ -46,8 +46,8 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
     </tr>
     <tr>
       <td><strong>SLSA Source L3</strong></td>
-      <td>🎯 Target</td>
-      <td>Continuous technical controls on protected branches</td>
+      <td>🎯 Follow where feasible</td>
+      <td>Continuous technical controls on protected branches when practical</td>
     </tr>
     <tr>
       <td><strong>SLSA Source L4</strong></td>
@@ -58,7 +58,7 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
 </table>
 
 > [!NOTE]
-> SLSA v1.2 defines Build Track levels 0-3 and Source Track levels 1-4. Build L0 represents no SLSA guarantees. Source L4 requires two-party review and is not achievable for a single-person organization. See [Source Track Achievability for 1-Person Organizations](#source-track-achievability-for-1-person-organizations) for details.
+> SLSA v1.2 defines Build Track levels 0-3 and Source Track levels 1-4. Build L0 represents no SLSA guarantees. Source L4 requires two-party review and is not achievable for a single-person organization; see [the Source L4 section](#source-l4--two-party-review) for the structural limitation and compensating controls.
 
 ## SLSA Build Track Requirements
 
@@ -156,10 +156,40 @@ Implementation for this organization:
 
 - Repository rulesets protect `main` and release branches with required status checks
 - All PRs must pass CI checks (markdown lint, dependency review, scorecard) before merge
-- Required reviewers are enforced on all PRs to protected branches
+- Reviewer requirements are enforced on protected branches when independent review is feasible
 - Status checks include: OpenSSF Scorecard, Dependency Review, CodeQL, OSV Scanner
 - Branch protection requires signed commits
 - The organization documents all technical controls in this policy
+
+For a single-person organization, **Source L3 should be treated as a best-effort target rather than a guaranteed achievable level**. Repositories must follow Source L3 controls wherever feasible, but some controls depend on repository context and available trusted reviewers. In particular, independent human review is practical only when someone other than the last pusher can review the change; bot-authored PRs such as Dependabot updates may be easier to review independently than human-authored changes in a 1-person organization.
+
+Practical implementation controls:
+
+1. **Branch protection rulesets**
+   - Protect `main` and all release branches
+   - Require status checks to pass before merging
+   - Require signed commits
+   - Block force pushes
+   - Require pull request review when a trusted reviewer other than the last pusher is available
+   - For bot-authored PRs, such as Dependabot updates, perform human review before merging
+
+2. **Required status checks**
+   - OpenSSF Scorecard analysis
+   - Dependency Review
+   - CodeQL code scanning
+   - Markdown lint and format checks
+   - Any repository-specific test suites
+
+3. **Commit signing enforcement**
+   - Require all commits on protected branches to be signed
+   - Use Sigstore gitsign for keyless signing when possible
+   - Allow GPG or SSH signing as alternatives
+
+4. **Audit logging and ruleset governance**
+   - Enable GitHub audit logs for repository events
+   - Monitor for unexpected access patterns or policy violations
+   - Use organization-wide rulesets for consistency
+   - Document ruleset bypassers and bypass reasons
 
 ### Source L4 — Two-Party Review
 
@@ -177,75 +207,27 @@ Requirements:
 Achievability for this organization:
 
 - **Not achievable under a 1-person organization model.** Source L4 explicitly requires two distinct trusted persons for every change. A single individual cannot satisfy the "two-party" requirement by definition.
-- See [Source Track Achievability for 1-Person Organizations](#source-track-achievability-for-1-person-organizations) for mitigation strategies and alternative controls.
+- This is not a technical limitation but a structural requirement of the security model. The requirement exists to mitigate insider threats and unilateral changes.
 
-## Source Track Achievability for 1-Person Organizations
-
-### Maximum Achievable Level: Source L3
-
-For a single-person organization, **Source L3 is the maximum realistically achievable level** under the SLSA v1.2 specification. Source L4 is fundamentally incompatible with a 1-person model because it requires two distinct trusted persons to review every change.
-
-### Why Source L4 Is Not Achievable
-
-The SLSA Source L4 requirement for two-party review exists specifically to mitigate insider threats and unilateral changes. The specification states:
-
-> Changes in protected branches MUST be agreed to by two or more trusted persons prior to submission.
-
-A "trusted person" is defined as a human authorized by the organization to propose and approve changes. A single individual cannot simultaneously be two different trusted persons. This is not a technical limitation but a structural requirement of the security model.
-
-### Achieving Source L3: Practical Implementation
-
-A 1-person organization can achieve Source L3 by implementing the following controls using GitHub features:
-
-1. **Branch Protection Rulesets**
-   - Protect `main` and all release branches
-   - Require pull request reviews (even if self-reviewed, the mechanism is enforced)
-   - Require status checks to pass before merging
-   - Require signed commits
-   - Block force pushes
-
-2. **Required Status Checks**
-   - OpenSSF Scorecard analysis
-   - Dependency Review
-   - CodeQL code scanning
-   - Markdown lint and format checks
-   - Any repository-specific test suites
-
-3. **Commit Signing Enforcement**
-   - Require all commits on protected branches to be signed
-   - Use Sigstore gitsign for keyless signing (recommended)
-   - Alternative: GPG or SSH signing
-
-4. **Audit Logging**
-   - Enable GitHub audit logs for all repository events
-   - Monitor for unexpected access patterns or policy violations
-   - Export logs for long-term retention
-
-5. **Repository Rulesets (GitHub)**
-   - Use rulesets instead of legacy branch protection for granular control
-   - Apply rulesets organization-wide for consistency
-   - Require ruleset bypassers to be documented
-
-### Mitigating the Absence of Source L4
+## Mitigations and Transition Path
 
 While two-party review is not possible with one person, the following compensating controls reduce the risk of unilateral malicious changes:
 
-| Control                         | Purpose                       | Implementation                                                            |
-| :------------------------------ | :---------------------------- | :------------------------------------------------------------------------ |
-| **Self-review checklist**       | Force deliberate review       | Maintain a security checklist that must be completed before self-approval |
-| **Automated security scanning** | Detect malicious patterns     | CodeQL, Semgrep, or similar tools scanning for suspicious code            |
-| **Immutable audit trail**       | Enable post-hoc investigation | Signed commits + GitHub audit logs provide tamper-evident history         |
-| **External monitoring**         | Detect unauthorized changes   | OpenSSF Scorecard monitors branch protection and signed commits           |
-| **Artifact attestations**       | Verify build integrity        | All releases include signed SLSA Build provenance                         |
-
-## Transition Path to Source L4
+| Control                         | Purpose                        | Implementation                                                                                                       |
+| :------------------------------ | :----------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| **Review when feasible**        | Add independent human judgment | Require review by someone other than the last pusher whenever available; always review bot-authored PRs before merge |
+| **Self-review checklist**       | Force deliberate review        | Maintain a security checklist for cases where no independent reviewer is available                                   |
+| **Automated security scanning** | Detect malicious patterns      | CodeQL, Semgrep, or similar tools scanning for suspicious code                                                       |
+| **Immutable audit trail**       | Enable post-hoc investigation  | Signed commits + GitHub audit logs provide tamper-evident history                                                    |
+| **External monitoring**         | Detect unauthorized changes    | OpenSSF Scorecard monitors branch protection and signed commits                                                      |
+| **Artifact attestations**       | Verify build integrity         | All releases include signed SLSA Build provenance                                                                    |
 
 If the organization grows to multiple trusted contributors, the following steps enable Source L4:
 
 1. Add at least one additional trusted person with write access
 2. Configure branch protection to require 1 reviewer (GitHub minimum)
 3. Document the review policy requiring security-relevant review
-4. Maintain the existing Source L3 controls as baseline
+4. Convert feasible Source L3 controls into enforced baseline requirements
 5. Update this policy to reflect the new achievable level
 
 ## References
