@@ -38,9 +38,9 @@ The Code of Conduct is available in multiple languages:
 
 ### Issue and PR Templates
 
-| Template              | Location                                                                 | Purpose                                                                                    |
-| --------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| Pull Request Template | [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) | Standardized PR format with summary, change type, checklists for CI, testing, and security |
+| Template              | Location                                                                 | Purpose                                                                                                            |
+| --------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Pull Request Template | [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) | Standardized PR format with summary, change type, changelog decision, and checklists for CI, testing, and security |
 
 ### CI/CD Workflows
 
