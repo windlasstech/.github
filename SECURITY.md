@@ -74,12 +74,14 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
 
 ### At a Glance
 
-- Build L1/L2 required; Build L3 target
+- Build L1/L2 required; Build L3+ target wherever feasible
 - Source L1/L2 required; Source L3 target
 - Source L4 not achievable in a 1-person organization
 - SHA-pinned workflows, hardened runners, least-privilege permissions
 - Lockfiles committed, dependency review, OSV scanning
 - Signed commits, protected branches, OIDC, release integrity
+- Build provenance and SBOM attestations for released artifacts
+- Linked artifacts metadata for registry-published release artifacts
 
 ### Detailed Requirements
 
@@ -149,7 +151,12 @@ jobs:
 - **GPG-signed commits** — All commits on `main` must be GPG-signed (enforced by repository rulesets)
 - **Linear history** — Squash-merge-only policy prevents history rewriting; force-push to `main` is blocked
 - **CI gate** — All required status checks must pass before any merge to `main`
-- **Artifact attestations** — All released artifacts must include signed attestations
+- **SLSA Build L3+ provenance** — Released artifacts should use SLSA GitHub Generator builders or reusable workflow based attestation to produce hardened Build L3+ provenance wherever feasible
+- **Baseline build provenance attestations** — If an L3+ path is not available for a repository yet, released artifacts that consumers run, install, deploy, or download must still include signed provenance attestations
+- **SBOM attestations and release assets** — Released binaries and container images must include signed SPDX and CycloneDX SBOM attestations when the build can generate them, and public releases should publish the same SBOM files as release assets
+- **Linked artifacts metadata** — Registry-published release artifacts should upload storage metadata to GitHub's linked artifacts page through `actions/attest` or the artifact metadata API
+
+Workflow implementation requirements for provenance, SBOM attestations, and linked artifacts uploads are documented in [Workflow Hardening: Artifact Attestations](./docs/security/workflow-hardening.md#artifact-attestations).
 
 ## Verifying Artifacts
 
@@ -189,6 +196,22 @@ gh attestation verify oci://ghcr.io/windlass-tech/my-image:latest \
 # Verify by digest (recommended)
 gh attestation verify oci://ghcr.io/windlass-tech/my-image@sha256:abc123... \
   -R windlass-tech/my-repo
+```
+
+### Verify SBOM Attestations
+
+SBOM attestations require the SBOM predicate type. Verify each published SBOM format separately:
+
+```bash
+# SPDX
+gh attestation verify ./my-artifact \
+  -R windlass-tech/my-repo \
+  --predicate-type https://spdx.dev/Document/v2.3
+
+# CycloneDX
+gh attestation verify ./my-artifact \
+  -R windlass-tech/my-repo \
+  --predicate-type https://cyclonedx.org/bom
 ```
 
 ### Verify SLSA Provenance

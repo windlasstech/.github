@@ -88,6 +88,13 @@ Build L0 represents the absence of SLSA Build Track guarantees. No requirements 
 - Cache poisoning must be prevented between builds
 - All external interactions must be captured in provenance
 
+Implementation for this organization:
+
+- Prefer SLSA GitHub Generator builders when they fit the project ecosystem and release workflow
+- Use reusable workflow based artifact attestations when a supported SLSA builder is not a good fit
+- Use direct `actions/attest` provenance only as the baseline path when Build L3+ isolation is not yet feasible
+- Document the verification command and expected signer workflow for each release-producing repository
+
 ## SLSA Source Track Requirements
 
 The SLSA Source Track ensures the integrity and trustworthiness of source code throughout the development lifecycle. It provides increasing guarantees about how source revisions are created, managed, and protected.
