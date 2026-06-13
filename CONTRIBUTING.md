@@ -61,8 +61,9 @@ If your change depends on non-public backend behavior, open an issue first so ma
    - `fix/<short-description>`
    - `docs/<short-description>`
 5. Implement changes with tests/docs updates as needed.
-6. Ensure CI is green.
-7. Open a PR using the PR template.
+6. If the change is meaningful to users or downstream integrators, update `CHANGELOG.md` under `[Unreleased]` in the same PR.
+7. Ensure CI is green.
+8. Open a PR using the PR template, including the changelog category and user-facing note.
 
 > [!NOTE]
 > Please keep changes in each PR small and focused.
@@ -99,6 +100,32 @@ PRs implementing substantial changes without prior RFC discussion may be closed 
 - Use clear, structured commit messages.
 - Explain why the change is needed, not only what changed.
 - Link related issue(s) in the PR.
+
+### Changelog Management
+
+Projects in the organization should maintain a `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+Use changelog entries to summarize what users, operators, or downstream integrators need to know when upgrading. Do not generate changelog entries by listing commits.
+
+For every PR, complete the PR template's `Changelog` section:
+
+- **Category**: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`, or `None`
+- **User-facing note**: A short description of the impact, or why no note is needed
+
+Use `None` for changes with no direct user-facing impact, such as test cleanup, internal refactoring, formatting, or CI-only maintenance.
+
+During development:
+
+- Update only the `[Unreleased]` section when a PR has user-facing impact.
+- Group entries by `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, and `Security`.
+- Do not create empty category sections.
+
+For release PRs:
+
+- Move `[Unreleased]` entries into the new version section, for example `## [0.1.0] - 12026-06-13`.
+- Recreate an empty `[Unreleased]` section at the top.
+- Update comparison links at the bottom of `CHANGELOG.md`.
+- Use the finalized version section as the GitHub Release body.
 
 ### Versioning and Compatibility
 

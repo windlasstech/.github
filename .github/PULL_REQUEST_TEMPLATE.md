@@ -23,6 +23,33 @@
 - [ ] Breaking change
 - [ ] Other: <!-- describe -->
 
+## Changelog
+
+<!--
+Use this section to decide whether this PR needs a CHANGELOG.md update.
+
+Follow Keep a Changelog:
+- Write entries for meaningful user-facing changes, not raw commit history.
+- During development, update only the [Unreleased] section.
+- Group entries by category: Added, Changed, Deprecated, Removed, Fixed, Security.
+- Do not create empty category sections.
+- Use "None" for test cleanup, internal refactoring, CI-only changes, or other changes with no direct user-facing impact.
+
+For release PRs:
+- Move [Unreleased] entries into the new version section using Human Era five-digit years, e.g. ## [0.1.0] - 12026-06-13.
+- Recreate an empty [Unreleased] section at the top.
+- Update comparison links at the bottom.
+- Use the finalized version section as the GitHub Release body.
+-->
+
+- Category: Added / Changed / Deprecated / Removed / Fixed / Security / None
+- User-facing note:
+
+Changelog update:
+
+- [ ] `CHANGELOG.md` `[Unreleased]` updated
+- [ ] Not needed because this change is not user-facing
+
 ## Checklist
 
 ### General
@@ -64,7 +91,7 @@ Describe test evidence:
 
 - [ ] README updated
 - [ ] Spec/docs updated
-- [ ] Changelog/release notes updated (if needed)
+- [ ] Changelog decision completed above
 
 ## Rollout / Risk
 
