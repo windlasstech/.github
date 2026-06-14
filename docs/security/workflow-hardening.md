@@ -37,6 +37,7 @@ When adding or modifying workflows, contributors must:
 2. **Job-level elevation** — Grant additional permissions at the job level only when required:
    - `id-token: write` — Required for OIDC token generation
    - `attestations: write` — Required for artifact attestations
+   - `artifact-metadata: write` — Required to upload storage records to the organization's linked artifacts page
    - `packages: write` — Required for container registry pushes
    - `pull-requests: write` — Required for PR comments
 
@@ -69,6 +70,7 @@ When adding or modifying workflows, contributors must:
          contents: read
          id-token: write # Required for OIDC
          attestations: write # Required for attestations
+         artifact-metadata: write # Required for linked artifact storage records
          packages: write # Required for GHCR
        steps:
          - name: Harden the runner (Audit all outbound calls)
@@ -85,87 +87,50 @@ When adding or modifying workflows, contributors must:
    - Deployment branch policies
    - Wait timers where appropriate
 
-## Artifact Attestations
+## OIDC and Cloud Authentication
 
-All released artifacts must include cryptographically signed attestations establishing build provenance.
+Use OpenID Connect (OIDC) for authentication to cloud providers instead of long-lived credentials stored as GitHub secrets. OIDC credentials are short-lived, scoped to the workflow identity, and controlled by provider-side trust policies.
 
-### Required Permissions
+Supported providers:
 
-Workflows generating attestations require these permissions:
+- AWS — `aws-actions/configure-aws-credentials`
+- Azure — `azure/login`
+- Google Cloud — `google-github-actions/auth`
+
+### AWS OIDC Example
 
 ```yaml
 permissions:
-  id-token: write # Required for OIDC token to request signing certificate
-  attestations: write # Required to persist the attestation
-  contents: read # Required to read source code
-```
+  id-token: write
+  contents: read
 
-### Generating Attestations
-
-Use the `actions/attest` action to generate SLSA-compliant provenance:
-
-```yaml
-- name: Generate artifact attestation
-  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381 # v4.1.0
-  with:
-    subject-path: "${{ github.workspace }}/my-artifact"
-```
-
-For container images:
-
-```yaml
-- name: Generate container attestation
-  uses: actions/attest@61d634515b50b54366a3498d04742794e07fc381 # v4.1.0
-  with:
-    subject-name: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-    subject-digest: "${{ steps.build.outputs.digest }}"
-    push-to-registry: true
-```
-
-### Attestation Modes
-
-| Mode                     | Input                          | Description                                  |
-| ------------------------ | ------------------------------ | -------------------------------------------- |
-| **Provenance** (default) | `subject-path` only            | Auto-generates SLSA build provenance         |
-| **SBOM**                 | `sbom-path` provided           | Creates attestation from SPDX/CycloneDX SBOM |
-| **Custom**               | `predicate-type` + `predicate` | User-defined predicate                       |
-
-## SLSA GitHub Generator
-
-For language-specific builds, use the [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) to generate SLSA Build Level 3 provenance:
-
-### Available Builders
-
-| Ecosystem   | Builder                                                                              | Status |
-| ----------- | ------------------------------------------------------------------------------------ | ------ |
-| Go          | `slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml`        | Stable |
-| Node.js/npm | `slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml`    | Beta   |
-| Maven       | `slsa-framework/slsa-github-generator/.github/workflows/builder_maven_slsa3.yml`     | Beta   |
-| Gradle      | `slsa-framework/slsa-github-generator/.github/workflows/builder_gradle_slsa3.yml`    | Beta   |
-| Generic     | `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml` | Stable |
-
-### Reference Requirements
-
-> [!IMPORTANT]
-> SLSA generators must be referenced by tag (e.g., `@v2.1.0`) for `slsa-verifier` to validate the trusted builder. This is an intentional exception to the SHA-pinning requirement.
-
-```yaml
 jobs:
-  build:
-    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.1.0
-    with:
-      go-version: "1.26"
-      # ... other inputs
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429c905ace6919b0a7664b96b2b5dc3c81 # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-deploy-role
+          aws-region: us-east-1
+
+      - name: Deploy
+        run: aws s3 sync ./dist s3://my-bucket/
 ```
+
+## Release Artifact Integrity
+
+Release artifact provenance, SBOM attestations, linked artifacts uploads, and consumer verification commands are documented in [Artifact Attestations](./artifact-attestations.md).
+
+Use this workflow hardening guide for GitHub Actions permissions, SHA-pinning, runner security, and OIDC configuration. Use the artifact attestation guide for release artifact signing and verification requirements.
 
 ## References
 
 ### GitHub Security
 
-- [GitHub Artifact Attestations](https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds)
-- [GitHub Artifact Attestations - Increase Security](https://docs.github.com/en/actions/security-guides/using-artifact-attestations/increase-security-for-your-builds)
 - [GitHub Reusable Workflows](https://docs.github.com/en/actions/sharing-automations/reusing-workflows)
-- [actions/attest](https://github.com/actions/attest)
 - [GitHub Actions Security Hardening](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions)
 - [OIDC in GitHub Actions](https://docs.github.com/en/actions/security-guides/security-hardening-your-deployments/configuring-openid-connect-in-cloud-providers)
 
