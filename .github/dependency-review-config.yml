@@ -54,6 +54,8 @@ allow-licenses:
   # Public domain dedications (no attribution required)
   - CC0-1.0 # Creative Commons Zero - public domain dedication
   - Unlicense # The Unlicense - public domain dedication
+  # Google patent license for Go standard library dependencies
+  - LicenseRef-scancode-google-patent-license-golang # Google patent license for Go (BSD-3-Clause + patent grant)
   # Language-specific permissive licenses
   - Python-2.0 # Python Software Foundation License - permissive
   - PHP-3.01 # PHP License v3.01 - permissive
