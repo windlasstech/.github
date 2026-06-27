@@ -22,6 +22,23 @@ All GitHub Actions workflows enforce supply-chain protections:
 > [!NOTE] Exception for internal reusable workflows
 > Reusable workflows published from `windlasstech/.github` should be referenced by branch name (e.g., `@main`) instead of a commit SHA. This repository does not maintain semantic version tags, and Dependabot cannot propose updates for SHA-pinned references to internal reusable workflows. Adding tags or introducing an additional automation tool solely for this purpose would create more operational overhead than value. This exception applies only to Windlass-owned reusable workflows in this repository.
 
+## Workflow Linting
+
+Lint all workflow files with [`windlasstech/actionlint-hardened-action`](https://github.com/windlasstech/actionlint-hardened-action). This action runs [actionlint](https://github.com/rhysd/actionlint) from a SHA-pinned Docker image and checks for common workflow mistakes, invalid expressions, missing permissions, and insecure patterns.
+
+Add the action to CI after checkout:
+
+```yaml
+- name: Lint workflow files with actionlint
+  uses: windlasstech/actionlint-hardened-action@39b1442298202b328f0da62908b70c54ab6601b9 # v1.0.0
+  with:
+    paths: |
+      .github/workflows/*.yml
+      .github/workflows/*.yaml
+```
+
+For repository-wide workflow validation, include this step in the repository lint workflow so every workflow change is checked automatically.
+
 ## Runner Security
 
 - **Harden-runner** — Every job starts with [`step-security/harden-runner`](https://github.com/step-security/harden-runner) in audit mode (`egress-policy: audit`), logging all outbound network calls. This provides visibility into unexpected egress from CI runners.
