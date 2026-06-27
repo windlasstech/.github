@@ -61,3 +61,10 @@ jobs:
 
       - name: Lint Markdown with markdownlint
         run: bun run lint:md
+
+      - name: Lint workflow files with actionlint
+        uses: windlasstech/actionlint-hardened-action@39b1442298202b328f0da62908b70c54ab6601b9 # v1.0.0
+        with:
+          paths: |
+            .github/workflows/*.yml
+            .github/workflows/*.yaml
