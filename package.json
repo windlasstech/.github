@@ -11,8 +11,8 @@
     "format:check": "prettier --check \"**/*.{md,mdx,yml,yaml,json,jsonc,mjs}\""
   },
   "devDependencies": {
-    "lefthook": "^2.1.9",
+    "lefthook": "^2.1.10",
     "markdownlint-cli2": "^0.23.0",
-    "prettier": "^3.9.4"
+    "prettier": "^3.9.5"
   }
 }
