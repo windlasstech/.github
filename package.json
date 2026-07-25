@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "lefthook": "^2.1.10",
-    "markdownlint-cli2": "^0.23.0",
-    "prettier": "^3.9.5"
+    "markdownlint-cli2": "^0.23.1",
+    "prettier": "^3.9.6"
   }
 }
