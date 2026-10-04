@@ -78,7 +78,15 @@ allow-licenses:
 # Common use cases:
 #   - Internal packages without SPDX license
 #   - Packages with custom proprietary licenses
-allow-dependencies-licenses: []
+allow-dependencies-licenses:
+  # go-openapi/runtime: Apache-2.0 but bundles MIT-licensed naoina/denco router
+  # (middleware/denco), which GitHub reports as non-standard "LicenseRef-bad-apache-2.0-mit".
+  # Both Apache-2.0 and MIT are already on the allow-list.
+  - pkg:golang/github.com/go-openapi/runtime
+  # sassoftware/relic: Apache-2.0 but ContributorAgreement.txt embeds the DCO 1.1 text,
+  # which ScanCode reports as "LicenseRef-scancode-dco-1.1". DCO is a contributor
+  # certification document, not a software license.
+  - pkg:golang/github.com/sassoftware/relic/v8
 # Example:
 #   - pkg:npm/@windlass/internal-package
 #   - pkg:cargo/windlass-internal@1.0.0
