@@ -1,0 +1,20 @@
+.github/dependency-review-config.yml
+  s_32ea0f991e23fc::t_35544de7dcc857 85,89
+  s_32ea0f991e23fc::t_6838737f1336cf 81-84,86-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "33f3ebe770a8c905ccf3417b99c7ce4ec1fe8111",
+  "prompts": {},
+  "sessions": {
+    "s_32ea0f991e23fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_ef79baae9ffeTfTNuIrNox2ltx",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
