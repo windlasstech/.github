@@ -7,7 +7,7 @@ All GitHub Actions workflows enforce supply-chain protections:
 
 ## Action References
 
-- **SHA-pinned actions** — Every `uses:` reference is pinned to the full 40-character commit SHA (not a mutable tag like `@v4`). This prevents supply-chain attacks where a tag is silently repointed to a compromised commit. Dependabot keeps SHAs up to date automatically via weekly PRs.
+- **SHA-pinned actions**: Every `uses:` reference is pinned to the full 40-character commit SHA (not a mutable tag like `@v4`). This prevents supply-chain attacks where a tag is silently repointed to a compromised commit. Dependabot keeps SHAs up to date automatically via weekly PRs.
 
   Example:
 
@@ -21,6 +21,11 @@ All GitHub Actions workflows enforce supply-chain protections:
 
 > [!NOTE] Exception for internal reusable workflows
 > Reusable workflows published from `windlasstech/.github` should be referenced by branch name (e.g., `@main`) instead of a commit SHA. This repository does not maintain semantic version tags, and Dependabot cannot propose updates for SHA-pinned references to internal reusable workflows. Adding tags or introducing an additional automation tool solely for this purpose would create more operational overhead than value. This exception applies only to Windlass-owned reusable workflows in this repository.
+
+## Third-Party Action Selection
+
+- **StepSecurity Maintained Actions preferred**: When a third-party action is needed, check whether a [StepSecurity Maintained Action](https://docs.stepsecurity.io/github-actions/actions/stepsecurity-maintained-actions) replacement exists and prefer it. Maintained Actions are hardened, continuously monitored forks of popular community actions. The [StepSecurity Action Advisor](https://app.stepsecurity.io/action-advisor?tab=maintained) identifies which actions in a workflow have maintained replacements, and StepSecurity can open [automated pull requests that swap third-party actions for their maintained equivalents](https://www.stepsecurity.io/blog/replace-third-party-actions-with-stepsecurity-maintained-actions-via-automated-pull-requests).
+- SHA-pinning remains mandatory for all actions, including StepSecurity Maintained Actions.
 
 ## Workflow Linting
 
@@ -41,22 +46,34 @@ For repository-wide workflow validation, include this step in the repository lin
 
 ## Runner Security
 
-- **Harden-runner** — Every job starts with [`step-security/harden-runner`](https://github.com/step-security/harden-runner) in audit mode (`egress-policy: audit`), logging all outbound network calls. This provides visibility into unexpected egress from CI runners.
+- **Harden Runner (required, all repositories)**: Windlass uses StepSecurity Enterprise, so every job in every repository, public **and** private, must start with [`step-security/harden-runner`](https://github.com/step-security/harden-runner). The minimum permitted configuration is audit mode (`egress-policy: audit`), which logs all outbound network calls and provides visibility into unexpected egress from CI runners. Enterprise coverage removes the previous limitation where Harden Runner insights were unavailable on private repositories.
 
-- **Ephemeral environments** — All builds use fresh, isolated runners with no persistence between builds
+- **Recommended progression to block mode**: Once audit mode has established a baseline of a workflow's outbound destinations, switch to `egress-policy: block` with an `allowed-endpoints` allow-list so all egress traffic except the approved endpoints is blocked. Audit mode is the floor, not the target state:
+
+  ```yaml
+  - name: Harden the runner (Block all outbound calls except allowed endpoints)
+    uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+    with:
+      egress-policy: block
+      allowed-endpoints: >
+        api.github.com:443
+        github.com:443
+  ```
+
+- **Ephemeral environments**: All builds use fresh, isolated runners with no persistence between builds
 
 ## Permission Management
 
 When adding or modifying workflows, contributors must:
 
-1. **Explicit top-level permissions** — Set `permissions: {}` or minimal read-only permissions at the workflow level. This establishes a secure default that prevents accidental privilege escalation.
+1. **Explicit top-level permissions**: Set `permissions: {}` or minimal read-only permissions at the workflow level. This establishes a secure default that prevents accidental privilege escalation.
 
-2. **Job-level elevation** — Grant additional permissions at the job level only when required:
-   - `id-token: write` — Required for OIDC token generation
-   - `attestations: write` — Required for artifact attestations
-   - `artifact-metadata: write` — Required to upload storage records to the organization's linked artifacts page
-   - `packages: write` — Required for container registry pushes
-   - `pull-requests: write` — Required for PR comments
+2. **Job-level elevation**: Grant additional permissions at the job level only when required:
+   - `id-token: write`: Required for OIDC token generation
+   - `attestations: write`: Required for artifact attestations
+   - `artifact-metadata: write`: Required to upload storage records to the organization's linked artifacts page
+   - `packages: write`: Required for container registry pushes
+   - `pull-requests: write`: Required for PR comments
 
    Example:
 
@@ -73,7 +90,7 @@ When adding or modifying workflows, contributors must:
        # Inherits top-level permissions (read-only)
        steps:
          - name: Harden the runner (Audit all outbound calls)
-           uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+           uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
            with:
              egress-policy: audit
 
@@ -91,7 +108,7 @@ When adding or modifying workflows, contributors must:
          packages: write # Required for GHCR
        steps:
          - name: Harden the runner (Audit all outbound calls)
-           uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+           uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
            with:
              egress-policy: audit
 
@@ -99,7 +116,7 @@ When adding or modifying workflows, contributors must:
            uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
    ```
 
-3. **Environment protection** — Production deployments must use protected environments with:
+3. **Environment protection**: Production deployments must use protected environments with:
    - Required reviewers for approval
    - Deployment branch policies
    - Wait timers where appropriate
@@ -110,9 +127,9 @@ Use OpenID Connect (OIDC) for authentication to cloud providers instead of long-
 
 Supported providers:
 
-- AWS — `aws-actions/configure-aws-credentials`
-- Azure — `azure/login`
-- Google Cloud — `google-github-actions/auth`
+- AWS: `aws-actions/configure-aws-credentials`
+- Azure: `azure/login`
+- Google Cloud: `google-github-actions/auth`
 
 ### AWS OIDC Example
 
@@ -157,3 +174,6 @@ Use this workflow hardening guide for GitHub Actions permissions, SHA-pinning, r
 - [Step Security - Security Engineer Experience](https://docs.stepsecurity.io/security-engineer-experience)
 - [Step Security - Harden-Runner](https://docs.stepsecurity.io/harden-runner)
 - [Step Security - Secure Workflow](https://app.stepsecurity.io/secureworkflow)
+- [StepSecurity Maintained Actions](https://docs.stepsecurity.io/github-actions/actions/stepsecurity-maintained-actions)
+- [Replacing third-party actions with StepSecurity Maintained Actions via automated pull requests](https://www.stepsecurity.io/blog/replace-third-party-actions-with-stepsecurity-maintained-actions-via-automated-pull-requests)
+- [StepSecurity Action Advisor](https://app.stepsecurity.io/action-advisor?tab=maintained)
