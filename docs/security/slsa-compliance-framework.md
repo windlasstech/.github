@@ -58,15 +58,15 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
 </table>
 
 > [!NOTE]
-> SLSA v1.2 defines Build Track levels 0-3 and Source Track levels 1-4. Build L0 represents no SLSA guarantees. Source L4 requires two-party review and is not achievable for a single-person organization; see [the Source L4 section](#source-l4--two-party-review) for the structural limitation and compensating controls.
+> SLSA v1.2 defines Build Track levels 0-3 and Source Track levels 1-4. Build L0 represents no SLSA guarantees. Source L4 requires two-party review and is not achievable for a single-person organization; see [the Source L4 section](#source-l4-two-party-review) for the structural limitation and compensating controls.
 
 ## SLSA Build Track Requirements
 
-### Build L0 — No Guarantees
+### Build L0: No Guarantees
 
 Build L0 represents the absence of SLSA Build Track guarantees. No requirements are imposed. This is the default state for software that does not follow the SLSA Build Track.
 
-### Build L1 — Provenance Exists
+### Build L1: Provenance Exists
 
 - All builds must generate provenance describing:
   - Entity that performed the build
@@ -74,13 +74,13 @@ Build L0 represents the absence of SLSA Build Track guarantees. No requirements 
   - Top-level inputs (source repository, commit SHA, dependencies)
 - Provenance must be in SLSA format or equivalent
 
-### Build L2 — Hosted Build Platform
+### Build L2: Hosted Build Platform
 
 - All production builds must run on hosted CI/CD platforms (GitHub Actions)
 - Provenance must be cryptographically signed by the build platform
 - No local/developer workstation builds for releases
 
-### Build L3 — Hardened Builds
+### Build L3: Hardened Builds
 
 - Builds must run in isolated, ephemeral environments
 - Build steps cannot access platform signing keys
@@ -100,7 +100,7 @@ Implementation for this organization:
 
 The SLSA Source Track ensures the integrity and trustworthiness of source code throughout the development lifecycle. It provides increasing guarantees about how source revisions are created, managed, and protected.
 
-### Source L1 — Version Controlled
+### Source L1: Version Controlled
 
 The source is stored and managed through a modern version control system.
 
@@ -119,7 +119,7 @@ Implementation for this organization:
 - GitHub provides diff tooling for all changes
 - Repository rulesets enforce version control standards
 
-### Source L2 — History and Provenance
+### Source L2: History and Provenance
 
 Branch history is continuous, immutable, and retained. The source control system issues Source Provenance attestations for each new revision.
 
@@ -141,7 +141,7 @@ Implementation for this organization:
 - Tag protection rules prevent tag deletion and movement
 - Repository rulesets enforce signed commits on protected branches
 
-### Source L3 — Continuous Technical Controls
+### Source L3: Continuous Technical Controls
 
 The source control system enforces the organization's technical controls for specific named references within the repository.
 
@@ -192,7 +192,7 @@ Practical implementation controls:
    - Use organization-wide rulesets for consistency
    - Document ruleset bypassers and bypass reasons
 
-### Source L4 — Two-Party Review
+### Source L4: Two-Party Review
 
 Changes to protected branches require review and agreement by two or more trusted persons prior to submission.
 

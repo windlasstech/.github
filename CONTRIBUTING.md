@@ -101,11 +101,25 @@ PRs implementing substantial changes without prior RFC discussion may be closed 
 - Explain why the change is needed, not only what changed.
 - Link related issue(s) in the PR.
 
+### Documentation and Prose Conventions
+
+- Dates in human-facing documents: use Holocene Era / Human Era years for prose, changelog headings, ADR dates, and other human-reader dates (for example, `12026-06-23`). Machine-readable timestamps and protocol/schema fields, such as JSON `generated_at`, keep the applicable technical standard, normally ISO 8601 with a four-digit Gregorian year (for example, `2026-06-23T12:00:00Z`).
+- Em dashes: in English prose the em dash is grammatically valid, but prefer an alternative construction (comma, parentheses, colon, or a sentence split) when it offers no clear readability advantage. Keep the em dash where it is genuinely clearer, such as around an interjection that already contains parentheses or a comma-heavy list.
+
 ### Changelog Management
 
-Projects in the organization should maintain a `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+Projects in the organization should maintain a `CHANGELOG.md` following [Keep a Changelog 2.0.0](https://keepachangelog.com/en/2.0.0/). Pin the format link to the version you follow so it stays accurate as the specification evolves.
 
-Use changelog entries to summarize what users, operators, or downstream integrators need to know when upgrading. Do not generate changelog entries by listing commits.
+Use changelog entries to summarize what users, operators, or downstream integrators need to know when upgrading. Do not generate changelog entries by listing commits. Curate, don't accumulate: record notable changes only, written for the reader.
+
+File structure:
+
+- Open with a `# Changelog` heading and a short, fixed preamble stating what the file is, that the format is based on Keep a Changelog (pinned to 2.0.0), and which versioning scheme the project adheres to.
+- Keep an `[Unreleased]` section at the top to collect upcoming changes.
+- Start each version with its number and date, for example `## [0.1.0] - 12026-06-13`, and resolve each version heading as a reference-style comparison link at the bottom of the file.
+
+> [!NOTE]
+> Windlass deviation: Keep a Changelog 2.0.0 prescribes four-digit `YYYY-MM-DD` dates per ISO 8601. Windlass deliberately deviates by using Holocene Era five-digit years (`12026-06-13` rather than `2026-06-13`) in changelog headings and other human-facing dates. The five-digit form keeps the largest-to-smallest ISO 8601 field ordering; machine-readable timestamps stay four-digit ISO 8601 (see [Documentation and Prose Conventions](#documentation-and-prose-conventions)).
 
 For every PR, complete the PR template's `Changelog` section:
 
@@ -114,18 +128,35 @@ For every PR, complete the PR template's `Changelog` section:
 
 Use `None` for changes with no direct user-facing impact, such as test cleanup, internal refactoring, formatting, or CI-only maintenance.
 
+The six categories are fixed by the format — do not invent new ones (for example, there is no `Performance` or `Dependencies` type; describe the effect under the right existing type). Choosing between the ambiguous three: use `Fixed` when the old behavior was a bug, `Changed` when the old behavior was intentional and now works differently, and `Security` when the change addresses a vulnerability.
+
+Changelog categories describe changes relative to a previous release. While a project is pre-release and no earlier version exists, do not add categories that presuppose previously released behavior, such as `Fixed`: correcting unreleased behavior revises the relevant `[Unreleased]` entry text instead, and PRs whose changes are not user-facing use `None`.
+
 During development:
 
 - Update only the `[Unreleased]` section when a PR has user-facing impact.
 - Group entries by `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, and `Security`.
 - Do not create empty category sections.
+- Mark breaking changes inline with a `**Breaking:**` marker within `Changed` or `Removed`, and keep them with their type rather than collecting them in a separate section. State which interface breaks (CLI, API, protocol, file format, configuration schema); put substantial upgrade steps in a linked migration guide, not in the entry.
+- Record a dependency vulnerability fix under `Security` if the vulnerable package is a production dependency, or, even for `devDependencies`, if its exploitation could theoretically affect build or release artifacts (for example, code execution inside the test or release pipeline).
+- Lead a `Security` entry with its CVE identifier when one is assigned (`- CVE-XXXX-YYYY: ...`); when no CVE exists, lead with the applicable alternative identifier instead, such as a GHSA or a Go vulnerability database ID (`- GHSA-XXXX-XXXX-XXXX: ...`, `- GO-XXXX-YYYY: ...`). Link each leading identifier to its OSV entry, for example `- [CVE-2026-12345](https://osv.dev/vulnerability/CVE-2026-12345): out-of-bounds read when parsing malformed input.`
+- A version may open with a short optional summary paragraph on the theme of the release before the typed sections.
+- Announce deprecations before acting on them: mark a feature `Deprecated` in one release and `Removed` only in a later one, naming the version that will remove it.
+- List yanked releases rather than hiding them, and mark them like `## [0.0.5] - 12014-12-13 [YANKED]`.
+- You may fix a changelog after release (a missed entry, an unrecorded breaking change); when you do, note the date the entry was updated.
 
 For release PRs:
 
 - Move `[Unreleased]` entries into the new version section, for example `## [0.1.0] - 12026-06-13`.
-- Recreate an empty `[Unreleased]` section at the top.
+- Recreate an empty `[Unreleased]` section at the top, pointing at `HEAD`.
 - Update comparison links at the bottom of `CHANGELOG.md`.
-- Use the finalized version section as the GitHub Release body.
+- Use the finalized version section as the GitHub Release body. The changelog is the canonical record; derive release notes from it rather than maintaining two documents. Host-generated release notes live in the host's database, not your repository. Treat them as output, never as the source.
+
+Automation and AI assistance:
+
+- Machines can draft, but humans curate. An AI tool may draft entries from a diff, but a maintainer must decide what is notable, group it, and write it for the reader before merge.
+- If coding agents work on the repository, record the changelog brief (summarize notable user-facing changes; sort into the six types; mark breaking changes; drop anything not worth reading) where agents read it, such as `AGENTS.md`.
+- Conventional Commits and CI tooling play a supporting role: they may propose versions or check formatting, but a changelog edit must never be a required check on every PR; that fills the changelog with noise.
 
 ### Versioning and Compatibility
 
@@ -140,7 +171,8 @@ When contributing workflow changes or release-related code, you **must** follow 
 Key requirements include:
 
 - **SHA-pinned actions**: All `uses:` references in GitHub Actions workflows must be pinned to the full 40-character commit SHA (add `# vX.Y.Z` comment for readability).
-- **Harden-runner**: Every job must start with `step-security/harden-runner` in audit mode.
+- **Harden Runner (StepSecurity Enterprise)**: Every job in every repository, public or private, must start with `step-security/harden-runner`, at minimum in audit mode (`egress-policy: audit`). Once a workflow's baseline of outbound destinations is established, switching to `egress-policy: block` with an `allowed-endpoints` allow-list is recommended.
+- **StepSecurity Maintained Actions**: When a third-party action is needed, prefer the [StepSecurity Maintained Action](https://docs.stepsecurity.io/github-actions/actions/stepsecurity-maintained-actions) replacement where one exists.
 - **GPG-signed commits**: All commits must be GPG-signed.
 - **Job-level permissions**: Prefer job-level `permissions` over top-level `permissions`.
 

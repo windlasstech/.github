@@ -86,7 +86,7 @@ The Rust ecosystem has unique characteristics affecting cooldown strategy:
 
 1. **Strict SemVer Compliance**: Cargo enforces SemVer strictly. Minor updates are generally safer than in npm, but the community tends toward conservatism.
 
-2. **Cargo Yank Mechanism**: Yanked crates remain available for existing `Cargo.lock` but prevent new adoption. Cooldowns work synergistically—malicious versions can be yanked before PRs are created.
+2. **Cargo Yank Mechanism**: Yanked crates remain available for existing `Cargo.lock` but prevent new adoption. Cooldowns work synergistically: malicious versions can be yanked before PRs are created.
 
 3. **Recent Attack Patterns** (March 2026): Five malicious crates (`chrono_anchor`, `dnp3times`, etc.) targeted CI/CD environments to exfiltrate `.env` files. Cooldowns provide critical detection window.
 
@@ -157,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
         with:
           egress-policy: audit
 
@@ -196,7 +196,7 @@ Use an allow-list approach for license compliance. Reference a centralized confi
     config-file: "windlasstech/.github/.github/dependency-review-config.yml@main"
 ```
 
-**Standard allow-licenses list:**
+**Standard allow-licenses list** (mirrors the centralized configuration):
 
 ```yaml
 allow-licenses:
@@ -210,12 +210,46 @@ allow-licenses:
   # Public domain dedications (no attribution required)
   - CC0-1.0 # Creative Commons Zero - public domain dedication
   - Unlicense # The Unlicense - public domain dedication (not "unlicensed")
+  # Google patent license for Go standard library dependencies
+  - LicenseRef-scancode-google-patent-license-golang # Google patent license for Go (BSD-3-Clause + patent grant)
   # Language-specific permissive licenses
   - Python-2.0 # Python Software Foundation License - permissive
+  - PHP-3.01 # PHP License v3.01 - permissive
+  - Ruby # Ruby License - permissive
 ```
 
 > [!NOTE]
 > License identifiers must be SPDX-compliant. For licenses detected as `OTHER`, use `LicenseRef-clearlydefined-OTHER` in allow/deny lists.
+
+`LicenseRef-scancode-google-patent-license-golang` is allowed because Go toolchain dependencies such as `golang.org/x/sys` and `golang.org/x/term` are licensed `BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang`. The Google patent grant is a permissive patent clause, not a restrictive license, so it must not block otherwise-compliant Go dependencies.
+
+#### Package-Scoped License Exemptions
+
+When a package's detected license expression contains a false-positive `LicenseRef-*` but the underlying licenses are all on the allow-list, exempt the **package** via `allow-dependencies-licenses` instead of adding the `LicenseRef-*` to `allow-licenses`. Package scoping keeps the policy tight: GitHub-internal identifiers such as `LicenseRef-bad-*` are unstable and could appear on arbitrary packages, so widening the global allow-list for them would silently weaken enforcement.
+
+Current organization-wide exemptions in the centralized configuration:
+
+| Package purl (all versions)                  | Reported expression                          | Rationale                                                                                                                           |
+| :------------------------------------------- | :------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `pkg:golang/github.com/go-openapi/runtime`   | `LicenseRef-bad-apache-2.0-mit`              | Apache-2.0, but bundles the MIT-licensed `naoina/denco` router; both Apache-2.0 and MIT are allow-listed                            |
+| `pkg:golang/github.com/sassoftware/relic/v8` | `Apache-2.0 AND LicenseRef-scancode-dco-1.1` | Apache-2.0; `ContributorAgreement.txt` embeds the DCO 1.1 text, which ScanCode classifies as a CLA document, not a software license |
+
+Exemption policy:
+
+- Prefer package-scoped `allow-dependencies-licenses` entries over widening `allow-licenses` for unstable or non-standard `LicenseRef-*` detections.
+- Document the ground truth for each exemption (upstream `LICENSE` files, ScanCode LicenseDB classification) in a comment next to the entry.
+- Leave versions unpinned (`purl` without `@version`) so future Dependabot bumps do not re-trip the check. Trade-off: a genuinely non-permissive license introduced in a future version of an exempted package would not be flagged. Re-review exemptions when upstream packaging changes.
+- Because consumer repositories reference the centralized configuration via `@main`, every change to it takes effect organization-wide on merge; review exemption changes accordingly.
+
+Exemptions are declared in the centralized configuration, [`.github/dependency-review-config.yml`](../../.github/dependency-review-config.yml), using purl format with a rationale comment per entry:
+
+```yaml
+allow-dependencies-licenses:
+  # <package>: <why the detected expression is a false positive; upstream ground truth>
+  - pkg:golang/github.com/go-openapi/runtime
+  # <package>: <why the detected expression is a false positive; upstream ground truth>
+  - pkg:golang/github.com/sassoftware/relic/v8
+```
 
 ### Permissions Requirements
 
@@ -261,8 +295,8 @@ The [OSV Scanner](https://google.github.io/osv-scanner/) workflow detects known 
 
 ### Recommended Defaults
 
-- `upload-sarif: true` — upload results to the repository's code scanning dashboard
-- `fail-on-vuln: true` — fail the workflow when vulnerabilities are found
+- `upload-sarif: true`: upload results to the repository's code scanning dashboard
+- `fail-on-vuln: true`: fail the workflow when vulnerabilities are found
 - `scan-args` defaulting to `--recursive ./` for automatic lockfile detection
 
 Repository-specific overrides are supported:

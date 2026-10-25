@@ -26,10 +26,10 @@ Artifact attestations are available for public repositories on current GitHub pl
 
 The organization default is to produce SLSA Build L3+ provenance wherever feasible. Choose the provenance path in this order:
 
-1. **SLSA GitHub Generator builder** — Use when a hosted builder can both build the artifact and generate provenance for the project's ecosystem.
-2. **SLSA GitHub Generator generator** — Use when the release workflow already builds the artifact and only needs SLSA provenance generation for an existing file or container image. For most custom release workflows, start with the [generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md).
-3. **Reusable workflow with `actions/attest`** — Use when a dedicated SLSA builder or generator is not a good fit, but the build can be moved into a trusted reusable workflow.
-4. **Direct `actions/attest` in the release workflow** — Use only as the baseline provenance path when Build L3+ is not yet feasible.
+1. **SLSA GitHub Generator builder**: Use when a hosted builder can both build the artifact and generate provenance for the project's ecosystem.
+2. **SLSA GitHub Generator generator**: Use when the release workflow already builds the artifact and only needs SLSA provenance generation for an existing file or container image. For most custom release workflows, start with the [generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md).
+3. **Reusable workflow with `actions/attest`**: Use when a dedicated SLSA builder or generator is not a good fit, but the build can be moved into a trusted reusable workflow.
+4. **Direct `actions/attest` in the release workflow**: Use only as the baseline provenance path when Build L3+ is not yet feasible.
 
 ### SLSA GitHub Generator
 
@@ -323,11 +323,11 @@ Consumers verify build provenance with `gh attestation verify`. For reusable wor
 
 Verification confirms:
 
-1. **Authenticity** — The artifact was built by the claimed repository
-2. **Integrity** — The artifact has not been tampered with since build
-3. **Provenance** — The artifact's build process is documented
-4. **Source** — The exact source code revision used to build the artifact is known
-5. **Build environment** — The workflow that produced the artifact is identified
+1. **Authenticity**: The artifact was built by the claimed repository
+2. **Integrity**: The artifact has not been tampered with since build
+3. **Provenance**: The artifact's build process is documented
+4. **Source**: The exact source code revision used to build the artifact is known
+5. **Build environment**: The workflow that produced the artifact is identified
 
 ### Install Verification Tools
 
