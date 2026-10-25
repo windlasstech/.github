@@ -1,0 +1,27 @@
+.github/workflows/lint.yml
+  s_1546e9276bc70c::t_4262a9a99a8892 27-28
+  s_1546e9276bc70c::t_d676cd4d0afbab 3
+.github/workflows/autofix.yml
+  s_1546e9276bc70c::t_36b324eda9a7dd 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d091ac865ec83ee6b0b70bb6b78e6762d06232b9",
+  "prompts": {},
+  "humans": {
+    "h_495200fbbeca45": {
+      "author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  },
+  "sessions": {
+    "s_1546e9276bc70c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e8ba3ee3fffe14Z40mzaBLjg6y",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
