@@ -1,0 +1,48 @@
+name: Lint
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
+      - ".markdownlint-cli2.*"
+      - ".github/actionlint.yml"
+      - ".github/actionlint.yaml"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
+      - ".markdownlint-cli2.*"
+      - ".github/actionlint.yml"
+      - ".github/actionlint.yaml"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Lint Markdown with markdownlint-cli2
+        uses: step-security/markdownlint-cli2-action@47642322847569917c6eceacb91e6c37cbd0f9fb # 24.2.0
+        with:
+          config: .markdownlint-cli2.jsonc
+          globs: "**/*.md"
+
+      - name: Lint workflow files with actionlint
+        uses: windlasstech/actionlint-hardened-action@043a16f2538fe7bee89d8e19bbd5292e925210e0 # v1.0.0
+        with:
+          paths: |
+            .github/workflows/*.yml
+            .github/workflows/*.yaml
