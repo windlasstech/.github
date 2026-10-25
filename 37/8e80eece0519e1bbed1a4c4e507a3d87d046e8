@@ -1,0 +1,16 @@
+.github/workflows/autofix.yml
+  h_495200fbbeca45 1,10,13-14,26,29-30,36-38,40-41,43-45,55,57-58,60-61,63
+.github/workflows/lint.yml
+  h_495200fbbeca45 1-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "378e80eece0519e1bbed1a4c4e507a3d87d046e8",
+  "prompts": {},
+  "humans": {
+    "h_495200fbbeca45": {
+      "author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
