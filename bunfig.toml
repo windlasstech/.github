@@ -1,0 +1,22 @@
+telemetry = false
+
+[fmt]
+printWidth = 100
+semi = false
+trailingComma = "all"
+proseWrap = "always"
+sortImports = true
+
+[install]
+# Only install package versions published at least 3 days ago
+minimumReleaseAge = 259200 # seconds
+
+[install.lockfile]
+save = true
+
+[install.security]
+scanner = "@socketsecurity/bun-security-scanner"
+
+[run]
+# equivalent to `bun --bun` for all `bun run` commands
+bun = true

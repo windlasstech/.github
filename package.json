@@ -2,17 +2,29 @@
   "name": "windlass-github",
   "description": "Centralized documents and information for the Windlass",
   "private": true,
+  "devEngines": {
+    "runtime": {
+      "name": "bun",
+      "version": "^1.4.4",
+      "onFail": "download"
+    },
+    "packageManager": {
+      "name": "bun",
+      "version": "^1.4.4",
+      "onFail": "download"
+    }
+  },
   "scripts": {
     "prepare": "bunx lefthook install",
     "lint": "bun run lint:md && bun run format:check",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/*.mdx\"",
     "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"**/*.mdx\"",
-    "format": "prettier --write \"**/*.{md,mdx,yml,yaml,json,jsonc,mjs}\"",
-    "format:check": "prettier --check \"**/*.{md,mdx,yml,yaml,json,jsonc,mjs}\""
+    "format": "bun fmt \"**/*.{md,mdx,yml,yaml,json,jsonc,mjs}\"",
+    "format:check": "bun fmt --check \"**/*.{md,mdx,yml,yaml,json,jsonc,mjs}\""
   },
   "devDependencies": {
+    "@socketsecurity/bun-security-scanner": "^1.1.3",
     "lefthook": "^2.2.2",
-    "markdownlint-cli2": "^0.24.0",
-    "prettier": "^3.9.10"
+    "markdownlint-cli2": "^0.24.0"
   }
 }
