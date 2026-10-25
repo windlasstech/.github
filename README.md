@@ -322,8 +322,8 @@ because they are tightly coupled to this repository's specific tooling stack:
 - **Linting tools**: Assumes `markdownlint-cli2` and Bun's built-in formatter (`bun fmt`)
 - **Configuration files**: Expects `.markdownlint-cli2.jsonc` and `bunfig.toml` to exist at
   repository root
-- **Scripts**: Calls `bun run lint:md` and `bun run format`, which are defined in this repo's
-  `package.json`
+- **Scripts**: `autofix.yml` calls `bun run format` from this repo's `package.json`; `lint.yml` uses
+  the markdownlint-cli2 and actionlint actions directly
 - **GitHub App**: `autofix.yml` additionally requires the autofix.ci GitHub App to be installed on
   the repository
 
@@ -384,6 +384,6 @@ bunx lefthook run pre-commit
 
 #### CI/CD
 
-Pull requests and pushes to `main` that modify Markdown, YAML, JSON/JSONC, workflow, lockfile, or
-tooling configuration files trigger blocking lint checks via the Lint workflow, while autofix.ci
-automatically applies `bun fmt` formatting fixes.
+Pull requests and pushes to `main` that modify Markdown or workflow files trigger blocking lint
+checks via the Lint workflow. autofix.ci automatically applies `bun fmt` formatting fixes to
+Markdown, YAML, JSON/JSONC, lockfile, and tooling configuration files.

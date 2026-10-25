@@ -2,15 +2,16 @@
   "name": "windlass-github",
   "description": "Centralized documents and information for the Windlass",
   "private": true,
+  "packageManager": "bun@1.4.4",
   "devEngines": {
     "runtime": {
       "name": "bun",
-      "version": "^1.4.4",
+      "version": "1.4.4",
       "onFail": "download"
     },
     "packageManager": {
       "name": "bun",
-      "version": "^1.4.4",
+      "version": "1.4.4",
       "onFail": "download"
     }
   },

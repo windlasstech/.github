@@ -34,6 +34,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Lint Markdown with markdownlint-cli2
         uses: step-security/markdownlint-cli2-action@47642322847569917c6eceacb91e6c37cbd0f9fb # 24.2.0

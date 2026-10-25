@@ -22,13 +22,13 @@ All GitHub Actions workflows enforce supply-chain protections:
   - uses: actions/checkout@v6
   ```
 
-> [!NOTE]  
-> Exception for internal reusable workflows Reusable workflows published from `windlasstech/.github`
-> should be referenced by branch name (e.g., `@main`) instead of a commit SHA. This repository does
-> not maintain semantic version tags, and Dependabot cannot propose updates for SHA-pinned
-> references to internal reusable workflows. Adding tags or introducing an additional automation
-> tool solely for this purpose would create more operational overhead than value. This exception
-> applies only to Windlass-owned reusable workflows in this repository.
+> [!NOTE] Exception for internal reusable workflows  
+> Reusable workflows published from `windlasstech/.github` should be referenced by branch name
+> (e.g., `@main`) instead of a commit SHA. This repository does not maintain semantic version tags,
+> and Dependabot cannot propose updates for SHA-pinned references to internal reusable workflows.
+> Adding tags or introducing an additional automation tool solely for this purpose would create more
+> operational overhead than value. This exception applies only to Windlass-owned reusable workflows
+> in this repository.
 
 ## Third-Party Action Selection
 
@@ -54,7 +54,7 @@ Add the action to CI after checkout:
 
 ```yaml
 - name: Lint workflow files with actionlint
-  uses: windlasstech/actionlint-hardened-action@39b1442298202b328f0da62908b70c54ab6601b9 # v1.0.0
+  uses: windlasstech/actionlint-hardened-action@043a16f2538fe7bee89d8e19bbd5292e925210e0 # v1.0.0
   with:
     paths: |
       .github/workflows/*.yml

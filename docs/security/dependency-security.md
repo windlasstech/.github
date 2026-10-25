@@ -165,10 +165,13 @@ documented, narrow exception path for emergency patches — Bun package/exact-ve
 `npmPreapprovedPackages`; where a manager offers no per-package exception (for example npm), the
 emergency path is a reviewed config change that is reverted immediately after the hotfix lands
 (Renovate needs no installer exception because it is a bot, not an install-time gate). Exceptions
-must be approved by a maintainer, scoped to a specific package and version, and time-boxed. These
-exceptions do not expire on their own: the approving maintainer must record a removal date (for
-example in the PR or issue that introduced the exception) and delete the entry once the fixed
-release has aged past the gate. Never disable a gate globally to land a hotfix.
+must be approved by a maintainer, scoped to a specific package and version where the mechanism
+allows, and time-boxed. Note that Poetry's `min-release-age-exclude` exempts every version of the
+package rather than one release, so for package-wide exceptions the recorded removal date is the
+only version control — keep those windows especially short. These exceptions do not expire on their
+own: the approving maintainer must record a removal date (for example in the PR or issue that
+introduced the exception) and delete the entry once the fixed release has aged past the gate. Never
+disable a gate globally to land a hotfix.
 
 pip, Cargo, Go modules, Maven/Gradle, NuGet, and Composer have no native release-age gate (Python
 repositories using uv are covered by the gate above). For repositories in those ecosystems,
