@@ -1,0 +1,14 @@
+.github/dependabot.yml
+  h_495200fbbeca45 28,50-51,84-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b68c15764fcb2dfa1801aa4e5d26f73f21ea2b69",
+  "prompts": {},
+  "humans": {
+    "h_495200fbbeca45": {
+      "author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
