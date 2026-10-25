@@ -145,6 +145,8 @@ bunx lefthook run pre-commit
 - Uses hard-runner audit mode, SHA-pinned actions
 - `SECURITY.md` has full supply chain integrity requirements
 - OSV Scanner reusable workflows support all ecosystems JS/Python/Go/Rust/Java/.NET/PHP
+- Consumer repos: `lint.yml`/`autofix.yml` are reference starting points, not reusable;
+  `osv-scanner-smoke.yml` is the reference consumer for the reusable OSV workflows
 
 ## cubic review workflow
 

@@ -55,7 +55,7 @@ The Code of Conduct is available in multiple languages:
 | Scorecard         | [`.github/workflows/scorecard-reusable.yml`](./.github/workflows/scorecard-reusable.yml)                 | Reusable workflow for OpenSSF Scorecard supply-chain security analysis |   Yes    |
 | OSV Scanner PR    | [`.github/workflows/osv-scanner-pr-reusable.yml`](./.github/workflows/osv-scanner-pr-reusable.yml)       | Reusable workflow for PR diff vulnerability scans                      |   Yes    |
 | OSV Scanner Full  | [`.github/workflows/osv-scanner-full-reusable.yml`](./.github/workflows/osv-scanner-full-reusable.yml)   | Reusable workflow for full repository vulnerability scans              |   Yes    |
-| OSV Scanner Smoke | [`.github/workflows/osv-scanner-smoke.yml`](./.github/workflows/osv-scanner-smoke.yml)                   | Validates OSV Scanner integration in this repository                   |    No    |
+| OSV Scanner Smoke | [`.github/workflows/osv-scanner-smoke.yml`](./.github/workflows/osv-scanner-smoke.yml)                   | Validates the reusable OSV workflows; reference consumer example       |    No    |
 
 ## How Organization-Wide Files Work
 
@@ -148,6 +148,13 @@ jobs:
       security-events: write
     uses: windlasstech/.github/.github/workflows/osv-scanner-full-reusable.yml@<pin-sha>
 ```
+
+#### Reference Consumer
+
+This repository dogfoods both reusable workflows in
+[`.github/workflows/osv-scanner-smoke.yml`](./.github/workflows/osv-scanner-smoke.yml). Consult the
+smoke workflow as a working reference when wiring the PR diff scan and full scan into your own
+repository, including the required job permissions and `scan-args` overrides.
 
 #### Multi-Ecosystem Support
 
@@ -322,6 +329,10 @@ because they are tightly coupled to this repository's specific tooling stack:
 
 Consumer repositories using different package managers (npm, yarn, pnpm) or different linting
 configurations should implement their own repository linting workflow tailored to their stack.
+
+That said, consumer repositories rarely need to start from a blank page: in many cases this
+repository's two workflows are a good starting point. Copy `lint.yml` and `autofix.yml` and adapt
+the tool installation, scripts, and trigger paths to your own stack.
 
 ## Development
 

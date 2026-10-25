@@ -362,6 +362,10 @@ jobs:
     uses: windlasstech/.github/.github/workflows/osv-scanner-pr-reusable.yml@<pin-sha>
 ```
 
+The `.github` repository dogfoods both reusable workflows in its
+[`osv-scanner-smoke.yml`](../../.github/workflows/osv-scanner-smoke.yml) workflow. Consult it as a
+working reference consumer when wiring the PR diff scan and full scan into your own repository.
+
 ## References
 
 ### Dependency Review
