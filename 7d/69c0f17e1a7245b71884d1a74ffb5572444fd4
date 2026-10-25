@@ -1,0 +1,30 @@
+docs/security/dependency-security.md
+  s_1546e9276bc70c::t_c0dc58dfefa70f 129
+  s_1546e9276bc70c::t_9c1a4d7159646c 49-53
+  s_1546e9276bc70c::t_e73ba6affcbb6a 60-67
+  s_1546e9276bc70c::t_be584d8ad72514 138-141,145-167
+  s_1546e9276bc70c::t_35a774a70b5ea3 424-434
+  s_1546e9276bc70c::t_9013bba6e49e43 142-144
+  s_1546e9276bc70c::t_23803d14ab5339 435
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7d69c0f17e1a7245b71884d1a74ffb5572444fd4",
+  "prompts": {},
+  "humans": {
+    "h_495200fbbeca45": {
+      "author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  },
+  "sessions": {
+    "s_1546e9276bc70c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e8ba3ee3fffe14Z40mzaBLjg6y",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
