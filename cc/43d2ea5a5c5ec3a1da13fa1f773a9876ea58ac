@@ -1,0 +1,27 @@
+README.md
+  s_f9ef5d2aa6bdaa::t_e7c7b6b31ae0e1 11
+  s_f9ef5d2aa6bdaa::t_a80f248028f035 95-97
+  s_f9ef5d2aa6bdaa::t_ea5d8d36f41a71 19
+  s_f9ef5d2aa6bdaa::t_aca17833f18e4e 318-319
+docs/security/artifact-attestations.md
+  s_f9ef5d2aa6bdaa::t_9fd0d6cce066de 29-32,326-330
+docs/security/slsa-compliance-framework.md
+  s_f9ef5d2aa6bdaa::t_7ad4e3d45b3ce8 65,69,77,83,103,122,144,195
+  s_f9ef5d2aa6bdaa::t_000790dc63d6e4 61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cc43d2ea5a5c5ec3a1da13fa1f773a9876ea58ac",
+  "prompts": {},
+  "sessions": {
+    "s_f9ef5d2aa6bdaa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e8c7e6733ffeDhS5G8yr3iUKPb",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
