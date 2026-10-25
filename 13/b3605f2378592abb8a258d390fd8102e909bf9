@@ -1,0 +1,33 @@
+docs/security/workflow-hardening.md
+  s_f9ef5d2aa6bdaa::t_f3373cdae87ed2 52-61
+  s_f9ef5d2aa6bdaa::t_87271cbe2edf22 10,27,49-51,63,69,71-76,119,130-132
+  s_f9ef5d2aa6bdaa::t_e45b3ce595b45a 25-26,28-29
+  s_f9ef5d2aa6bdaa::t_2459c6762475cc 93,111
+  s_f9ef5d2aa6bdaa::t_459c0127eee5a0 177-179
+SECURITY.md
+  s_8ba39a10460531::t_6094ed1a57c5f1 27,47,114,133-134,140-147,157-161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "13b3605f2378592abb8a258d390fd8102e909bf9",
+  "prompts": {},
+  "sessions": {
+    "s_8ba39a10460531": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e8c7e6733ffeDhS5G8yr3iUKPb",
+        "model": "k3"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    },
+    "s_f9ef5d2aa6bdaa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e8c7e6733ffeDhS5G8yr3iUKPb",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
