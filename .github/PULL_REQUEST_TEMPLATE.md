@@ -28,18 +28,20 @@
 <!--
 Use this section to decide whether this PR needs a CHANGELOG.md update.
 
-Follow Keep a Changelog:
+Follow Keep a Changelog 2.0.0 (https://keepachangelog.com/en/2.0.0/):
 - Write entries for meaningful user-facing changes, not raw commit history.
 - During development, update only the [Unreleased] section.
 - Group entries by category: Added, Changed, Deprecated, Removed, Fixed, Security.
 - Do not create empty category sections.
+- Mark breaking changes inline with a **Breaking:** marker within Changed or Removed.
+- Lead Security entries with the CVE identifier when one exists.
 - Use "None" for test cleanup, internal refactoring, CI-only changes, or other changes with no direct user-facing impact.
 
 For release PRs:
 - Move [Unreleased] entries into the new version section using Human Era five-digit years, e.g. ## [0.1.0] - 12026-06-13.
-- Recreate an empty [Unreleased] section at the top.
+- Recreate an empty [Unreleased] section at the top, pointing at HEAD.
 - Update comparison links at the bottom.
-- Use the finalized version section as the GitHub Release body.
+- Use the finalized version section as the GitHub Release body; the changelog file remains the canonical record.
 -->
 
 - Category: Added / Changed / Deprecated / Removed / Fixed / Security / None
