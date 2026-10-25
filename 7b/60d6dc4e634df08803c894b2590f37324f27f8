@@ -1,0 +1,19 @@
+CONTRIBUTING.md
+  s_f9ef5d2aa6bdaa::t_6b31a2c1ab354f 122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7b60d6dc4e634df08803c894b2590f37324f27f8",
+  "prompts": {},
+  "sessions": {
+    "s_f9ef5d2aa6bdaa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e8c7e6733ffeDhS5G8yr3iUKPb",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
