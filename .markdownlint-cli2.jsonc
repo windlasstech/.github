@@ -33,7 +33,6 @@
     "MD049": false,
     "MD050": false,
     "MD060": false,
-    "MD070": false,
   },
   "ignores": ["node_modules/**"],
 }

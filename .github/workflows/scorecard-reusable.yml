@@ -23,7 +23,9 @@ on:
         type: boolean
         default: true
       repo-token:
-        description: "Fine-grained PAT token for Branch-Protection check on public repos or private repo installation"
+        description:
+          "Fine-grained PAT token for Branch-Protection check on public repos or private repo
+          installation"
         required: false
         type: string
         default: ""
@@ -60,7 +62,9 @@ jobs:
     name: Scorecard analysis
     runs-on: ubuntu-latest
     # `publish_results: true` only works when run from the default branch. conditional can be removed if disabled.
-    if: github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request'
+    if:
+      github.event.repository.default_branch == github.ref_name || github.event_name ==
+      'pull_request'
     permissions:
       # Needed for Scorecard to read repository contents.
       contents: read

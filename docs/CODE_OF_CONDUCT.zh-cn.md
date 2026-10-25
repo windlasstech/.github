@@ -2,7 +2,10 @@
 
 # 贡献者公约
 
-[English](../CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | 简体中文 | [日本語](CODE_OF_CONDUCT.ja.md) | [Español](CODE_OF_CONDUCT.es.md) | [Deutsch](CODE_OF_CONDUCT.de.md) | [Français](CODE_OF_CONDUCT.fr.md) | [বাংলা](CODE_OF_CONDUCT.bn.md) | [Magyar](CODE_OF_CONDUCT.hu.md)
+[English](../CODE_OF_CONDUCT.md) | [한국어](CODE_OF_CONDUCT.ko.md) | 简体中文 |
+[日本語](CODE_OF_CONDUCT.ja.md) | [Español](CODE_OF_CONDUCT.es.md) |
+[Deutsch](CODE_OF_CONDUCT.de.md) | [Français](CODE_OF_CONDUCT.fr.md) |
+[বাংলা](CODE_OF_CONDUCT.bn.md) | [Magyar](CODE_OF_CONDUCT.hu.md)
 
 </div>
 
@@ -49,7 +52,8 @@
 
 即使社区成员之间尽其所能地合作，也仍然可能发生矛盾。并不是所有冲突都涉及违反行为准则，本准则旨在强化受鼓励的行为与规范，它们有助于预防冲突并将伤害降到最低。
 
-当事件发生时，及时报告非常重要。要报告可能的违规行为，**请发送电子邮件至 [oss-conduct@windlasstech.com](mailto:oss-conduct@windlasstech.com)**。
+当事件发生时，及时报告非常重要。要报告可能的违规行为，**请发送电子邮件至
+[oss-conduct@windlasstech.com](mailto:oss-conduct@windlasstech.com)**。
 
 社区管理员会严肃对待违规报告，并尽力及时回应。将对所有违反行为准则的报告展开调查，方式包括查阅消息、日志及录音，或访谈证人及其他相关参与人。社区管理员在优先保障安全与保密性的前提下，会尽可能保持调查与执行过程的透明度。为践行这些价值观，执行措施会在涉事各方的私下环境中进行，但如经各方同意，将事件通报全体社区也可以作为解决方案的一部分。
 
@@ -84,6 +88,8 @@
 
 本行为准则改编自 贡献者公约 3.0 版，该公约永久可在此查阅：[https://www.contributor-covenant.org/version/3/0/](https://www.contributor-covenant.org/version/3/0/)。
 
-贡献者公约 由 Organization for Ethical Source 负责维护，并以 CC BY-SA 4.0 许可协议发布。查看该许可协议请访问：[https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/)。
+贡献者公约 由 Organization for Ethical Source 负责维护，并以 CC BY-SA
+4.0 许可协议发布。查看该许可协议请访问：[https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/)。
 
-关于 贡献者公约 的常见问题解答，请参阅：[https://www.contributor-covenant.org/faq](https://www.contributor-covenant.org/faq)。各语言版本译文请见：[https://www.contributor-covenant.org/translations](https://www.contributor-covenant.org/translations)。更多执行与社区指南资源请见：[https://www.contributor-covenant.org/resources](https://www.contributor-covenant.org/resources)。本分级措施的灵感来源于 [Mozilla 行为准则团队](https://github.com/mozilla/inclusion) 的工作。
+关于 贡献者公约 的常见问题解答，请参阅：[https://www.contributor-covenant.org/faq](https://www.contributor-covenant.org/faq)。各语言版本译文请见：[https://www.contributor-covenant.org/translations](https://www.contributor-covenant.org/translations)。更多执行与社区指南资源请见：[https://www.contributor-covenant.org/resources](https://www.contributor-covenant.org/resources)。本分级措施的灵感来源于
+[Mozilla 行为准则团队](https://github.com/mozilla/inclusion) 的工作。

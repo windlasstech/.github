@@ -1,11 +1,16 @@
 # Artifact Attestations
 
-> [!NOTE]
-> This page is part of the Windlass organization security policy. Start with [SECURITY.md](../../SECURITY.md).
+> [!NOTE]  
+> This page is part of the Windlass organization security policy. Start with
+> [SECURITY.md](../../SECURITY.md).
 
-All released artifacts that consumers run, install, deploy, or download must include cryptographically signed artifact attestations. Attestations establish provenance and integrity by linking the artifact to the repository, workflow, commit SHA, triggering event, build environment, and OIDC identity that produced it.
+All released artifacts that consumers run, install, deploy, or download must include
+cryptographically signed artifact attestations. Attestations establish provenance and integrity by
+linking the artifact to the repository, workflow, commit SHA, triggering event, build environment,
+and OIDC identity that produced it.
 
-Do not attest every test-only build or individual source/documentation files. Attest release binaries, packages, container images, and manifests that identify released contents by digest.
+Do not attest every test-only build or individual source/documentation files. Attest release
+binaries, packages, container images, and manifests that identify released contents by digest.
 
 ## Required Permissions
 
@@ -18,22 +23,42 @@ permissions:
   contents: read # Required to read source code
 ```
 
-SLSA GitHub Generator jobs use a reusable workflow instead of `actions/attest`. Generic generator jobs require `actions: read`, `id-token: write`, and `contents: write` when uploading provenance to a GitHub Release. Container image release jobs also require `packages: write` when pushing to GHCR or another registry. Jobs that should appear on the organization's linked artifacts page must also include `artifact-metadata: write`.
+SLSA GitHub Generator jobs use a reusable workflow instead of `actions/attest`. Generic generator
+jobs require `actions: read`, `id-token: write`, and `contents: write` when uploading provenance to
+a GitHub Release. Container image release jobs also require `packages: write` when pushing to GHCR
+or another registry. Jobs that should appear on the organization's linked artifacts page must also
+include `artifact-metadata: write`.
 
-Artifact attestations are available for public repositories on current GitHub plans. Private or internal repositories require GitHub Enterprise Cloud. GitHub Enterprise Server does not support artifact attestations.
+Artifact attestations are available for public repositories on current GitHub plans. Private or
+internal repositories require GitHub Enterprise Cloud. GitHub Enterprise Server does not support
+artifact attestations.
 
 ## Build Provenance Attestations
 
-The organization default is to produce SLSA Build L3+ provenance wherever feasible. Choose the provenance path in this order:
+The organization default is to produce SLSA Build L3+ provenance wherever feasible. Choose the
+provenance path in this order:
 
-1. **SLSA GitHub Generator builder**: Use when a hosted builder can both build the artifact and generate provenance for the project's ecosystem.
-2. **SLSA GitHub Generator generator**: Use when the release workflow already builds the artifact and only needs SLSA provenance generation for an existing file or container image. For most custom release workflows, start with the [generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md).
-3. **Reusable workflow with `actions/attest`**: Use when a dedicated SLSA builder or generator is not a good fit, but the build can be moved into a trusted reusable workflow.
-4. **Direct `actions/attest` in the release workflow**: Use only as the baseline provenance path when Build L3+ is not yet feasible.
+1. **SLSA GitHub Generator builder**: Use when a hosted builder can both build the artifact and
+   generate provenance for the project's ecosystem.
+2. **SLSA GitHub Generator generator**: Use when the release workflow already builds the artifact
+   and only needs SLSA provenance generation for an existing file or container image. For most
+   custom release workflows, start with the
+   [generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md).
+3. **Reusable workflow with `actions/attest`**: Use when a dedicated SLSA builder or generator is
+   not a good fit, but the build can be moved into a trusted reusable workflow.
+4. **Direct `actions/attest` in the release workflow**: Use only as the baseline provenance path
+   when Build L3+ is not yet feasible.
 
 ### SLSA GitHub Generator
 
-The [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator) project provides both builders and generators. Builders perform the build and generate provenance together. Generators only generate provenance for artifacts that were already produced by the repository's release workflow. Prefer a builder when it fits the project ecosystem; use a generator when the build flow is too custom for a hosted builder or the artifact already exists. In practice, the [generic generator](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md) is the most likely fit for repositories that already have bespoke build and release jobs.
+The [slsa-framework/slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator)
+project provides both builders and generators. Builders perform the build and generate provenance
+together. Generators only generate provenance for artifacts that were already produced by the
+repository's release workflow. Prefer a builder when it fits the project ecosystem; use a generator
+when the build flow is too custom for a hosted builder or the artifact already exists. In practice,
+the
+[generic generator](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md)
+is the most likely fit for repositories that already have bespoke build and release jobs.
 
 Available builders and generators:
 
@@ -48,8 +73,10 @@ Available builders and generators:
 | **Generator** | Existing file artifacts            | `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml`       | Generates provenance for arbitrary file-based artifacts, for any ecosystem and programming language | Stable |
 | **Generator** | Existing container images          | `slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml`     | Generate provenance for container images                                                            | Stable |
 
-> [!IMPORTANT]
-> SLSA builders and generators must be referenced by tag (e.g., `@v2.1.0`) for `slsa-verifier` to validate the trusted reusable workflow. This is an intentional exception to the SHA-pinning requirement.
+> [!IMPORTANT]  
+> SLSA builders and generators must be referenced by tag (e.g., `@v2.1.0`) for `slsa-verifier` to
+> validate the trusted reusable workflow. This is an intentional exception to the SHA-pinning
+> requirement.
 
 Builder example:
 
@@ -64,7 +91,10 @@ jobs:
 
 Generic generator example for existing file artifacts:
 
-Before adapting this pattern, read the [SLSA GitHub Generator generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md) for the latest supported triggers, inputs, outputs, private repository caveats, and `base64-subjects-as-file` guidance.
+Before adapting this pattern, read the
+[SLSA GitHub Generator generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md)
+for the latest supported triggers, inputs, outputs, private repository caveats, and
+`base64-subjects-as-file` guidance.
 
 ```yaml
 jobs:
@@ -102,17 +132,29 @@ jobs:
       upload-assets: true
 ```
 
-The generic generator expects `base64-subjects` to decode to `sha256sum`-formatted lines, such as `SHA256 artifact-name`. For many artifacts or runner masking issues, follow the [generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md) and write the checksums to a file, then pass it with `base64-subjects-as-file` using the SLSA helper action.
+The generic generator expects `base64-subjects` to decode to `sha256sum`-formatted lines, such as
+`SHA256 artifact-name`. For many artifacts or runner masking issues, follow the
+[generic generator README](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/generic/README.md)
+and write the checksums to a file, then pass it with `base64-subjects-as-file` using the SLSA helper
+action.
 
 ### Reusable Workflow Attestation
 
-Use this path when a dedicated SLSA builder or generator is not a good fit, but the build can be moved into a trusted reusable workflow. This follows GitHub's artifact-attestation path for SLSA Build L3 by isolating the build instructions in a reusable workflow and verifying the expected signer workflow.
+Use this path when a dedicated SLSA builder or generator is not a good fit, but the build can be
+moved into a trusted reusable workflow. This follows GitHub's artifact-attestation path for SLSA
+Build L3 by isolating the build instructions in a reusable workflow and verifying the expected
+signer workflow.
 
-Generate the artifact and the `actions/attest` provenance inside the reusable workflow. Both the caller and reusable workflow must grant `contents: read`, `id-token: write`, and `attestations: write`; container builds also need `packages: write`. Verification policy must use `--signer-workflow`, and `--signer-repo` when the reusable workflow lives in another repository.
+Generate the artifact and the `actions/attest` provenance inside the reusable workflow. Both the
+caller and reusable workflow must grant `contents: read`, `id-token: write`, and
+`attestations: write`; container builds also need `packages: write`. Verification policy must use
+`--signer-workflow`, and `--signer-repo` when the reusable workflow lives in another repository.
 
 ### Direct `actions/attest` Baseline
 
-Use direct `actions/attest` only when Build L3+ is not yet feasible. It still creates signed GitHub artifact attestations and satisfies the release provenance requirement, but it should not be described as the repository's SLSA Build L3+ implementation by itself.
+Use direct `actions/attest` only when Build L3+ is not yet feasible. It still creates signed GitHub
+artifact attestations and satisfies the release provenance requirement, but it should not be
+described as the repository's SLSA Build L3+ implementation by itself.
 
 Direct baseline example:
 
@@ -134,19 +176,36 @@ For container images, attest the image by digest and push the attestation to the
     push-to-registry: true
 ```
 
-The `subject-name` must be the fully qualified image name without a tag, and `subject-digest` must be the immutable `sha256:...` digest from the image build/push step. `push-to-registry: true` is required when the attestation should upload registry storage metadata to the linked artifacts page, and `actions/attest` supports that option only with `subject-name` plus `subject-digest`.
+The `subject-name` must be the fully qualified image name without a tag, and `subject-digest` must
+be the immutable `sha256:...` digest from the image build/push step. `push-to-registry: true` is
+required when the attestation should upload registry storage metadata to the linked artifacts page,
+and `actions/attest` supports that option only with `subject-name` plus `subject-digest`.
 
 ## SBOM Attestations
 
-Released binaries and container images must also have SBOM attestations when the build can produce them. Prefer generating both SPDX and CycloneDX SBOMs because downstream consumers and scanners do not all accept the same format. Generate each SBOM during the release workflow, then run one `actions/attest` step per SBOM file with `sbom-path`.
+Released binaries and container images must also have SBOM attestations when the build can produce
+them. Prefer generating both SPDX and CycloneDX SBOMs because downstream consumers and scanners do
+not all accept the same format. Generate each SBOM during the release workflow, then run one
+`actions/attest` step per SBOM file with `sbom-path`.
 
-`actions/attest` accepts a single JSON-formatted SPDX or CycloneDX SBOM file per attestation. Each SBOM file must be 16 MB or smaller and cannot be combined with custom `predicate-type`, `predicate`, or `predicate-path` inputs in the same step.
+`actions/attest` accepts a single JSON-formatted SPDX or CycloneDX SBOM file per attestation. Each
+SBOM file must be 16 MB or smaller and cannot be combined with custom `predicate-type`, `predicate`,
+or `predicate-path` inputs in the same step.
 
-This policy requires released artifacts to include provenance and SBOM attestations. `anchore/sbom-action` is only the example SBOM generator used in this document. Projects may use another SBOM generation tool if it produces valid SPDX or CycloneDX JSON for `actions/attest` or an equivalent attestation workflow.
+This policy requires released artifacts to include provenance and SBOM attestations.
+`anchore/sbom-action` is only the example SBOM generator used in this document. Projects may use
+another SBOM generation tool if it produces valid SPDX or CycloneDX JSON for `actions/attest` or an
+equivalent attestation workflow.
 
-When a project uses a different SBOM generator, configure workflow permissions and tool-specific settings according to that tool's requirements. The permission examples below apply to `anchore/sbom-action`; other tools may need different read, write, registry, or release permissions.
+When a project uses a different SBOM generator, configure workflow permissions and tool-specific
+settings according to that tool's requirements. The permission examples below apply to
+`anchore/sbom-action`; other tools may need different read, write, registry, or release permissions.
 
-For public releases, generate local SBOM files for attestation and publish the same SBOM files as release assets whenever possible. Attestation provides cryptographic binding to the released artifact. Release assets make the SBOMs easy to download for auditors, license review, offline storage, and third-party scanners. Release asset uploads do not create linked artifacts storage records by themselves.
+For public releases, generate local SBOM files for attestation and publish the same SBOM files as
+release assets whenever possible. Attestation provides cryptographic binding to the released
+artifact. Release assets make the SBOMs easy to download for auditors, license review, offline
+storage, and third-party scanners. Release asset uploads do not create linked artifacts storage
+records by themselves.
 
 ### SBOM Permissions by Purpose
 
@@ -159,7 +218,10 @@ Use the narrowest permissions that match the release job's behavior:
 | Release asset upload                       | `actions: read`, `contents: write`                                            | Needed so Anchore can read workflow artifacts and write release assets. Grant only on release jobs.    |
 | Release asset upload plus attestation      | `actions: read`, `contents: write`, `id-token: write`, `attestations: write`  | Add `packages: write` for container registry pushes and `artifact-metadata: write` for linked records. |
 
-`anchore/sbom-action` defaults to `upload-artifact: true` and `upload-release-assets: true`. If the SBOM is only an intermediate file for `actions/attest`, disable both upload behaviors explicitly. If the workflow is creating a GitHub Release, leave release publishing enabled and grant `actions: read` plus `contents: write` at the job level.
+`anchore/sbom-action` defaults to `upload-artifact: true` and `upload-release-assets: true`. If the
+SBOM is only an intermediate file for `actions/attest`, disable both upload behaviors explicitly. If
+the workflow is creating a GitHub Release, leave release publishing enabled and grant
+`actions: read` plus `contents: write` at the job level.
 
 Binary example:
 
@@ -259,22 +321,35 @@ Container image example:
     push-to-registry: true
 ```
 
-SBOM attestations do not replace vulnerability scanning. They provide signed dependency metadata that consumers and auditors can verify alongside build provenance.
+SBOM attestations do not replace vulnerability scanning. They provide signed dependency metadata
+that consumers and auditors can verify alongside build provenance.
 
 ## Linked Artifacts Page Uploads
 
-For container images and other registry-published release artifacts, workflows should upload storage metadata to the organization's linked artifacts page so security and compliance reviewers can trace artifacts to their source repository, build run, storage location, attestations, and deployment context.
+For container images and other registry-published release artifacts, workflows should upload storage
+metadata to the organization's linked artifacts page so security and compliance reviewers can trace
+artifacts to their source repository, build run, storage location, attestations, and deployment
+context.
 
-The `actions/attest` action automatically creates a linked artifacts storage record when both conditions are true:
+The `actions/attest` action automatically creates a linked artifacts storage record when both
+conditions are true:
 
 - `push-to-registry: true` is set on the attestation step
 - The job has `artifact-metadata: write`
 
-For `actions/attest`, `push-to-registry: true` requires `subject-name` and `subject-digest`. Use it for container images and other registry artifacts that have a fully qualified registry name and immutable digest. Do not add `push-to-registry: true` to file-path attestations that use `subject-path`; those attestations are still valid, but they do not create linked artifacts storage records through `actions/attest`.
+For `actions/attest`, `push-to-registry: true` requires `subject-name` and `subject-digest`. Use it
+for container images and other registry artifacts that have a fully qualified registry name and
+immutable digest. Do not add `push-to-registry: true` to file-path attestations that use
+`subject-path`; those attestations are still valid, but they do not create linked artifacts storage
+records through `actions/attest`.
 
-Storage record creation is enabled by default when `push-to-registry: true` is set. Set `create-storage-record: false` only when the artifact must not appear on the linked artifacts page. Storage records can be created only for artifacts built from organization-owned repositories.
+Storage record creation is enabled by default when `push-to-registry: true` is set. Set
+`create-storage-record: false` only when the artifact must not appear on the linked artifacts page.
+Storage records can be created only for artifacts built from organization-owned repositories.
 
-For non-registry release assets that still need linked artifacts metadata, use the artifact metadata REST API or an approved integration instead of forcing `push-to-registry` into a file-path attestation.
+For non-registry release assets that still need linked artifacts metadata, use the artifact metadata
+REST API or an approved integration instead of forcing `push-to-registry` into a file-path
+attestation.
 
 Recommended container release pattern:
 
@@ -305,11 +380,14 @@ steps:
       push-to-registry: true
 ```
 
-If an artifact is not attested, or if deployment/runtime records must be uploaded, use the artifact metadata REST API or an approved integration such as JFrog Artifactory, Dynatrace, or Microsoft Defender for Cloud. Linked artifacts records store metadata only; they do not store artifact files.
+If an artifact is not attested, or if deployment/runtime records must be uploaded, use the artifact
+metadata REST API or an approved integration such as JFrog Artifactory, Dynatrace, or Microsoft
+Defender for Cloud. Linked artifacts records store metadata only; they do not store artifact files.
 
 ## `actions/attest` Attestation Modes
 
-These modes apply only to `actions/attest` usage. SLSA GitHub Generator workflows use `base64-subjects` or `base64-subjects-as-file` instead.
+These modes apply only to `actions/attest` usage. SLSA GitHub Generator workflows use
+`base64-subjects` or `base64-subjects-as-file` instead.
 
 | Mode                     | Input                          | Description                                  |
 | :----------------------- | :----------------------------- | :------------------------------------------- |
@@ -319,7 +397,9 @@ These modes apply only to `actions/attest` usage. SLSA GitHub Generator workflow
 
 ## Verification Expectations
 
-Consumers verify build provenance with `gh attestation verify`. For reusable workflow builders, verification policy should pin the expected signing workflow with `--signer-workflow`, and use `--signer-repo` when the reusable workflow lives in a separate repository.
+Consumers verify build provenance with `gh attestation verify`. For reusable workflow builders,
+verification policy should pin the expected signing workflow with `--signer-workflow`, and use
+`--signer-repo` when the reusable workflow lives in a separate repository.
 
 Verification confirms:
 
@@ -368,7 +448,8 @@ gh attestation verify oci://ghcr.io/windlasstech/my-image@sha256:abc123... \
 
 ### Verify SBOM Attestations
 
-SBOM attestations must be verified with the SBOM predicate type, such as `https://spdx.dev/Document/v2.3` for SPDX SBOMs. Verify each published SBOM format separately:
+SBOM attestations must be verified with the SBOM predicate type, such as
+`https://spdx.dev/Document/v2.3` for SPDX SBOMs. Verify each published SBOM format separately:
 
 ```bash
 # SPDX
