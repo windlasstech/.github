@@ -1,7 +1,6 @@
 name: Lint
 
-permissions:
-  contents: read
+permissions: {}
 
 on:
   pull_request:
@@ -25,6 +24,8 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2

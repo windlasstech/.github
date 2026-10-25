@@ -31,8 +31,7 @@ on:
       - "bun.lock"
       - "package.json"
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   autofix:
