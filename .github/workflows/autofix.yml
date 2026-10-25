@@ -12,8 +12,7 @@ on:
       - "**/*.jsonc"
       - "**/*.mjs"
       - ".github/workflows/autofix.yml"
-      - ".prettierignore"
-      - ".prettierrc"
+      - ".editorconfig"
       - "bun.lock"
       - "package.json"
   push:
@@ -28,8 +27,7 @@ on:
       - "**/*.jsonc"
       - "**/*.mjs"
       - ".github/workflows/autofix.yml"
-      - ".prettierignore"
-      - ".prettierrc"
+      - ".editorconfig"
       - "bun.lock"
       - "package.json"
 
