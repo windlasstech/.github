@@ -1,0 +1,18 @@
+.github/workflows/lint.yml
+  h_495200fbbeca45 1-48
+.github/workflows/autofix.yml
+  h_495200fbbeca45 1,10,13-14,26,29-30,36-38,40-41,43-45,55,57-58,60-61,63
+.omo/run-continuation/ses_e8ba3ee3fffe14Z40mzaBLjg6y.json
+  h_495200fbbeca45 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "981cb216121d6f82fb6bb9a79bcb6acc3329395c",
+  "prompts": {},
+  "humans": {
+    "h_495200fbbeca45": {
+      "author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
