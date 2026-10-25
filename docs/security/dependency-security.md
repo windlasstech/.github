@@ -46,20 +46,26 @@ Cooldown periods delay version update PRs to allow community vetting of new rele
 supply chain attacks by providing time for malicious packages to be detected and yanked before
 adoption.
 
+**Organization baseline: a uniform 7-day minimum release age across all ecosystems.** This is a
+floor, not a target — the longer windows in the table below remain recommended where listed. The
+baseline is a deliberate conservative choice — OpenSSF guidance suggests ~3 days and several package
+managers default to 1 day — and it satisfies the Semgrep cooldown rules, which all require at least
+7 days. SemVer-major updates use 14 days as an explicit organizational choice.
+
 > [!NOTE]  
 > Security updates bypass cooldowns and are created immediately. Cooldowns apply only to version
 > updates.
 
 #### Ecosystem-Specific Recommendations
 
-| Ecosystem                 | Patch     | Minor      | Major      | Rationale                                                                             |
-| :------------------------ | :-------- | :--------- | :--------- | :------------------------------------------------------------------------------------ |
-| **GitHub Actions**        | N/A       | N/A        | N/A        | Use `default-days` only; SemVer cooldown not supported. SHA-pinning mitigates risk.   |
-| **NPM/Bun (Production)**  | 3-7 days  | 7-14 days  | 21-30 days | Balance security with npm `min-release-age`; align cooldown with install restrictions |
-| **NPM/Bun (Development)** | 1-3 days  | 3-7 days   | 14-21 days | Lower risk tolerance for dev dependencies                                             |
-| **Rust/Cargo**            | 3-7 days  | 14-21 days | 30-60 days | Stricter SemVer compliance allows longer vetting; Cargo.lock provides safety net      |
-| **Python/pip**            | 7-14 days | 14-21 days | 21-30 days | PyPI has slower yank response; conservative approach recommended                      |
-| **Go**                    | 3-7 days  | 7-14 days  | 14-21 days | Go modules are immutable; supply chain attacks less common but possible               |
+| Ecosystem                 | Patch     | Minor      | Major      | Rationale                                                                        |
+| :------------------------ | :-------- | :--------- | :--------- | :------------------------------------------------------------------------------- |
+| **GitHub Actions**        | N/A       | N/A        | N/A        | `default-days: 7`; SemVer cooldown not supported. SHA-pinning mitigates risk     |
+| **NPM/Bun (Production)**  | 7 days    | 7-14 days  | 21-30 days | Aligns with the install-time release-age gate and the Semgrep 7-day baseline     |
+| **NPM/Bun (Development)** | 7 days    | 7 days     | 14 days    | Same 7-day floor as production; dev dependencies get no shorter window           |
+| **Rust/Cargo**            | 7 days    | 14-21 days | 30-60 days | Stricter SemVer compliance allows longer vetting; Cargo.lock provides safety net |
+| **Python/pip**            | 7-14 days | 14-21 days | 21-30 days | PyPI has slower yank response; conservative approach recommended                 |
+| **Go**                    | 7 days    | 7-14 days  | 14-21 days | Go modules are immutable; supply chain attacks less common but possible          |
 
 > [!IMPORTANT]  
 > SemVer-based cooldown (`semver-major-days`, `semver-minor-days`, `semver-patch-days`) is only
@@ -121,7 +127,7 @@ updates:
       default-days: 7
       semver-major-days: 30
       semver-minor-days: 14
-      semver-patch-days: 5
+      semver-patch-days: 7
     groups:
       patch-updates:
         patterns: ["*"]
@@ -129,6 +135,45 @@ updates:
     reviewers:
       - "windlass-tech/security-team"
 ```
+
+#### Install-Time Release-Age Gates
+
+Dependabot cooldowns only delay update PRs; several package managers can also block installation of
+too-recent versions directly. Configure both so an update bot never proposes a version the installer
+would refuse: the install-time gate matches the bot's baseline window (`default-days` and the
+minor/patch cooldowns, 7 days). The gate must never exceed the bot's cooldown; a repository choosing
+a longer window from the ranges above simply makes the bot more conservative than the gate, which is
+safe. SemVer-major cooldowns longer than 7 days are a review and migration-planning delay, not a
+release-age gate, and need no installer equivalent.
+
+| Ecosystem  | File                         | Setting                       | Org value  | Units             |
+| :--------- | :--------------------------- | :---------------------------- | :--------- | :---------------- |
+| Bun        | `bunfig.toml`                | `[install].minimumReleaseAge` | `604800`   | seconds           |
+| Bundler    | `Gemfile` (per source)       | `cooldown`                    | `7`        | days              |
+| npm        | `.npmrc`                     | `min-release-age`             | `7`        | days              |
+| pnpm       | `pnpm-workspace.yaml`        | `minimumReleaseAge`           | `10080`    | minutes           |
+| Poetry     | `poetry.toml`                | `[solver].min-release-age`    | `7`        | days              |
+| uv         | `pyproject.toml` `[tool.uv]` | `exclude-newer`               | `"7 days"` | relative duration |
+| Yarn Berry | `.yarnrc.yml`                | `npmMinimalAgeGate`           | `"7d"`     | duration string   |
+
+On the bot side, Renovate repositories set `minimumReleaseAge: "7 days"` as the equivalent of
+Dependabot's cooldown; it delays update PRs but does not gate installation.
+
+Unlike Dependabot, install-time gates also delay urgent security fixes. Every gate must ship with a
+documented, narrow exception path for emergency patches — Bun package/exact-version exceptions, pnpm
+`minimumReleaseAgeExclude`, uv `exclude-newer-package`, Poetry `min-release-age-exclude`, Yarn
+`npmPreapprovedPackages`; where a manager offers no per-package exception (for example npm), the
+emergency path is a reviewed config change that is reverted immediately after the hotfix lands
+(Renovate needs no installer exception because it is a bot, not an install-time gate). Exceptions
+must be approved by a maintainer, scoped to a specific package and version, and time-boxed. These
+exceptions do not expire on their own: the approving maintainer must record a removal date (for
+example in the PR or issue that introduced the exception) and delete the entry once the fixed
+release has aged past the gate. Never disable a gate globally to land a hotfix.
+
+pip, Cargo, Go modules, Maven/Gradle, NuGet, and Composer have no native release-age gate (Python
+repositories using uv are covered by the gate above). For repositories in those ecosystems,
+compensate with the Dependabot cooldown above plus lockfile diff review, Dependency Review and OSV
+Scanner gates, and — where available — a proxy registry that delays mirroring new releases.
 
 ### Additional Supply Chain Defenses
 
@@ -385,6 +430,18 @@ working reference consumer when wiring the PR diff scan and full scan into your 
 - [OSV Scanner Output Formats](https://google.github.io/osv-scanner/output/)
 - [OSV Scanner GitHub Action](https://google.github.io/osv-scanner/github-action/)
 - [OSV Scanner Action Repository](https://github.com/google/osv-scanner-action)
+
+### Dependency Cooldown
+
+- [OpenSSF Concise Guide for Developing More Secure Software](https://best.openssf.org/Concise-Guide-for-Developing-More-Secure-Software.html)
+- [GitHub Dependabot cooldown configuration](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/optimizing-pr-creation-version-updates)
+- [Bun minimumReleaseAge](https://bun.com/docs/pm/cli/install#minimum-release-age)
+- [pnpm minimumReleaseAge](https://pnpm.io/settings#minimumreleaseage)
+- [Yarn npmMinimalAgeGate](https://yarnpkg.com/configuration/yarnrc#npmMinimalAgeGate)
+- [uv dependency cooldowns](https://docs.astral.sh/uv/concepts/resolution/#dependency-cooldowns)
+- [Poetry solver.min-release-age](https://python-poetry.org/docs/configuration/#solvermin-release-age)
+- [Bundler cooldown configuration](https://bundler.io/v4.0/man/bundle-config.1.html)
+- [Semgrep package-manager cooldown rules](https://github.com/semgrep/semgrep-rules/tree/develop/package_managers)
 
 ### Additional Resources
 
