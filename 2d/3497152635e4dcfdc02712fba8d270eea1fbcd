@@ -1,0 +1,33 @@
+docs/security/workflow-hardening.md
+  s_1546e9276bc70c::t_2a6ad8a0fb9479 28-31
+  s_1546e9276bc70c::t_2c342a3629e7da 26-27
+  s_1546e9276bc70c::t_736e5d74717dc4 25
+.github/workflows/lint.yml
+  s_1546e9276bc70c::t_5c5cee29b7c88b 37-38
+.github/workflows/autofix.yml
+  s_1546e9276bc70c::t_73addf2ed60b89 56-57
+docs/security/dependency-security.md
+  s_1546e9276bc70c::t_2a6ad8a0fb9479 171-174
+  s_1546e9276bc70c::t_e0a340c3892d46 168-170
+package.json
+  s_1546e9276bc70c::t_26e3e1c1cc26f7 5,9,14
+README.md
+  s_1546e9276bc70c::t_26a964b43562aa 325-326
+  s_1546e9276bc70c::t_9260305d84398f 387-389
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2d3497152635e4dcfdc02712fba8d270eea1fbcd",
+  "prompts": {},
+  "sessions": {
+    "s_1546e9276bc70c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e8ba3ee3fffe14Z40mzaBLjg6y",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
