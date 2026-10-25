@@ -119,7 +119,7 @@ File structure:
 - Start each version with its number and date, for example `## [0.1.0] - 12026-06-13`, and resolve each version heading as a reference-style comparison link at the bottom of the file.
 
 > [!NOTE]
-> Windlass convention: changelog dates use Holocene Era five-digit years (e.g. `12026-06-13` rather than `2026-06-13`), keeping the largest-to-smallest ISO 8601 ordering. Keep a Changelog 2.0.0 requires a consistent, stated date convention; this is ours.
+> Windlass deviation: Keep a Changelog 2.0.0 prescribes four-digit `YYYY-MM-DD` dates per ISO 8601. Windlass deliberately deviates by using Holocene Era five-digit years (`12026-06-13` rather than `2026-06-13`) in changelog headings and other human-facing dates. The five-digit form keeps the largest-to-smallest ISO 8601 field ordering; machine-readable timestamps stay four-digit ISO 8601 (see [Documentation and Prose Conventions](#documentation-and-prose-conventions)).
 
 For every PR, complete the PR template's `Changelog` section:
 
