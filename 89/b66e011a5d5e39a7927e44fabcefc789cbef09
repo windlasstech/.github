@@ -1,0 +1,20 @@
+lefthook.yml
+  s_1546e9276bc70c::t_1a9f8e5a60ddb4 27,36-37
+  s_1546e9276bc70c::t_55e55b741046a1 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "89b66e011a5d5e39a7927e44fabcefc789cbef09",
+  "prompts": {},
+  "sessions": {
+    "s_1546e9276bc70c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e8ba3ee3fffe14Z40mzaBLjg6y",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
