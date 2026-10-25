@@ -33,12 +33,15 @@ repos without their own versions.
 │   ├── dependabot.yml              # Dependency update automation
 │   ├── dependency-review-config.yml # Dependency review policy
 │   └── workflows/                  # CI workflows
-│       ├── lint-and-format.yml          # Repository linting and formatting CI
+│       ├── lint.yml                      # Blocking markdown/workflow lint checks
+│       ├── autofix.yml                   # autofix.ci formatting automation
 │       ├── dependency-review.yml        # Supply chain security
 │       ├── scorecard.yml                # OpenSSF Scorecard
 │       ├── osv-scanner-pr-reusable.yml  # Reusable OSV PR scan
 │       ├── osv-scanner-full-reusable.yml # Reusable OSV full scan
 │       └── osv-scanner-smoke.yml        # OSV integration smoke test
+├── bunfig.toml                     # Bun: fmt, install security scanner, release age
+├── .editorconfig                   # Editor formatting defaults
 └── [config files]
 ```
 
@@ -49,9 +52,11 @@ repos without their own versions.
 | Edit org-wide Code of Conduct | `CODE_OF_CONDUCT.md`                              |
 | Add translation               | `docs/CODE_OF_CONDUCT.{lang}.md`                  |
 | Edit PR template              | `.github/PULL_REQUEST_TEMPLATE.md`                |
-| Modify CI checks              | `.github/workflows/lint-and-format.yml`           |
+| Modify lint CI                | `.github/workflows/lint.yml`                      |
+| Modify formatting automation  | `.github/workflows/autofix.yml`                   |
 | Change lint rules             | `.markdownlint-cli2.jsonc`                        |
-| Change format rules           | `.prettierrc`                                     |
+| Change format rules           | `bunfig.toml` (`[fmt]`)                           |
+| Change install security scan  | `bunfig.toml` (`[install.security]`)              |
 | Modify pre-commit hooks       | `lefthook.yml`                                    |
 | Modify dependency automation  | `.github/dependabot.yml`                          |
 | Change dependency review      | `.github/workflows/dependency-review.yml`         |
@@ -85,8 +90,8 @@ Compact tables with minimal spacing. Never align with excessive whitespace.
 
 ### Linting Stack
 
-- **markdownlint-cli2** (v0.22.0): `.markdownlint-cli2.jsonc`
-- **Prettier** (v3.8.1): `.prettierrc`
+- **markdownlint-cli2** (v0.24.0): `.markdownlint-cli2.jsonc`
+- **bun fmt** (Bun built-in formatter): `bunfig.toml` `[fmt]` (proseWrap always, printWidth 100)
 - **Lefthook**: pre-commit automation
 
 ### Dates in human-facing documents
@@ -107,7 +112,7 @@ parentheses or a comma-heavy list.
 
 - **Don't add `node_modules/` to git**: Already ignored
 - **Don't use `*` bullets**: Use `-` only (MD004: dash style enforced)
-- **Don't hard-wrap prose**: Prettier preserves wraps ("proseWrap": "preserve")
+- **Don't fight the formatter**: `bun fmt` hard-wraps prose ("proseWrap": "always", printWidth 100)
 - **Don't use setext headers**: ATX style required (MD003 disabled, MD018-020 disabled)
 - **Don't commit without signing**: Org requires GPG/SSH/Sigstore signed commits
 
@@ -126,7 +131,7 @@ bun install                    # Installs deps + lefthook hooks
 # Lint/Format
 bun run lint:md               # Check markdown
 bun run lint:md:fix           # Auto-fix issues
-bun run format                # Format with Prettier
+bun run format                # Format with bun fmt
 bun run format:check          # Check formatting
 
 # Pre-commit (manual)
@@ -135,7 +140,8 @@ bunx lefthook run pre-commit
 
 ## NOTES
 
-- CI runs on PRs + pushes to `main` touching `**/*.md`
+- Lint CI runs on PRs + pushes to `main` touching Markdown or workflow files; autofix.ci applies
+  formatting fixes
 - Uses hard-runner audit mode, SHA-pinned actions
 - `SECURITY.md` has full supply chain integrity requirements
 - OSV Scanner reusable workflows support all ecosystems JS/Python/Go/Rust/Java/.NET/PHP
