@@ -25,7 +25,7 @@ updates:
         patterns:
           - "lefthook"
           - "markdownlint-cli2"
-          - "prettier"
+          - "@socketsecurity/bun-security-scanner"
         update-types:
           - "minor"
           - "patch"
@@ -37,7 +37,6 @@ updates:
     # Labels for easy identification and triage
     labels:
       - "dependencies"
-      - "javascript"
     # Semantic versioning strategy
     versioning-strategy: "auto"
     # Allow all direct dependencies (production and development)
@@ -48,8 +47,8 @@ updates:
     cooldown:
       default-days: 3
       semver-major-days: 14
-      semver-minor-days: 3
-      semver-patch-days: 1
+      semver-minor-days: 7
+      semver-patch-days: 3
   # GitHub Actions - critical for SLSA compliance and SHA-pinning
   # All workflows use SHA-pinned actions per SECURITY.md requirements
   - package-ecosystem: "github-actions"
@@ -79,6 +78,13 @@ updates:
       scorecard-actions:
         patterns:
           - "ossf/scorecard-action"
+        update-types:
+          - "minor"
+          - "patch"
+      # OSV Scanner action
+      osv-scanner-actions:
+        patterns:
+          - "google/osv-scanner-action/*"
         update-types:
           - "minor"
           - "patch"
