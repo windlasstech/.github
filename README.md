@@ -8,7 +8,7 @@
 
 Centralized documents and information for the Windlass.
 
-This is the organization's special `.github` repository — a [GitHub convention](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file) that automatically applies its files across all repositories in the Windlass organization that don't have their own versions.
+This is the organization's special `.github` repository, a [GitHub convention](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file) that automatically applies its files across all repositories in the Windlass organization that don't have their own versions.
 
 ## Repository Contents
 
@@ -16,7 +16,7 @@ This is the organization's special `.github` repository — a [GitHub convention
 
 | File                                         | Purpose                                                                                | Scope             |
 | :------------------------------------------- | :------------------------------------------------------------------------------------- | :---------------- |
-| [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) | Contributor Covenant 3.0 — behavioral expectations for community participation         | Organization-wide |
+| [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) | Contributor Covenant 3.0: behavioral expectations for community participation          | Organization-wide |
 | [`CONTRIBUTING.md`](./CONTRIBUTING.md)       | Contribution guidelines: scope boundaries, process, RFC path, development expectations | Organization-wide |
 | [`SECURITY.md`](./SECURITY.md)               | Security policy: vulnerability reporting, SLSA compliance, supply chain integrity      | Organization-wide |
 
@@ -92,9 +92,9 @@ Provides reusable workflows for [OSV Scanner](https://google.github.io/osv-scann
 
 #### Standard Defaults
 
-- `scan-args` defaults to `--recursive ./` — OSV Scanner auto-detects supported lockfiles across ecosystems
-- `upload-sarif` defaults to `true` — set to `false` for repositories where SARIF upload is not available
-- `fail-on-vuln` defaults to `true` — the workflow fails when vulnerabilities are found
+- `scan-args` defaults to `--recursive ./`: OSV Scanner auto-detects supported lockfiles across ecosystems
+- `upload-sarif` defaults to `true`: set to `false` for repositories where SARIF upload is not available
+- `fail-on-vuln` defaults to `true`: the workflow fails when vulnerabilities are found
 
 #### Consumer Usage
 
@@ -315,8 +315,8 @@ bun install
 
 #### Configuration
 
-- **markdownlint**: `.markdownlint-cli2.jsonc` — Configured to avoid conflicts with Prettier
-- **Prettier**: `.prettierrc` — Uses default Prettier settings for Markdown, YAML, and JSON/JSONC
+- **markdownlint** (`.markdownlint-cli2.jsonc`): Configured to avoid conflicts with Prettier
+- **Prettier** (`.prettierrc`): Uses default Prettier settings for Markdown, YAML, and JSON/JSONC
 
 #### Pre-commit Hooks
 
