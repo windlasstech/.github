@@ -56,14 +56,16 @@ Changelog update:
 
 ### General
 
-- [ ] PR title follows [Conventional Commits](https://www.conventionalcommits.org/) format: `type(scope): Summary`
+- [ ] PR title follows [Conventional Commits](https://www.conventionalcommits.org/) format:
+      `type(scope): Summary`
 - [ ] This PR does not expose backend/internal implementation details in a public repo.
 - [ ] No secrets, tokens, keys, or private endpoints are included.
 - [ ] Changes stay within this repository's intended scope.
 
 ### CI/Workflow Changes (if applicable)
 
-If this PR modifies GitHub Actions workflows or CI/CD configuration, it must comply with our [Supply Chain Integrity requirements](SECURITY.md#supply-chain-integrity):
+If this PR modifies GitHub Actions workflows or CI/CD configuration, it must comply with our
+[Supply Chain Integrity requirements](SECURITY.md#supply-chain-integrity):
 
 - [ ] All `uses:` references are pinned to full 40-character commit SHAs (with `# vX.Y.Z` comment)
 - [ ] `step-security/harden-runner` is included as the first step in every job

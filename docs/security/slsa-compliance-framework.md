@@ -1,9 +1,12 @@
 # SLSA Compliance Framework
 
-> [!NOTE]
-> This page is part of the Windlass organization security policy. Start with [SECURITY.md](../../SECURITY.md).
+> [!NOTE]  
+> This page is part of the Windlass organization security policy. Start with
+> [SECURITY.md](../../SECURITY.md).
 
-This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)](https://slsa.dev/) framework to ensure software supply chain security. SLSA provides a checklist of standards and controls to prevent tampering, improve integrity, and secure software packages.
+This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)](https://slsa.dev/)
+framework to ensure software supply chain security. SLSA provides a checklist of standards and
+controls to prevent tampering, improve integrity, and secure software packages.
 
 ## Current SLSA Level Status
 
@@ -57,14 +60,18 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
   </tbody>
 </table>
 
-> [!NOTE]
-> SLSA v1.2 defines Build Track levels 0-3 and Source Track levels 1-4. Build L0 represents no SLSA guarantees. Source L4 requires two-party review and is not achievable for a single-person organization; see [the Source L4 section](#source-l4-two-party-review) for the structural limitation and compensating controls.
+> [!NOTE]  
+> SLSA v1.2 defines Build Track levels 0-3 and Source Track levels 1-4. Build L0 represents no SLSA
+> guarantees. Source L4 requires two-party review and is not achievable for a single-person
+> organization; see [the Source L4 section](#source-l4-two-party-review) for the structural
+> limitation and compensating controls.
 
 ## SLSA Build Track Requirements
 
 ### Build L0: No Guarantees
 
-Build L0 represents the absence of SLSA Build Track guarantees. No requirements are imposed. This is the default state for software that does not follow the SLSA Build Track.
+Build L0 represents the absence of SLSA Build Track guarantees. No requirements are imposed. This is
+the default state for software that does not follow the SLSA Build Track.
 
 ### Build L1: Provenance Exists
 
@@ -92,13 +99,17 @@ Implementation for this organization:
 
 - Prefer SLSA GitHub Generator builders when they fit the project ecosystem and release workflow
 - Use reusable workflow based artifact attestations when a supported SLSA builder is not a good fit
-- Use direct `actions/attest` provenance only as the baseline path when Build L3+ isolation is not yet feasible
-- Document the verification command and expected signer workflow for each release-producing repository
+- Use direct `actions/attest` provenance only as the baseline path when Build L3+ isolation is not
+  yet feasible
+- Document the verification command and expected signer workflow for each release-producing
+  repository
 - Follow the implementation guide in [Artifact Attestations](./artifact-attestations.md)
 
 ## SLSA Source Track Requirements
 
-The SLSA Source Track ensures the integrity and trustworthiness of source code throughout the development lifecycle. It provides increasing guarantees about how source revisions are created, managed, and protected.
+The SLSA Source Track ensures the integrity and trustworthiness of source code throughout the
+development lifecycle. It provides increasing guarantees about how source revisions are created,
+managed, and protected.
 
 ### Source L1: Version Controlled
 
@@ -110,7 +121,8 @@ Requirements:
 - Repositories must be uniquely identifiable with a stable locator (URI)
 - Revisions must be immutable and uniquely identifiable (e.g., Git commit SHA)
 - The SCS must provide tooling to display changes in a human-readable form (diffs)
-- Source Verification Summary Attestations (Source VSAs) must be generated for revisions at Level 1 or above
+- Source Verification Summary Attestations (Source VSAs) must be generated for revisions at Level 1
+  or above
 
 Implementation for this organization:
 
@@ -121,13 +133,16 @@ Implementation for this organization:
 
 ### Source L2: History and Provenance
 
-Branch history is continuous, immutable, and retained. The source control system issues Source Provenance attestations for each new revision.
+Branch history is continuous, immutable, and retained. The source control system issues Source
+Provenance attestations for each new revision.
 
 Requirements:
 
 - Change history must be continuous and immutable
-- The SCS must record all changes to named references (branches, tags), including when they occurred, who made them, and the new revision ID
-- Branch updates must only point to revisions that descend from the current revision (no force push or history rewriting)
+- The SCS must record all changes to named references (branches, tags), including when they
+  occurred, who made them, and the new revision ID
+- Branch updates must only point to revisions that descend from the current revision (no force push
+  or history rewriting)
 - Source Provenance attestations must be created contemporaneously with branch updates
 - Identity management must be configured to authenticate actors and attribute actions
 - Tags must be protected from being moved or deleted
@@ -143,7 +158,8 @@ Implementation for this organization:
 
 ### Source L3: Continuous Technical Controls
 
-The source control system enforces the organization's technical controls for specific named references within the repository.
+The source control system enforces the organization's technical controls for specific named
+references within the repository.
 
 Requirements:
 
@@ -162,7 +178,12 @@ Implementation for this organization:
 - Branch protection requires signed commits
 - The organization documents all technical controls in this policy
 
-For a single-person organization, **Source L3 should be treated as a best-effort target rather than a guaranteed achievable level**. Repositories must follow Source L3 controls wherever feasible, but some controls depend on repository context and available trusted reviewers. In particular, independent human review is practical only when someone other than the last pusher can review the change; bot-authored PRs such as Dependabot updates may be easier to review independently than human-authored changes in a 1-person organization.
+For a single-person organization, **Source L3 should be treated as a best-effort target rather than
+a guaranteed achievable level**. Repositories must follow Source L3 controls wherever feasible, but
+some controls depend on repository context and available trusted reviewers. In particular,
+independent human review is practical only when someone other than the last pusher can review the
+change; bot-authored PRs such as Dependabot updates may be easier to review independently than
+human-authored changes in a 1-person organization.
 
 Practical implementation controls:
 
@@ -194,7 +215,8 @@ Practical implementation controls:
 
 ### Source L4: Two-Party Review
 
-Changes to protected branches require review and agreement by two or more trusted persons prior to submission.
+Changes to protected branches require review and agreement by two or more trusted persons prior to
+submission.
 
 Requirements:
 
@@ -207,12 +229,16 @@ Requirements:
 
 Achievability for this organization:
 
-- **Not achievable under a 1-person organization model.** Source L4 explicitly requires two distinct trusted persons for every change. A single individual cannot satisfy the "two-party" requirement by definition.
-- This is not a technical limitation but a structural requirement of the security model. The requirement exists to mitigate insider threats and unilateral changes.
+- **Not achievable under a 1-person organization model.** Source L4 explicitly requires two distinct
+  trusted persons for every change. A single individual cannot satisfy the "two-party" requirement
+  by definition.
+- This is not a technical limitation but a structural requirement of the security model. The
+  requirement exists to mitigate insider threats and unilateral changes.
 
 ## Mitigations and Transition Path
 
-While two-party review is not possible with one person, the following compensating controls reduce the risk of unilateral malicious changes:
+While two-party review is not possible with one person, the following compensating controls reduce
+the risk of unilateral malicious changes:
 
 | Control                         | Purpose                        | Implementation                                                                                                       |
 | :------------------------------ | :----------------------------- | :------------------------------------------------------------------------------------------------------------------- |

@@ -1,14 +1,15 @@
 # AGENTS.md: Windlass .github Repository
 
-**Generated:** 2026-04-26
-**Commit:** b394f5f
+**Generated:** 2026-04-26  
+**Commit:** b394f5f  
 **Branch:** refactor/security-docs-split
 
 ---
 
 ## OVERVIEW
 
-GitHub Organization Community Health Files repository. Files auto-apply across all Windlass org repos without their own versions.
+GitHub Organization Community Health Files repository. Files auto-apply across all Windlass org
+repos without their own versions.
 
 ## STRUCTURE
 
@@ -90,11 +91,17 @@ Compact tables with minimal spacing. Never align with excessive whitespace.
 
 ### Dates in human-facing documents
 
-Use Holocene Era / Human Era year format for prose, changelog headings, ADR dates, and other human-reader dates (e.g., `12026-06-23`). Machine-readable timestamps and protocol/schema fields, such as JSON `generated_at`, must preserve the applicable technical standard format, normally ISO 8601 with a standard four-digit Gregorian year (e.g., `2026-06-23T12:00:00Z`).
+Use Holocene Era / Human Era year format for prose, changelog headings, ADR dates, and other
+human-reader dates (e.g., `12026-06-23`). Machine-readable timestamps and protocol/schema fields,
+such as JSON `generated_at`, must preserve the applicable technical standard format, normally ISO
+8601 with a standard four-digit Gregorian year (e.g., `2026-06-23T12:00:00Z`).
 
 ### Guidelines for Using the Em Dash
 
-In English prose the em dash is grammatically valid: prefer an alternative construction (comma, parentheses, colon, or a sentence split) when the em dash offers no clear readability advantage, but keep the em dash where it is genuinely clearer, such as around an interjection that already contains parentheses or a comma-heavy list.
+In English prose the em dash is grammatically valid: prefer an alternative construction (comma,
+parentheses, colon, or a sentence split) when the em dash offers no clear readability advantage, but
+keep the em dash where it is genuinely clearer, such as around an interjection that already contains
+parentheses or a comma-heavy list.
 
 ## ANTI-PATTERNS
 

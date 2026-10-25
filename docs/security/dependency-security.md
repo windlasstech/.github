@@ -1,9 +1,11 @@
 # Dependency Security
 
-> [!NOTE]
-> This page is part of the Windlass organization security policy. Start with [SECURITY.md](../../SECURITY.md).
+> [!NOTE]  
+> This page is part of the Windlass organization security policy. Start with
+> [SECURITY.md](../../SECURITY.md).
 
-All projects must commit dependency lockfiles to version control to ensure reproducible builds and enable security auditing.
+All projects must commit dependency lockfiles to version control to ensure reproducible builds and
+enable security auditing.
 
 ## Dependency Defense Overview
 
@@ -40,10 +42,13 @@ Dependency security uses layered controls so each tool covers a different point 
 
 ### Dependabot Cooldown Configuration
 
-Cooldown periods delay version update PRs to allow community vetting of new releases. This mitigates supply chain attacks by providing time for malicious packages to be detected and yanked before adoption.
+Cooldown periods delay version update PRs to allow community vetting of new releases. This mitigates
+supply chain attacks by providing time for malicious packages to be detected and yanked before
+adoption.
 
-> [!NOTE]
-> Security updates bypass cooldowns and are created immediately. Cooldowns apply only to version updates.
+> [!NOTE]  
+> Security updates bypass cooldowns and are created immediately. Cooldowns apply only to version
+> updates.
 
 #### Ecosystem-Specific Recommendations
 
@@ -56,8 +61,10 @@ Cooldown periods delay version update PRs to allow community vetting of new rele
 | **Python/pip**            | 7-14 days | 14-21 days | 21-30 days | PyPI has slower yank response; conservative approach recommended                      |
 | **Go**                    | 3-7 days  | 7-14 days  | 14-21 days | Go modules are immutable; supply chain attacks less common but possible               |
 
-> [!IMPORTANT]
-> SemVer-based cooldown (`semver-major-days`, `semver-minor-days`, `semver-patch-days`) is only supported by package ecosystems that use Semantic Versioning. Ecosystems like **GitHub Actions**, **Docker**, **Terraform**, and **Bazel** only support `default-days`.
+> [!IMPORTANT]  
+> SemVer-based cooldown (`semver-major-days`, `semver-minor-days`, `semver-patch-days`) is only
+> supported by package ecosystems that use Semantic Versioning. Ecosystems like **GitHub Actions**,
+> **Docker**, **Terraform**, and **Bazel** only support `default-days`.
 
 #### SemVer Cooldown Support by Ecosystem
 
@@ -78,19 +85,26 @@ Cooldown periods delay version update PRs to allow community vetting of new rele
 
 - **Patch (z in x.y.z)**: Bug fixes only; shortest cooldown acceptable
 - **Minor (y in x.y.z)**: New features; moderate cooldown for API stability verification
-- **Major (x in x.y.z)**: Breaking changes; longest cooldown for migration planning and community feedback
+- **Major (x in x.y.z)**: Breaking changes; longest cooldown for migration planning and community
+  feedback
 
 #### Rust-Specific Considerations
 
 The Rust ecosystem has unique characteristics affecting cooldown strategy:
 
-1. **Strict SemVer Compliance**: Cargo enforces SemVer strictly. Minor updates are generally safer than in npm, but the community tends toward conservatism.
+1. **Strict SemVer Compliance**: Cargo enforces SemVer strictly. Minor updates are generally safer
+   than in npm, but the community tends toward conservatism.
 
-2. **Cargo Yank Mechanism**: Yanked crates remain available for existing `Cargo.lock` but prevent new adoption. Cooldowns work synergistically: malicious versions can be yanked before PRs are created.
+2. **Cargo Yank Mechanism**: Yanked crates remain available for existing `Cargo.lock` but prevent
+   new adoption. Cooldowns work synergistically: malicious versions can be yanked before PRs are
+   created.
 
-3. **Recent Attack Patterns** (March 2026): Five malicious crates (`chrono_anchor`, `dnp3times`, etc.) targeted CI/CD environments to exfiltrate `.env` files. Cooldowns provide critical detection window.
+3. **Recent Attack Patterns** (March 2026): Five malicious crates (`chrono_anchor`, `dnp3times`,
+   etc.) targeted CI/CD environments to exfiltrate `.env` files. Cooldowns provide critical
+   detection window.
 
-4. **Cargo.lock Pinning**: Unlike npm, Cargo.lock should always be committed. This creates natural review gates that complement cooldowns.
+4. **Cargo.lock Pinning**: Unlike npm, Cargo.lock should always be committed. This creates natural
+   review gates that complement cooldowns.
 
 #### Example Configuration
 
@@ -127,10 +141,14 @@ Combine cooldowns with:
 
 ## Dependency Review
 
-The [Dependency Review Action](https://github.com/actions/dependency-review-action) scans pull requests for vulnerable or non-compliant dependencies before they enter the codebase. It performs diff-based analysis comparing dependencies in the PR head against the base, identifying changes that introduce known vulnerabilities or license violations.
+The [Dependency Review Action](https://github.com/actions/dependency-review-action) scans pull
+requests for vulnerable or non-compliant dependencies before they enter the codebase. It performs
+diff-based analysis comparing dependencies in the PR head against the base, identifying changes that
+introduce known vulnerabilities or license violations.
 
-> [!NOTE]
-> Dependency Review is available for all public repositories. For private repositories, GitHub Advanced Security is required.
+> [!NOTE]  
+> Dependency Review is available for all public repositories. For private repositories, GitHub
+> Advanced Security is required.
 
 ### Required Workflow Template
 
@@ -218,14 +236,24 @@ allow-licenses:
   - Ruby # Ruby License - permissive
 ```
 
-> [!NOTE]
-> License identifiers must be SPDX-compliant. For licenses detected as `OTHER`, use `LicenseRef-clearlydefined-OTHER` in allow/deny lists.
+> [!NOTE]  
+> License identifiers must be SPDX-compliant. For licenses detected as `OTHER`, use
+> `LicenseRef-clearlydefined-OTHER` in allow/deny lists.
 
-`LicenseRef-scancode-google-patent-license-golang` is allowed because Go toolchain dependencies such as `golang.org/x/sys` and `golang.org/x/term` are licensed `BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang`. The Google patent grant is a permissive patent clause, not a restrictive license, so it must not block otherwise-compliant Go dependencies.
+`LicenseRef-scancode-google-patent-license-golang` is allowed because Go toolchain dependencies such
+as `golang.org/x/sys` and `golang.org/x/term` are licensed
+`BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang`. The Google patent grant is a
+permissive patent clause, not a restrictive license, so it must not block otherwise-compliant Go
+dependencies.
 
 #### Package-Scoped License Exemptions
 
-When a package's detected license expression contains a false-positive `LicenseRef-*` but the underlying licenses are all on the allow-list, exempt the **package** via `allow-dependencies-licenses` instead of adding the `LicenseRef-*` to `allow-licenses`. Package scoping keeps the policy tight: GitHub-internal identifiers such as `LicenseRef-bad-*` are unstable and could appear on arbitrary packages, so widening the global allow-list for them would silently weaken enforcement.
+When a package's detected license expression contains a false-positive `LicenseRef-*` but the
+underlying licenses are all on the allow-list, exempt the **package** via
+`allow-dependencies-licenses` instead of adding the `LicenseRef-*` to `allow-licenses`. Package
+scoping keeps the policy tight: GitHub-internal identifiers such as `LicenseRef-bad-*` are unstable
+and could appear on arbitrary packages, so widening the global allow-list for them would silently
+weaken enforcement.
 
 Current organization-wide exemptions in the centralized configuration:
 
@@ -236,12 +264,19 @@ Current organization-wide exemptions in the centralized configuration:
 
 Exemption policy:
 
-- Prefer package-scoped `allow-dependencies-licenses` entries over widening `allow-licenses` for unstable or non-standard `LicenseRef-*` detections.
-- Document the ground truth for each exemption (upstream `LICENSE` files, ScanCode LicenseDB classification) in a comment next to the entry.
-- Leave versions unpinned (`purl` without `@version`) so future Dependabot bumps do not re-trip the check. Trade-off: a genuinely non-permissive license introduced in a future version of an exempted package would not be flagged. Re-review exemptions when upstream packaging changes.
-- Because consumer repositories reference the centralized configuration via `@main`, every change to it takes effect organization-wide on merge; review exemption changes accordingly.
+- Prefer package-scoped `allow-dependencies-licenses` entries over widening `allow-licenses` for
+  unstable or non-standard `LicenseRef-*` detections.
+- Document the ground truth for each exemption (upstream `LICENSE` files, ScanCode LicenseDB
+  classification) in a comment next to the entry.
+- Leave versions unpinned (`purl` without `@version`) so future Dependabot bumps do not re-trip the
+  check. Trade-off: a genuinely non-permissive license introduced in a future version of an exempted
+  package would not be flagged. Re-review exemptions when upstream packaging changes.
+- Because consumer repositories reference the centralized configuration via `@main`, every change to
+  it takes effect organization-wide on merge; review exemption changes accordingly.
 
-Exemptions are declared in the centralized configuration, [`.github/dependency-review-config.yml`](../../.github/dependency-review-config.yml), using purl format with a rationale comment per entry:
+Exemptions are declared in the centralized configuration,
+[`.github/dependency-review-config.yml`](../../.github/dependency-review-config.yml), using purl
+format with a rationale comment per entry:
 
 ```yaml
 allow-dependencies-licenses:
@@ -277,7 +312,8 @@ Enforce Dependency Review across the organization using repository rulesets:
 3. Add requirement: **Require status checks to pass**
 4. Search for and select the `dependency-review` workflow
 
-This ensures all PRs must pass dependency review before merging, regardless of individual repository configuration.
+This ensures all PRs must pass dependency review before merging, regardless of individual repository
+configuration.
 
 ### Common Pitfalls
 
@@ -291,7 +327,9 @@ This ensures all PRs must pass dependency review before merging, regardless of i
 
 ## OSV Scanner
 
-The [OSV Scanner](https://google.github.io/osv-scanner/) workflow detects known vulnerabilities in project dependencies using the Open Source Vulnerabilities database. It complements Dependency Review by scanning the entire dependency tree, not just changed dependencies.
+The [OSV Scanner](https://google.github.io/osv-scanner/) workflow detects known vulnerabilities in
+project dependencies using the Open Source Vulnerabilities database. It complements Dependency
+Review by scanning the entire dependency tree, not just changed dependencies.
 
 ### Recommended Defaults
 
@@ -303,7 +341,8 @@ Repository-specific overrides are supported:
 
 - Set `upload-sarif: false` when SARIF upload should not be used for that repository
 - Override `scan-args` for explicit lockfiles, generated dependency artifacts, or excluded paths
-- Use `fail-on-vuln: false` only for short initial calibration, then restore the standard default of `true`
+- Use `fail-on-vuln: false` only for short initial calibration, then restore the standard default of
+  `true`
 
 ### Consumer Caller Example
 

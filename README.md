@@ -8,7 +8,10 @@
 
 Centralized documents and information for the Windlass.
 
-This is the organization's special `.github` repository, a [GitHub convention](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file) that automatically applies its files across all repositories in the Windlass organization that don't have their own versions.
+This is the organization's special `.github` repository, a
+[GitHub convention](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file)
+that automatically applies its files across all repositories in the Windlass organization that don't
+have their own versions.
 
 ## Repository Contents
 
@@ -55,18 +58,27 @@ The Code of Conduct is available in multiple languages:
 
 ## How Organization-Wide Files Work
 
-GitHub automatically applies files from this repository to all other repositories in the Windlass organization:
+GitHub automatically applies files from this repository to all other repositories in the Windlass
+organization:
 
-- **Default behavior**: If a repository doesn't have its own `CODE_OF_CONDUCT.md`, it will inherit the one from this repository.
+- **Default behavior**: If a repository doesn't have its own `CODE_OF_CONDUCT.md`, it will inherit
+  the one from this repository.
 - **Override**: Individual repositories can override by adding their own version of any file.
-- **Visibility**: Files in this repository are visible across the organization via GitHub's UI (e.g., when creating issues or PRs).
+- **Visibility**: Files in this repository are visible across the organization via GitHub's UI
+  (e.g., when creating issues or PRs).
 
 ## Reusable Workflows
 
-This repository provides reusable workflows for common security and compliance checks. Consumer repositories can call these workflows with a single `uses:` line.
+This repository provides reusable workflows for common security and compliance checks. Consumer
+repositories can call these workflows with a single `uses:` line.
 
-> [!NOTE]
-> Reusable workflows from `windlasstech/.github` are an **exception** to [the SHA-pinning requirement](./docs/security/workflow-hardening.md#action-references). This repository does not publish semantic version tags, and Dependabot cannot propose updates for SHA-pinned internal reusable workflows. Adding tags or introducing an additional automation bot solely for this purpose would create more operational overhead than value. Consumer repositories may reference these workflows by branch name (e.g., `@main`).
+> [!NOTE]  
+> Reusable workflows from `windlasstech/.github` are an **exception** to
+> [the SHA-pinning requirement](./docs/security/workflow-hardening.md#action-references). This
+> repository does not publish semantic version tags, and Dependabot cannot propose updates for
+> SHA-pinned internal reusable workflows. Adding tags or introducing an additional automation bot
+> solely for this purpose would create more operational overhead than value. Consumer repositories
+> may reference these workflows by branch name (e.g., `@main`).
 
 ### Which Workflows Are Reusable
 
@@ -81,7 +93,8 @@ This repository provides reusable workflows for common security and compliance c
 
 ### OSV Scanner Reusable Workflow
 
-Provides reusable workflows for [OSV Scanner](https://google.github.io/osv-scanner/) vulnerability detection.
+Provides reusable workflows for [OSV Scanner](https://google.github.io/osv-scanner/) vulnerability
+detection.
 
 #### Available Workflows
 
@@ -92,8 +105,10 @@ Provides reusable workflows for [OSV Scanner](https://google.github.io/osv-scann
 
 #### Standard Defaults
 
-- `scan-args` defaults to `--recursive ./`: OSV Scanner auto-detects supported lockfiles across ecosystems
-- `upload-sarif` defaults to `true`: set to `false` for repositories where SARIF upload is not available
+- `scan-args` defaults to `--recursive ./`: OSV Scanner auto-detects supported lockfiles across
+  ecosystems
+- `upload-sarif` defaults to `true`: set to `false` for repositories where SARIF upload is not
+  available
 - `fail-on-vuln` defaults to `true`: the workflow fails when vulnerabilities are found
 
 #### Consumer Usage
@@ -134,7 +149,9 @@ jobs:
 
 #### Multi-Ecosystem Support
 
-These workflows support all ecosystems that OSV Scanner recognizes, including JavaScript, Python, Go, Rust, Java, .NET, PHP, and others. Standard lockfiles are auto-detected when scanning recursively from the repository root.
+These workflows support all ecosystems that OSV Scanner recognizes, including JavaScript, Python,
+Go, Rust, Java, .NET, PHP, and others. Standard lockfiles are auto-detected when scanning
+recursively from the repository root.
 
 Repositories with nonstandard layouts may override `scan-args`:
 
@@ -143,13 +160,15 @@ Repositories with nonstandard layouts may override `scan-args`:
 
 #### Rollout Notes
 
-- For initial calibration, a repository may temporarily set `fail-on-vuln: false` for the first 1-2 runs
+- For initial calibration, a repository may temporarily set `fail-on-vuln: false` for the first 1-2
+  runs
 - After calibration, revert to the standard default of `true`
 - Always pin the workflow reference to a specific commit SHA
 
 ### Dependency Review Reusable Workflow
 
-Provides standardized dependency vulnerability and license checking across all repositories with a centralized configuration.
+Provides standardized dependency vulnerability and license checking across all repositories with a
+centralized configuration.
 
 #### Available Inputs
 
@@ -199,7 +218,8 @@ jobs:
 
 ### Dependency Review Configuration
 
-The reusable workflow references a centralized configuration file that defines organization-wide policies for dependency vulnerability and license checking.
+The reusable workflow references a centralized configuration file that defines organization-wide
+policies for dependency vulnerability and license checking.
 
 | Policy Area           | Default Setting           | Description                                                                   |
 | :-------------------- | :------------------------ | :---------------------------------------------------------------------------- |
@@ -211,11 +231,14 @@ The reusable workflow references a centralized configuration file that defines o
 
 **Configuration file location:** `.github/dependency-review-config.yml`
 
-**Repository-specific overrides:** Individual repositories can override the centralized policy by passing different values to the reusable workflow inputs (e.g., `fail-on-severity: high` for stricter or `warn-only: true` for observation mode).
+**Repository-specific overrides:** Individual repositories can override the centralized policy by
+passing different values to the reusable workflow inputs (e.g., `fail-on-severity: high` for
+stricter or `warn-only: true` for observation mode).
 
 ### Scorecard Reusable Workflow
 
-Provides standardized OpenSSF Scorecard supply-chain security analysis with configurable publishing and artifact options.
+Provides standardized OpenSSF Scorecard supply-chain security analysis with configurable publishing
+and artifact options.
 
 #### Available Inputs
 
@@ -283,20 +306,25 @@ jobs:
 
 ### Why Lint and Format Is Not Reusable
 
-The `lint-and-format.yml` workflow is intentionally not provided as a reusable workflow because it is tightly coupled to this repository's specific tooling stack:
+The `lint-and-format.yml` workflow is intentionally not provided as a reusable workflow because it
+is tightly coupled to this repository's specific tooling stack:
 
 - **Package manager**: Uses `bun` with `bun.lock`
 - **Linting tools**: Assumes `markdownlint-cli2` and `prettier` are installed via `package.json`
-- **Configuration files**: Expects `.markdownlint-cli2.jsonc` and `.prettierrc` to exist at repository root
-- **Scripts**: Calls `bun run format:check` and `bun run lint:md` which are defined in this repo's `package.json`
+- **Configuration files**: Expects `.markdownlint-cli2.jsonc` and `.prettierrc` to exist at
+  repository root
+- **Scripts**: Calls `bun run format:check` and `bun run lint:md` which are defined in this repo's
+  `package.json`
 
-Consumer repositories using different package managers (npm, yarn, pnpm) or different linting configurations should implement their own repository linting workflow tailored to their stack.
+Consumer repositories using different package managers (npm, yarn, pnpm) or different linting
+configurations should implement their own repository linting workflow tailored to their stack.
 
 ## Development
 
 ### Linting and Formatting
 
-This repository uses [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [Prettier](https://prettier.io/) for consistent Markdown, YAML, and JSON/JSONC style.
+This repository uses [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and
+[Prettier](https://prettier.io/) for consistent Markdown, YAML, and JSON/JSONC style.
 
 #### Setup
 
@@ -320,7 +348,8 @@ bun install
 
 #### Pre-commit Hooks
 
-This repository uses [Lefthook](https://lefthook.dev/) to automatically lint and format Markdown files before each commit.
+This repository uses [Lefthook](https://lefthook.dev/) to automatically lint and format Markdown
+files before each commit.
 
 When you commit changes:
 
@@ -339,4 +368,5 @@ bunx lefthook run pre-commit
 
 #### CI/CD
 
-Pull requests and pushes to `main` that modify Markdown, YAML, JSON/JSONC, workflow, lockfile, or tooling configuration files trigger automated linting and formatting checks via GitHub Actions.
+Pull requests and pushes to `main` that modify Markdown, YAML, JSON/JSONC, workflow, lockfile, or
+tooling configuration files trigger automated linting and formatting checks via GitHub Actions.

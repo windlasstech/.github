@@ -1,6 +1,8 @@
 # Security Policy
 
-Thank you for helping keep this project and its users safe. We take security seriously. This document covers how to report vulnerabilities, what is in scope, and how the project's supply chain integrity works.
+Thank you for helping keep this project and its users safe. We take security seriously. This
+document covers how to report vulnerabilities, what is in scope, and how the project's supply chain
+integrity works.
 
 ## Scope
 
@@ -16,7 +18,8 @@ Do not disclose sensitive details publicly until we complete coordinated remedia
 The following are normally out of scope:
 
 - Cosmetic/content issues without security impact
-- Vulnerabilities in upstream repositories that we do not distribute yet (report these to the upstream project directly)
+- Vulnerabilities in upstream repositories that we do not distribute yet (report these to the
+  upstream project directly)
 - DoS volume testing without prior approval
 - Reports based only on missing best-practice headers without exploitability
 
@@ -24,7 +27,8 @@ The following are normally out of scope:
 
 Please report vulnerabilities privately:
 
-- Preferred: GitHub Security Advisories. Use the `Security > Advisories` tab to submit a private report.
+- Preferred: GitHub Security Advisories. Use the `Security > Advisories` tab to submit a private
+  report.
 - Alternate: Send a report to [oss-security@windlasstech.com](mailto:oss-security@windlasstech.com).
 
 ### What to Include
@@ -44,7 +48,8 @@ Please report vulnerabilities privately:
 | Fix for medium or low severity    | 30 days                                       |
 | Public disclosure                 | After fix is released, or 90 days from report |
 
-These timelines are best-effort commitments and are not guaranteed SLAs. Complex issues may take longer, but we will keep you informed of progress, at least every 7 business days until closure.
+These timelines are best-effort commitments and are not guaranteed SLAs. Complex issues may take
+longer, but we will keep you informed of progress, at least every 7 business days until closure.
 
 ## Disclosure Policy
 
@@ -56,7 +61,8 @@ We follow coordinated disclosure:
 4. The reporter is credited in the advisory unless they request anonymity.
 5. If no fix is released within 90 days, the reporter may disclose publicly.
 
-We will not take legal action against researchers who report vulnerabilities in good faith and follow this policy.
+We will not take legal action against researchers who report vulnerabilities in good faith and
+follow this policy.
 
 ## Safe Harbor
 
@@ -85,7 +91,8 @@ Please do not:
 
 ### OpenSSF Scorecard
 
-This organization uses [OpenSSF Scorecard](https://securityscorecards.dev/) to continuously monitor security posture:
+This organization uses [OpenSSF Scorecard](https://securityscorecards.dev/) to continuously monitor
+security posture:
 
 - Binary artifacts
 - Branch protection
@@ -103,7 +110,9 @@ This organization uses [OpenSSF Scorecard](https://securityscorecards.dev/) to c
 
 ## Supply Chain Integrity
 
-This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)](https://slsa.dev/) framework to ensure software supply chain security. Detailed implementation guidance is available in the companion documents linked below.
+This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)](https://slsa.dev/)
+framework to ensure software supply chain security. Detailed implementation guidance is available in
+the companion documents linked below.
 
 ### At a Glance
 
@@ -111,7 +120,8 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
 - Source L1/L2 required; Source L3 controls followed wherever feasible
 - Source L4 not achievable in a 1-person organization
 - SHA-pinned workflows, hardened runners, least-privilege permissions
-- StepSecurity Enterprise: Harden Runner required on all repositories (public and private), minimum audit mode, with block-mode egress filtering recommended after baselining outbound destinations
+- StepSecurity Enterprise: Harden Runner required on all repositories (public and private), minimum
+  audit mode, with block-mode egress filtering recommended after baselining outbound destinations
 - Lockfiles committed, dependency review, OSV scanning
 - Signed commits, protected branches, OIDC, release integrity
 - Build provenance and SBOM attestations for released artifacts
@@ -128,29 +138,49 @@ This organization follows the [SLSA (Supply-chain Levels for Software Artifacts)
 
 ### Source and Workflow Integrity
 
-Source and workflow controls are implemented through signed commits, protected branches, SHA-pinned actions, hardened runners, least-privilege workflow permissions, and OIDC-based cloud authentication.
+Source and workflow controls are implemented through signed commits, protected branches, SHA-pinned
+actions, hardened runners, least-privilege workflow permissions, and OIDC-based cloud
+authentication.
 
-All repositories, public and private, run [`step-security/harden-runner`](https://github.com/step-security/harden-runner) in at least audit mode under the organization's StepSecurity Enterprise plan. Once a workflow's baseline of outbound destinations is established, the recommended configuration is `egress-policy: block` with an `allowed-endpoints` allow-list so all other egress traffic is blocked. Where a [StepSecurity Maintained Action](https://docs.stepsecurity.io/github-actions/actions/stepsecurity-maintained-actions) exists for a third-party action in use, the maintained replacement is preferred.
+All repositories, public and private, run
+[`step-security/harden-runner`](https://github.com/step-security/harden-runner) in at least audit
+mode under the organization's StepSecurity Enterprise plan. Once a workflow's baseline of outbound
+destinations is established, the recommended configuration is `egress-policy: block` with an
+`allowed-endpoints` allow-list so all other egress traffic is blocked. Where a
+[StepSecurity Maintained Action](https://docs.stepsecurity.io/github-actions/actions/stepsecurity-maintained-actions)
+exists for a third-party action in use, the maintained replacement is preferred.
 
-- Source track requirements, branch protection controls, and commit signing expectations are documented in [SLSA Compliance Framework: SLSA Source Track Requirements](./docs/security/slsa-compliance-framework.md#slsa-source-track-requirements).
-- GitHub Actions hardening, permission patterns, and OIDC provider examples are documented in [Workflow Hardening](./docs/security/workflow-hardening.md).
+- Source track requirements, branch protection controls, and commit signing expectations are
+  documented in
+  [SLSA Compliance Framework: SLSA Source Track Requirements](./docs/security/slsa-compliance-framework.md#slsa-source-track-requirements).
+- GitHub Actions hardening, permission patterns, and OIDC provider examples are documented in
+  [Workflow Hardening](./docs/security/workflow-hardening.md).
 
 ### Release Integrity
 
 - **GPG-signed tags**: All release tags are GPG-signed annotated tags
 - **GPG-signed commits**: All commits on `main` must be GPG-signed (enforced by repository rulesets)
-- **Linear history**: Squash-merge-only policy prevents history rewriting; force-push to `main` is blocked
+- **Linear history**: Squash-merge-only policy prevents history rewriting; force-push to `main` is
+  blocked
 - **CI gate**: All required status checks must pass before any merge to `main`
-- **SLSA Build L3+ provenance**: Released artifacts should use SLSA GitHub Generator builders or reusable workflow based attestation to produce hardened Build L3+ provenance wherever feasible
-- **Baseline build provenance attestations**: If an L3+ path is not available for a repository yet, released artifacts that consumers run, install, deploy, or download must still include signed provenance attestations
-- **SBOM attestations and release assets**: Released binaries and container images must include signed SPDX and CycloneDX SBOM attestations when the build can generate them, and public releases should publish the same SBOM files as release assets
-- **Linked artifacts metadata**: Registry-published release artifacts should upload storage metadata to GitHub's linked artifacts page through `actions/attest` or the artifact metadata API
+- **SLSA Build L3+ provenance**: Released artifacts should use SLSA GitHub Generator builders or
+  reusable workflow based attestation to produce hardened Build L3+ provenance wherever feasible
+- **Baseline build provenance attestations**: If an L3+ path is not available for a repository yet,
+  released artifacts that consumers run, install, deploy, or download must still include signed
+  provenance attestations
+- **SBOM attestations and release assets**: Released binaries and container images must include
+  signed SPDX and CycloneDX SBOM attestations when the build can generate them, and public releases
+  should publish the same SBOM files as release assets
+- **Linked artifacts metadata**: Registry-published release artifacts should upload storage metadata
+  to GitHub's linked artifacts page through `actions/attest` or the artifact metadata API
 
-Implementation requirements for provenance, SBOM attestations, linked artifacts uploads, and release verification are documented in [Artifact Attestations](./docs/security/artifact-attestations.md).
+Implementation requirements for provenance, SBOM attestations, linked artifacts uploads, and release
+verification are documented in [Artifact Attestations](./docs/security/artifact-attestations.md).
 
 ## Verifying Artifacts
 
-Consumers can verify the authenticity, integrity, and provenance of artifacts from this organization using GitHub artifact attestations and SLSA provenance verification tools.
+Consumers can verify the authenticity, integrity, and provenance of artifacts from this organization
+using GitHub artifact attestations and SLSA provenance verification tools.
 
 Verification confirms:
 
@@ -160,7 +190,9 @@ Verification confirms:
 4. **Source**: The exact source code revision used to build the artifact is known
 5. **Build environment**: The workflow that produced the artifact is identified
 
-Detailed verification commands for binaries, container images, SBOM attestations, and SLSA provenance are documented in [Artifact Attestations: Verification Expectations](./docs/security/artifact-attestations.md#verification-expectations).
+Detailed verification commands for binaries, container images, SBOM attestations, and SLSA
+provenance are documented in
+[Artifact Attestations: Verification Expectations](./docs/security/artifact-attestations.md#verification-expectations).
 
 ## References
 
