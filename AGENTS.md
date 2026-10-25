@@ -1,4 +1,4 @@
-# AGENTS.md — Windlass .github Repository
+# AGENTS.md: Windlass .github Repository
 
 **Generated:** 2026-04-26
 **Commit:** b394f5f
@@ -70,7 +70,7 @@ GitHub Organization Community Health Files repository. Files auto-apply across a
 - **Lists:** Dashes only (`-`), not asterisks (MD004)
 - **Line length:** No hard limit (MD013 disabled)
 - **Trailing spaces:** Allowed (MD009 disabled)
-- **No setext headers** — ATX style only (MD003 disabled)
+- **No setext headers**: ATX style only (MD003 disabled)
 
 ### Table Style (CRITICAL)
 
@@ -84,17 +84,25 @@ Compact tables with minimal spacing. Never align with excessive whitespace.
 
 ### Linting Stack
 
-- **markdownlint-cli2** (v0.22.0) — `.markdownlint-cli2.jsonc`
-- **Prettier** (v3.8.1) — `.prettierrc`
-- **Lefthook** — pre-commit automation
+- **markdownlint-cli2** (v0.22.0): `.markdownlint-cli2.jsonc`
+- **Prettier** (v3.8.1): `.prettierrc`
+- **Lefthook**: pre-commit automation
+
+### Dates in human-facing documents
+
+Use Holocene Era / Human Era year format for prose, changelog headings, ADR dates, and other human-reader dates (e.g., `12026-06-23`). Machine-readable timestamps and protocol/schema fields, such as JSON `generated_at`, must preserve the applicable technical standard format, normally ISO 8601 with a standard four-digit Gregorian year (e.g., `2026-06-23T12:00:00Z`).
+
+### Guidelines for Using the Em Dash
+
+In English prose the em dash is grammatically valid: prefer an alternative construction (comma, parentheses, colon, or a sentence split) when the em dash offers no clear readability advantage, but keep the em dash where it is genuinely clearer, such as around an interjection that already contains parentheses or a comma-heavy list.
 
 ## ANTI-PATTERNS
 
-- **Don't add `node_modules/` to git** — Already ignored
-- **Don't use `*` bullets** — Use `-` only (MD004: dash style enforced)
-- **Don't hard-wrap prose** — Prettier preserves wraps ("proseWrap": "preserve")
-- **Don't use setext headers** — ATX style required (MD003 disabled, MD018-020 disabled)
-- **Don't commit without signing** — Org requires GPG/SSH/Sigstore signed commits
+- **Don't add `node_modules/` to git**: Already ignored
+- **Don't use `*` bullets**: Use `-` only (MD004: dash style enforced)
+- **Don't hard-wrap prose**: Prettier preserves wraps ("proseWrap": "preserve")
+- **Don't use setext headers**: ATX style required (MD003 disabled, MD018-020 disabled)
+- **Don't commit without signing**: Org requires GPG/SSH/Sigstore signed commits
 
 ## UNIQUE STYLES
 
@@ -124,3 +132,11 @@ bunx lefthook run pre-commit
 - Uses hard-runner audit mode, SHA-pinned actions
 - `SECURITY.md` has full supply chain integrity requirements
 - OSV Scanner reusable workflows support all ecosystems JS/Python/Go/Rust/Java/.NET/PHP
+
+## cubic review workflow
+
+Before committing, run `cubic review` to review uncommitted changes. Fix the validated issues and
+run the local review again. Repeat until the local review is clean or only disputed issues remain.
+
+After pushing, wait for cubic's GitHub review and check its comments. Fix the validated issues and
+push the changes. Use GitHub review as the final pass; it may find issues the local review misses.
