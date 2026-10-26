@@ -1,7 +1,7 @@
 # AGENTS.md: Windlass .github Repository
 
 **Generated:** 12026-10-27  
-**Commit:** 7479655  
+**Commit:** 381aac4  
 **Branch:** main
 
 ---
@@ -9,9 +9,9 @@
 ## OVERVIEW
 
 GitHub Organization Community Health Files repository, plus the org profile in `profile/`. Files
-auto-apply across all Windlass org repos without their own versions. Content is Markdown and YAML
-only (no application code, no symbol map). Tooling: Bun 1.4.4 (pinned), markdownlint-cli2,
-`bun fmt`, Lefthook.
+auto-apply across all Windlass org repos without their own versions. Content is documentation and
+configuration only (Markdown, YAML, JSON/JSONC, TOML, EditorConfig; no application code, no symbol
+map). Tooling: Bun 1.4.4 (pinned), markdownlint-cli2, `bun fmt`, Lefthook.
 
 ## STRUCTURE
 
@@ -88,9 +88,9 @@ only (no application code, no symbol map). Tooling: Bun 1.4.4 (pinned), markdown
 - **Lists:** Dashes only (`-`), not asterisks (MD004)
 - **Duplicate headings:** Checked only among siblings (MD024 `siblings_only`)
 - **Thematic breaks:** `---` style (MD035)
-- **Disabled rules:** MD003, MD007, MD009-MD013, MD018-MD023, MD027-MD033, MD041, MD048-MD050,
-  MD060. Net effect: no line-length limit, trailing spaces allowed, ATX and setext headers both
-  tolerated, emphasis-as-heading allowed. Full list: `.markdownlint-cli2.jsonc`
+- **Disabled rules:** MD003, MD007, MD009, MD010, MD012, MD013, MD018-MD020, MD022, MD023,
+  MD027-MD033, MD041, MD048-MD050, MD060. Net effect: no line-length limit, trailing spaces allowed,
+  ATX and setext headers both tolerated. Full list: `.markdownlint-cli2.jsonc`
 
 ### Table Style (CRITICAL)
 
@@ -148,10 +148,10 @@ parentheses or a comma-heavy list.
 - **SHA pinning**: All third-party actions are pinned to full-length SHAs. Local reusable `uses:`
   paths (e.g. `./.github/workflows/...`) are resolved at the caller's commit, so they are
   structurally immutable and exempt.
-- **Consumer exception**: Consumers reference this repo's reusable workflows by `@main` as a
-  documented risk acceptance (immediate fleet-wide propagation, not SHA-equivalent security);
-  high-privilege consumers may pin a SHA. See README.md and
-  `docs/security/workflow-hardening.md#internal-reusable-workflows`.
+- **Consumer exception**: Windlass consumers reference this repo's reusable workflows by `@main` as
+  a documented risk acceptance (immediate fleet-wide propagation, not SHA-equivalent security);
+  high-privilege consumers may pin a SHA, and callers outside the Windlass organization must. See
+  README.md and `docs/security/workflow-hardening.md#internal-reusable-workflows`.
 - **Harden Runner**: Every job runs harden-runner. `egress-policy: audit` is the floor; callers may
   pass `block` with an explicit `allowed-endpoints` list (this repo's callers use block mode).
 - **Least privilege**: Workflow-level `permissions` are empty/read-only; jobs add only the scopes
@@ -186,7 +186,8 @@ parentheses or a comma-heavy list.
 - Org-wide file precedence: Repo file > `.github` repo default > missing
 - Reusable OSV Scanner workflows provided for consumer repos
 - SHA-pin required on all GitHub Actions (supply chain); internal reusable workflows are the
-  documented exception (consumers reference `@main` as a risk acceptance)
+  documented exception (Windlass consumers reference `@main` as a risk acceptance; external callers
+  must pin a SHA)
 
 ## COMMANDS
 
