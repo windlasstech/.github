@@ -30,6 +30,21 @@ on:
         required: false
         type: boolean
         default: false
+      egress-policy:
+        description:
+          "StepSecurity harden-runner egress policy (audit or block). Audit is the minimum permitted
+          floor; block can fail the job if required endpoints are missing from allowed-endpoints.
+          Establish a baseline with audit first."
+        required: false
+        type: string
+        default: "audit"
+      allowed-endpoints:
+        description:
+          "Allowed outbound endpoints for harden-runner, one per line (e.g., api.github.com:443).
+          Only takes effect when egress-policy is block."
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -42,10 +57,11 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - name: Harden the runner (Audit all outbound calls)
+      - name: Harden the runner
         uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
-          egress-policy: audit
+          egress-policy: ${{ inputs.egress-policy }}
+          allowed-endpoints: ${{ inputs.allowed-endpoints }}
 
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
