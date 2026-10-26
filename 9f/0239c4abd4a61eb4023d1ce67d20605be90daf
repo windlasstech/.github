@@ -1,0 +1,27 @@
+docs/security/dependency-security.md
+  s_00c9ab78d7ad1c::t_9f4c187ae9ae30 410,413-415
+  s_00c9ab78d7ad1c::t_bc2e208852c178 416
+README.md
+  s_00c9ab78d7ad1c::t_d1acd944d71971 182-184
+  s_00c9ab78d7ad1c::t_3d1fd2b20803ad 138,156,217,233,299,322
+  s_00c9ab78d7ad1c::t_aab43f529f50f1 78-85
+docs/security/workflow-hardening.md
+  s_00c9ab78d7ad1c::t_3174341136fd3d 25-37,45-47
+  s_00c9ab78d7ad1c::t_cebdebd1cb2e2c 38-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9f0239c4abd4a61eb4023d1ce67d20605be90daf",
+  "prompts": {},
+  "sessions": {
+    "s_00c9ab78d7ad1c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e86e65b62ffeQ2nanN15xso44P",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
