@@ -108,6 +108,15 @@ parentheses, colon, or a sentence split) when the em dash offers no clear readab
 keep the em dash where it is genuinely clearer, such as around an interjection that already contains
 parentheses or a comma-heavy list.
 
+### Commits
+
+- **DCO sign-off required**: Every commit must include a `Signed-off-by:` line. Use `git commit -s`
+  (or `git commit --signoff`) for all commits. Lefthook enforces this in the commit-msg hook.
+- **Commit message body format**: When a commit needs a multi-line body, prefer
+  `git commit -s -F - <<'EOF'` (heredoc) over repeating `-m`. Repeating `-m` inserts blank lines
+  between each argument and hurts readability; use heredoc unless the blank lines are intentional
+  paragraph breaks.
+
 ## ANTI-PATTERNS
 
 - **Don't add `node_modules/` to git**: Already ignored
