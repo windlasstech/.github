@@ -112,6 +112,10 @@ detection.
 - `upload-sarif` defaults to `true`: set to `false` for repositories where SARIF upload is not
   available
 - `fail-on-vuln` defaults to `true`: the workflow fails when vulnerabilities are found
+- `egress-policy` defaults to `audit`: audit is the minimum floor; callers may pass `block` together
+  with `allowed-endpoints` to enforce an egress allow-list
+- `allowed-endpoints` defaults to empty: one endpoint per line (e.g., `api.github.com:443`); only
+  takes effect when `egress-policy` is `block`
 
 #### Consumer Usage
 
@@ -181,13 +185,15 @@ centralized configuration.
 
 #### Available Inputs
 
-| Input                   | Required | Default                                                          | Description                                                      |
-| :---------------------- | :------: | :--------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `config-file`           |    No    | `windlasstech/.github/.github/dependency-review-config.yml@main` | Path to dependency review configuration file                     |
-| `fail-on-severity`      |    No    | (from config)                                                    | Minimum severity to fail (`low`, `moderate`, `high`, `critical`) |
-| `comment-summary-in-pr` |    No    | `on-failure`                                                     | Post summary comment to PR (`always`, `on-failure`, `never`)     |
-| `warn-only`             |    No    | `false`                                                          | Report only, never fail                                          |
-| `external-repo-token`   |    No    | (empty)                                                          | Token for accessing external repository configs                  |
+| Input                   | Required | Default                                                          | Description                                                                     |
+| :---------------------- | :------: | :--------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| `config-file`           |    No    | `windlasstech/.github/.github/dependency-review-config.yml@main` | Path to dependency review configuration file                                    |
+| `fail-on-severity`      |    No    | (from config)                                                    | Minimum severity to fail (`low`, `moderate`, `high`, `critical`)                |
+| `comment-summary-in-pr` |    No    | `on-failure`                                                     | Post summary comment to PR (`always`, `on-failure`, `never`)                    |
+| `warn-only`             |    No    | `false`                                                          | Report only, never fail                                                         |
+| `external-repo-token`   |    No    | (empty)                                                          | Token for accessing external repository configs                                 |
+| `egress-policy`         |    No    | `audit`                                                          | Harden Runner egress policy; `block` requires `allowed-endpoints`               |
+| `allowed-endpoints`     |    No    | (empty)                                                          | Allowed outbound endpoints, one per line; only used with `egress-policy: block` |
 
 #### Consumer Usage
 
@@ -251,16 +257,18 @@ and artifact options.
 
 #### Available Inputs
 
-| Input                  | Required | Default         | Description                                      |
-| :--------------------- | :------: | :-------------- | :----------------------------------------------- |
-| `results-file`         |    No    | `results.sarif` | Path to the SARIF results file                   |
-| `results-format`       |    No    | `sarif`         | Results format (`sarif`, `json`, `csv`)          |
-| `publish-results`      |    No    | `true`          | Publish results to OpenSSF REST API              |
-| `repo-token`           |    No    | (empty)         | Fine-grained PAT for Branch-Protection check     |
-| `file-mode`            |    No    | (empty)         | File mode for `.gitattributes` export-ignore     |
-| `retention-days`       |    No    | `5`             | Artifact retention days                          |
-| `upload-artifact`      |    No    | `true`          | Upload results as artifact                       |
-| `upload-code-scanning` |    No    | `true`          | Upload results to GitHub code scanning dashboard |
+| Input                  | Required | Default         | Description                                                                     |
+| :--------------------- | :------: | :-------------- | :------------------------------------------------------------------------------ |
+| `results-file`         |    No    | `results.sarif` | Path to the SARIF results file                                                  |
+| `results-format`       |    No    | `sarif`         | Results format (`sarif`, `json`, `csv`)                                         |
+| `publish-results`      |    No    | `true`          | Publish results to OpenSSF REST API                                             |
+| `repo-token`           |    No    | (empty)         | Fine-grained PAT for Branch-Protection check                                    |
+| `file-mode`            |    No    | (empty)         | File mode for `.gitattributes` export-ignore                                    |
+| `retention-days`       |    No    | `5`             | Artifact retention days                                                         |
+| `upload-artifact`      |    No    | `true`          | Upload results as artifact                                                      |
+| `upload-code-scanning` |    No    | `true`          | Upload results to GitHub code scanning dashboard                                |
+| `egress-policy`        |    No    | `audit`         | Harden Runner egress policy; `block` requires `allowed-endpoints`               |
+| `allowed-endpoints`    |    No    | (empty)         | Allowed outbound endpoints, one per line; only used with `egress-policy: block` |
 
 #### Consumer Usage
 
