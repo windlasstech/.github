@@ -75,12 +75,14 @@ repositories can call these workflows with a single `uses:` line.
 
 > [!NOTE]  
 > Reusable workflows from `windlasstech/.github` are an **exception** to
-> [the SHA-pinning requirement](./docs/security/workflow-hardening.md#action-references). Consumer
-> repositories reference them by branch name (e.g., `@main`) as a deliberate trade-off: centrally
-> reviewed changes propagate to all consumers immediately, without per-consumer version management.
-> This is not a security equivalent of SHA pinning. A change to this repository's default branch can
-> execute in consumer workflow contexts before consumer-specific adoption, so consumers running
-> high-privilege workflows may pin a full-length commit SHA instead. See
+> [the SHA-pinning requirement](./docs/security/workflow-hardening.md#action-references). Windlass
+> consumer repositories reference them by branch name (e.g., `@main`) as a deliberate trade-off:
+> centrally reviewed changes propagate to all consumers immediately, without per-consumer version
+> management. This is not a security equivalent of SHA pinning. A change to this repository's
+> default branch can execute in consumer workflow contexts before consumer-specific adoption, so
+> Windlass consumers running high-privilege workflows may pin a full-length commit SHA instead.
+> Callers outside the Windlass organization are outside this trust boundary and must pin a
+> full-length commit SHA. See
 > [Workflow Hardening: Internal Reusable Workflows](./docs/security/workflow-hardening.md#internal-reusable-workflows)
 > for the full policy.
 

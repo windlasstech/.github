@@ -30,18 +30,19 @@ requirement, for two distinct reasons:
 - **Local references** (`uses: ./.github/workflows/...`): GitHub resolves local reusable workflow
   paths at the caller workflow's own commit, so there is no separate ref to pin. The reference is
   structurally immutable, and every change is reviewed in the same commit as its callers.
-
-- **Cross-repository references** (`uses: windlasstech/.github/...@main`): Consumer repositories
-  reference these workflows by branch name as a deliberate risk acceptance, not as a security
-  equivalent of SHA pinning. The `.github` repository is managed within the same organizational
-  trust boundary, and `@main` propagates centrally reviewed changes to all consumers immediately,
-  without per-consumer version management. The accepted trade-off is that any change to the default
-  branch (including a transient malicious or erroneous change) can execute in consumer workflow
-  contexts, with the caller's granted permissions and secrets, before consumer-specific adoption.
-  This risk is mitigated, not eliminated, by protected branches, signed commits, required CI,
-  least-privilege permissions, and Harden Runner coverage. Consumers running high-privilege
-  workflows (release or deployment jobs holding `id-token: write` or similarly sensitive grants) may
-  instead pin to a full-length commit SHA for per-repository rollout control.
+- **Cross-repository references** (`uses: windlasstech/.github/...@main`): Windlass consumer
+  repositories reference these workflows by branch name as a deliberate risk acceptance, not as a
+  security equivalent of SHA pinning. The `.github` repository is managed within the same
+  organizational trust boundary, and `@main` propagates centrally reviewed changes to all consumers
+  immediately, without per-consumer version management. The accepted trade-off is that any change to
+  the default branch (including a transient malicious or erroneous change) can execute in consumer
+  workflow contexts, with the caller's granted permissions and secrets, before consumer-specific
+  adoption. This risk is mitigated, not eliminated, by protected branches, signed commits, required
+  CI, least-privilege permissions, and Harden Runner coverage. Windlass consumers running
+  high-privilege workflows (release or deployment jobs holding `id-token: write` or similarly
+  sensitive grants) may instead pin to a full-length commit SHA for per-repository rollout control.
+  Callers outside the Windlass organization are outside this trust boundary and must pin a
+  full-length commit SHA rather than `@main`.
 
 This exception applies only to Windlass-owned reusable workflows in this repository. It does not
 extend to any third-party action or workflow.
