@@ -1,0 +1,22 @@
+docs/security/workflow-hardening.md
+  s_5c7b646f67583d::t_62ada6fc06445e 255-257
+  s_5c7b646f67583d::t_50086b8c444acd 93-126
+  s_5c7b646f67583d::t_165913dfc913dd 85,160,178
+  s_5c7b646f67583d::t_7858705a7a4002 242-244
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "005fcdf300a3e762883acd5db6803690b20b726a",
+  "prompts": {},
+  "sessions": {
+    "s_5c7b646f67583d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ses_e87e49787ffefg0D1jwF4j6LWJ",
+        "model": "unknown"
+      },
+      "human_author": "Yunseo Kim <git@yunseo.kim>"
+    }
+  }
+}
