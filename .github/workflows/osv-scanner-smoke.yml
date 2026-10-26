@@ -24,7 +24,9 @@ jobs:
       scan-args: |-
         --lockfile=./bun.lock
       upload-sarif: true
-      egress-policy: audit
+      egress-policy: block
+      allowed-endpoints: >
+        api.github.com:443 api.osv.dev:443 github.com:443
 
   full-smoke:
     if: github.event_name == 'workflow_dispatch'
@@ -38,4 +40,6 @@ jobs:
         --lockfile=./bun.lock
       upload-sarif: true
       fail-on-vuln: false
-      egress-policy: audit
+      egress-policy: block
+      allowed-endpoints: >
+        api.github.com:443 api.osv.dev:443 github.com:443
