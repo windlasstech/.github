@@ -75,11 +75,16 @@ repositories can call these workflows with a single `uses:` line.
 
 > [!NOTE]  
 > Reusable workflows from `windlasstech/.github` are an **exception** to
-> [the SHA-pinning requirement](./docs/security/workflow-hardening.md#action-references). This
-> repository does not publish semantic version tags, and Dependabot cannot propose updates for
-> SHA-pinned internal reusable workflows. Adding tags or introducing an additional automation bot
-> solely for this purpose would create more operational overhead than value. Consumer repositories
-> may reference these workflows by branch name (e.g., `@main`).
+> [the SHA-pinning requirement](./docs/security/workflow-hardening.md#action-references). Windlass
+> consumer repositories reference them by branch name (e.g., `@main`) as a deliberate trade-off:
+> centrally reviewed changes propagate to all consumers immediately, without per-consumer version
+> management. This is not a security equivalent of SHA pinning. A change to this repository's
+> default branch can execute in consumer workflow contexts before consumer-specific adoption, so
+> Windlass consumers running high-privilege workflows may pin a full-length commit SHA instead.
+> Callers outside the Windlass organization are outside this trust boundary and must pin a
+> full-length commit SHA. See
+> [Workflow Hardening: Internal Reusable Workflows](./docs/security/workflow-hardening.md#internal-reusable-workflows)
+> for the full policy.
 
 ### Which Workflows Are Reusable
 
@@ -132,7 +137,7 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: windlasstech/.github/.github/workflows/osv-scanner-pr-reusable.yml@<pin-sha>
+    uses: windlasstech/.github/.github/workflows/osv-scanner-pr-reusable.yml@main
 ```
 
 ```yaml
@@ -150,7 +155,7 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: windlasstech/.github/.github/workflows/osv-scanner-full-reusable.yml@<pin-sha>
+    uses: windlasstech/.github/.github/workflows/osv-scanner-full-reusable.yml@main
 ```
 
 #### Reference Consumer
@@ -176,7 +181,9 @@ Repositories with nonstandard layouts may override `scan-args`:
 - For initial calibration, a repository may temporarily set `fail-on-vuln: false` for the first 1-2
   runs
 - After calibration, revert to the standard default of `true`
-- Always pin the workflow reference to a specific commit SHA
+- Reference the workflow by `@main` under the
+  [internal reusable workflow exception](./docs/security/workflow-hardening.md#internal-reusable-workflows);
+  high-privilege consumers may pin a full-length commit SHA instead
 
 ### Dependency Review Reusable Workflow
 
@@ -209,7 +216,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: windlasstech/.github/.github/workflows/dependency-review-reusable.yml@<pin-sha>
+    uses: windlasstech/.github/.github/workflows/dependency-review-reusable.yml@main
 ```
 
 #### With Custom Configuration
@@ -225,7 +232,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: windlasstech/.github/.github/workflows/dependency-review-reusable.yml@<pin-sha>
+    uses: windlasstech/.github/.github/workflows/dependency-review-reusable.yml@main
     with:
       fail-on-severity: moderate
       warn-only: false
@@ -291,7 +298,7 @@ jobs:
       checks: read
       security-events: write
       id-token: write
-    uses: windlasstech/.github/.github/workflows/scorecard-reusable.yml@<pin-sha>
+    uses: windlasstech/.github/.github/workflows/scorecard-reusable.yml@main
 ```
 
 #### Private Repository Usage
@@ -314,7 +321,7 @@ jobs:
       checks: read
       security-events: write
       id-token: write
-    uses: windlasstech/.github/.github/workflows/scorecard-reusable.yml@<pin-sha>
+    uses: windlasstech/.github/.github/workflows/scorecard-reusable.yml@main
     with:
       publish-results: false
       upload-code-scanning: false

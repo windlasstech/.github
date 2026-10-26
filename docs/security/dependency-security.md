@@ -407,8 +407,13 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: windlasstech/.github/.github/workflows/osv-scanner-pr-reusable.yml@<pin-sha>
+    uses: windlasstech/.github/.github/workflows/osv-scanner-pr-reusable.yml@main
 ```
+
+Windlass consumer repositories reference these reusable workflows by `@main` under the
+[internal reusable workflow exception](./workflow-hardening.md#internal-reusable-workflows);
+high-privilege consumers may pin a full-length commit SHA instead, and callers outside the Windlass
+organization must do so.
 
 The `.github` repository dogfoods both reusable workflows in its
 [`osv-scanner-smoke.yml`](../../.github/workflows/osv-scanner-smoke.yml) workflow. Consult it as a
