@@ -22,7 +22,9 @@ All GitHub Actions workflows enforce supply-chain protections:
   - uses: actions/checkout@v6
   ```
 
-> [!NOTE] Exception for internal reusable workflows  
+> [!NOTE]  
+> **Exception for internal reusable workflows**
+>
 > Reusable workflows published from `windlasstech/.github` should be referenced by branch name
 > (e.g., `@main`) instead of a commit SHA. This repository does not maintain semantic version tags,
 > and Dependabot cannot propose updates for SHA-pinned references to internal reusable workflows.
@@ -80,13 +82,47 @@ workflow change is checked automatically.
 
   ```yaml
   - name: Harden the runner (Block all outbound calls except allowed endpoints)
-    uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+    uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
     with:
       egress-policy: block
       allowed-endpoints: >
         api.github.com:443  
         github.com:443
   ```
+
+### Harden Runner in Reusable Workflows
+
+Harden Runner must live inside the reusable workflow itself, as the first step of each of its jobs.
+Two structural reasons rule out caller-side placement:
+
+- A caller job that invokes a reusable workflow via `jobs.<id>.uses:` cannot define `steps:`, so the
+  caller cannot wrap the call with its own Harden Runner step.
+- Every job executes on a fresh ephemeral runner VM allocated in the caller's context, and Harden
+  Runner monitors only the runner of the job it executes in. A step in any other caller job observes
+  nothing about the called workflow's job.
+
+This repository's reusable workflows (OSV Scanner PR/Full, Dependency Review, Scorecard) therefore
+ship Harden Runner built in, with `egress-policy: audit` as the non-removable floor.
+
+- **Caller-configurable policy**: The reusable workflows expose an `egress-policy` input (string,
+  default `audit`) and an `allowed-endpoints` input (string, default empty, one endpoint per line
+  such as `api.github.com:443`, effective only with `egress-policy: block`) so callers can opt into
+  block mode. No input can disable Harden Runner or drop below audit.
+
+> [!WARNING]  
+> Block mode fails the job when a required endpoint is missing from the allow-list. Follow the
+> progression recommended above: establish a baseline in audit mode first, then switch to
+> `egress-policy: block` with a complete `allowed-endpoints` list.
+
+- **Policy Store**: On StepSecurity Enterprise, when a reusable workflow is called, the calling
+  repository's policy applies, not the policy of the repository hosting the reusable workflow.
+  Organization-wide block policies can therefore be managed centrally in the Policy Store without
+  per-workflow input wiring.
+
+- **Callers outside the organization**: These reusable workflows are public and may be called from
+  other organizations. Harden Runner executes on the caller's runner in the caller's context, so
+  external callers get audit-mode coverage without any Windlass-side configuration. Note that the
+  Community tier covers public repositories only.
 
 - **Ephemeral environments**: All builds use fresh, isolated runners with no persistence between
   builds
@@ -121,7 +157,7 @@ When adding or modifying workflows, contributors must:
        # Inherits top-level permissions (read-only)
        steps:
          - name: Harden the runner (Audit all outbound calls)
-           uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+           uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
            with:
              egress-policy: audit
 
@@ -139,7 +175,7 @@ When adding or modifying workflows, contributors must:
          packages: write # Required for GHCR
        steps:
          - name: Harden the runner (Audit all outbound calls)
-           uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+           uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
            with:
              egress-policy: audit
 
@@ -203,6 +239,9 @@ requirements.
 - [GitHub Reusable Workflows](https://docs.github.com/en/actions/sharing-automations/reusing-workflows)
 - [GitHub Actions Security Hardening](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions)
 - [OIDC in GitHub Actions](https://docs.github.com/en/actions/security-guides/security-hardening-your-deployments/configuring-openid-connect-in-cloud-providers)
+- [Reusable Workflows: Supported keywords for jobs that call a reusable workflow](https://docs.github.com/en/actions/reference/workflows-and-actions/reusable-workflows#supported-keywords-for-jobs-that-call-a-reusable-workflow)
+- [GitHub-hosted runners](https://docs.github.com/en/actions/concepts/runners/github-hosted-runners)
+- [How reusable workflows use runners](https://docs.github.com/en/actions/reference/workflows-and-actions/reusable-workflows#how-reusable-workflows-use-runners)
 
 ### Step Security
 
@@ -213,3 +252,6 @@ requirements.
 - [StepSecurity Maintained Actions](https://docs.stepsecurity.io/github-actions/actions/stepsecurity-maintained-actions)
 - [Replacing third-party actions with StepSecurity Maintained Actions via automated pull requests](https://www.stepsecurity.io/blog/replace-third-party-actions-with-stepsecurity-maintained-actions-via-automated-pull-requests)
 - [StepSecurity Action Advisor](https://app.stepsecurity.io/action-advisor?tab=maintained)
+- [Harden-Runner Policy Store](https://docs.stepsecurity.io/github-actions/harden-runner/policy-store)
+- [Fix a blocked endpoint in your workflow](https://docs.stepsecurity.io/start-here/guides/how-to-fix-a-blocked-endpoint-in-your-workflow)
+- [Harden Runner auto-detects cache endpoints (reusable workflows)](https://www.stepsecurity.io/blog/harden-runner-github-action-now-auto-detects-cache-endpoints)
